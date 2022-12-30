@@ -131,8 +131,8 @@ import type {
   DatabaseTransactionEvent,
   NetworkRequestEvent
 } from '@/services/api/resources/session/events/codec'
-import BaseEventDetails from '@/components/pages/projects/ProjectSessionView/EventTabs/ActiveEvent/BaseEventDetails.vue'
-import type { Props } from '@/components/pages/projects/ProjectSessionView/EventTabs/ActiveEvent/common'
+import BaseEventDetails from '@/components/resources/events/EventTabs/ActiveEvent/BaseEventDetails.vue'
+import type { Props } from '@/components/resources/events/EventTabs/ActiveEvent/common'
 import DCopyble from '@/components/DCopyble.vue'
 import { computed } from 'vue'
 import { useSessionsStore } from '@/stores/sessions'
