@@ -1,0 +1,23 @@
+form label {
+  margin-bottom: 4px;
+  display: block;
+}
+
+html {
+  font-size: 14px;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root {
+  --surface-ground: #EFF3F8;
+}
+
+.p-datatable-table .p-column-title {
+  font-weight: 500;
+}
