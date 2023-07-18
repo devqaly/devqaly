@@ -1,6 +1,6 @@
 <template>
   <div class="p-5">
-    <div class="text-3xl font-medium text-900">My Projects TESTING</div>
+    <div class="text-3xl font-medium text-900">My Projects</div>
     <div class="font-medium text-500 mb-3">The projects you are a member of will show up here</div>
 
     <SetupSDKDialog
