@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  deploy:
+  deploy-webapp:
     runs-on: ubuntu-latest
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.WEBAPP_AWS_ACCESS_KEY_ID }}
@@ -25,7 +25,7 @@ jobs:
       - name: Deploy
         uses: reggionick/s3-deploy@v3
         with:
-          folder: dist
+          folder: apps/webapp/dist
           bucket: ${{ secrets.WEBAPP_S3_BUCKET }}
           bucket-region: ${{ secrets.WEBAPP_S3_BUCKET_REGION }}
           dist-id: ${{ secrets.WEBAPP_CLOUDFRONT_DISTRIBUTION_ID }}
