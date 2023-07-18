@@ -23,7 +23,6 @@ jobs:
         run: yarn build
 
       - name: Deploy
-        working-directory: apps/webapp
         uses: reggionick/s3-deploy@v3
         with:
           folder: dist
