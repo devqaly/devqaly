@@ -1,0 +1,135 @@
+---
+title: Frontend Application
+description: Check out how you can get started with Devqaly
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+Devqaly allows your QA team to record their screen while we record important information to allow developers to debug
+issue faster.
+
+# Getting started
+
+To get started with Devqaly the first step is to install the SDK in your frontend project:
+
+
+<Tabs>
+  <TabItem label="NPM">
+    ```bash
+    npm install @devqaly/browser
+    ```
+  </TabItem>
+  <TabItem label="Yarn">
+    ```bash
+    yarn add @devqaly/browser
+    ```
+  </TabItem>
+</Tabs>
+
+Then, you can initialize the SDK in your project:
+
+```typescript
+import { DevqalySDK } from '@devqaly/browser'
+
+const devqalySDK = new DevqalySDK({
+  // You can obtain the project key by visiting your project's list at
+  // https://app.devqaly.com/projects
+  projectKey: '<project-key>',
+})
+
+devqalySDK.showRecordingButton()
+```
+
+By adding the SDK to your frontend project, you will allow your anyone with access to the project to record a session.
+
+:::tip[Did you know?]
+
+You can connect your backend with your frontend. This will allow you to record `database transactions`, `logs` and
+allow you to trace network requests through your infrastructure. Read more at [connect your backend](/getting-started/connect-backend/)
+
+:::
+
+
+## Configuration
+
+We are working hard to add new configuration methods to allow you to customize this SDK to your needs.
+
+Currently, we allow you to add the following configurations
+
+### Starting Devqaly only in a certain environment
+We have initially built Devqaly to work either in local environment or staging. We highly recommend to do the proper
+checks before initializing the SDK:
+
+```javascript
+const isStaging = process.env === 'staging'
+
+if (isStaging) {
+  const devqalySDK = new DevqalySDK({
+    projectKey: '<project-key>',
+  })
+
+  devqalySDK.showRecordingButton()
+}
+```
+
+### Filter events
+You are able to filter out events that should be sent to the devqaly's backend (or your own self-hosted version).
+
+You simply have to pass a `eventFilter` when initializing the SDK:
+
+```typescript
+import { DevqalySDK, SDKEvent } from '@devqaly/browser'
+
+const devqalySDK = new DevqalySDK({
+  // ...
+  eventFilter: function (event: SDKEvent) {
+    
+  }
+})
+```
+
+### Frontend Url
+
+If you are self-hosting devqaly, you can pass the frontend URL by providing a `frontendUrl` to the configuration:
+
+```typescript
+import { DevqalySDK } from '@devqaly/browser'
+
+const devqalySDK = new DevqalySDK({
+  // ...
+  frontendUrl: 'https://webapp-devqaly.my-domain.com'
+})
+```
+
+### API Url
+
+If you are self-hosting devqaly, you can pass the backend URL by providing a `apiUrl` when intializing the SDK:
+
+```typescript
+import { DevqalySDK } from '@devqaly/browser'
+
+const devqalySDK = new DevqalySDK({
+  // ...
+  apiUrl: 'https://api-devqaly.my-domain.com'
+})
+```
+
+### Disable listeners
+
+If you would like to disable certain listeners, you can simple pass a `disabledListeners` object when initializing the SDK:
+
+```typescript
+import { DevqalySDK } from '@devqaly/browser'
+
+const devqalySDK = new DevqalySDK({
+  // ...
+  disabledListeners: {
+    network: false,
+    click: false,
+    log: false,
+    resize: false,
+    scroll: false,
+    urlChange: false,
+  }
+})
+```
