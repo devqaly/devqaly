@@ -1,11 +1,37 @@
 ---
-title: Example Reference
-description: A reference page in my new Starlight docs site.
+title: Welcome to Devqaly Docs
+description: Get started recording your sessions to help your developers debug faster
+template: splash
+hero:
+  tagline: Record sessions and share them with your developers
+  image:
+    file: ../../assets/houston.webp
+  actions:
+    - text: Introduction
+      link: /overview/introduction/
+      icon: right-arrow
+      variant: primary
+    - text: Quickstart
+      link: /getting-started/quickstart/
+      icon: external
 ---
 
-Reference pages are ideal for outlining how things work in terse and clear terms.
-Less concerned with telling a story or addressing a specific use case, they should give a comprehensive outline of what your documenting.
+import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Further reading
+## Next steps
 
-- Read [about reference](https://diataxis.fr/reference/) in the Diátaxis framework
+<CardGrid stagger>
+  <Card title="Easy to Debug" icon="laptop">
+    Allow developers and Quality Assurance Engineers to record their screen while we record important information
+    for developers to debug easier and faster
+  </Card>
+  <Card title="Record Database Transactions" icon="add-document">
+    Identify when a database transaction happened when a person clicked a button in the frontend
+  </Card>
+  <Card title="Trace Network Requests" icon="setting">
+    Easily trace your network requests across your infrastructure
+  </Card>
+  <Card title="Read the docs" icon="open-book">
+    Learn more in [getting started](/overview/introduction/).
+  </Card>
+</CardGrid>

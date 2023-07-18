@@ -5,9 +5,9 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
   integrations: [
     starlight({
-      title: 'My Docs',
+      title: 'Devqaly Docs',
       social: {
-        github: 'https://github.com/withastro/starlight',
+        github: 'https://github.com/devqaly',
       },
       sidebar: [
         {
@@ -18,8 +18,14 @@ export default defineConfig({
           label: 'Getting Started',
           items: [
             { label: 'Quick Start', link: '/getting-started/quickstart' },
+          ]
+        },
+        {
+          label: 'Connect your backend',
+          items: [
             { label: 'Connect Your Backend', link: '/getting-started/connect-backend' },
             { label: 'Backend - PHP', link: '/getting-started/backend/php' },
+            { label: 'Backend - Laravel', link: '/getting-started/backend/laravel' },
           ]
         },
       ],

@@ -15,5 +15,8 @@ colleagues. But, Devqaly allows you to collect information on the backend as wel
 We have developed a few SDKs that allow you to easily integrate Devqaly into your backend. Currently we support the 
 following frameworks/languages:
 
-- PHP
-- Laravel
+- [PHP](/getting-started/backend/php/)
+- [Laravel](/getting-started/backend/laravel/)
+
+We will be adding more SDKs. We will be creating a guide on how you can contribute and create a framework specific 
+SDK soon.
