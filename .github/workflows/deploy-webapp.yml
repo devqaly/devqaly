@@ -7,6 +7,7 @@ on:
 
 jobs:
   deploy-webapp:
+    name: 'Deploy webapp'
     runs-on: ubuntu-latest
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.WEBAPP_AWS_ACCESS_KEY_ID }}
