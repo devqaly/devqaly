@@ -11,5 +11,5 @@ require 'resources/project.php';
 require 'resources/events.php';
 
 Route::get('test', function () {
-    return response()->json(['status' => 'okay']);
+    return response()->json(['status' => 'okay testing']);
 });
