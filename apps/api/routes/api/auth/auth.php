@@ -11,7 +11,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [LogoutController::class, 'logout'])->name('authentication.logout');
 });
 
-Route::post('resetPassword/link', [ResetPasswordController::class, 'requestPasswordResetLink']);
+Route::post('resetPassword/link', [ResetPasswordController::class, 'requestPasswordResetLink'])
+    ->name('password.requestResetLink');
 
 Route::post('/resetPassword', [ResetPasswordController::class, 'resetPassword'])
     ->name('password.update');

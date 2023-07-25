@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enum\User;
+namespace app\Enum\User;
 
 enum UserCurrentPositionEnum: string
 {
