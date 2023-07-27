@@ -17,7 +17,8 @@ class EventResizeScreenFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'inner_width' => rand(100, 1500),
+            'inner_height' => rand(100, 1500),
         ];
     }
 }

@@ -3,7 +3,6 @@
 namespace Tests\Feature\Http\Controllers\Resources;
 
 use App\Mail\Auth\SignupEmail;
-use App\Mail\MeetupMessage\NotifyAttendeeNewMessage;
 use App\Models\Auth\RegisterToken;
 use App\Models\Company\Company;
 use App\Models\User;

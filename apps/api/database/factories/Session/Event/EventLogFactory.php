@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Session\Event;
 
+use App\Enum\Event\EventLogLevelEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,18 @@ class EventLogFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'request_id' => null,
+            'level' => $this->faker->randomElement([
+                EventLogLevelEnum::EMERGENCY->value,
+                EventLogLevelEnum::ALERT->value,
+                EventLogLevelEnum::CRITICAL->value,
+                EventLogLevelEnum::ERROR->value,
+                EventLogLevelEnum::WARNING->value,
+                EventLogLevelEnum::NOTICE->value,
+                EventLogLevelEnum::INFORMATIONAL->value,
+                EventLogLevelEnum::DEBUG->value,
+            ]),
+            'log' => $this->faker->text(rand(10, 500)),
         ];
     }
 }

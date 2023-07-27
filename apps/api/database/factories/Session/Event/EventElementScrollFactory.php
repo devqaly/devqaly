@@ -17,7 +17,10 @@ class EventElementScrollFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'scroll_height' => rand(500, 1500),
+            'scroll_width' => rand(500, 1500),
+            'scroll_left' => rand(0, 1500),
+            'scroll_top' => rand(0, 1500),
         ];
     }
 }

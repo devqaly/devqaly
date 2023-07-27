@@ -17,7 +17,9 @@ class EventDatabaseTransactionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'request_id' => null,
+            'sql' => 'select * from users where 1 = 1',
+            'execution_time_in_milliseconds' => rand(100, 1000),
         ];
     }
 }
