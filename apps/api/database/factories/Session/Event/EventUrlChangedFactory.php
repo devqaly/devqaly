@@ -17,7 +17,7 @@ class EventUrlChangedFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'to_url' => $this->faker->url(),
         ];
     }
 }

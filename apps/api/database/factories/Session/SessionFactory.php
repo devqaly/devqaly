@@ -2,13 +2,42 @@
 
 namespace Database\Factories\Session;
 
+use App\Enum\Sessions\SessionVideoStatusEnum;
+use App\Models\Project\Project;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Session\Session>
  */
 class SessionFactory extends Factory
 {
+    const WINDOW_HEIGHTS = [
+        '16:9' => [
+            [1024, 576],
+            [1280, 720],
+            [1920, 1080],
+        ],
+        '16:10' => [
+            [1680, 1050],
+            [1920, 1200],
+        ]
+    ];
+
+    const OPERATING_SYSTEMS = [
+        'MacOS',
+        'Windows',
+        'Linux',
+    ];
+
+    const PLATFORM_NAMES = [
+        'Chrome',
+        'Firefox',
+        'Safari',
+        'Firefox',
+    ];
+
     /**
      * Define the model's default state.
      *
@@ -16,8 +45,27 @@ class SessionFactory extends Factory
      */
     public function definition(): array
     {
+        $windowDimensions = $this->faker->randomElement([
+            ...self::WINDOW_HEIGHTS['16:9'],
+            ...self::WINDOW_HEIGHTS['16:10'],
+        ]);
+
         return [
-            //
+            'created_by_id' => User::factory(),
+            'project_id' => Project::factory(),
+            'window_width' => $windowDimensions[0],
+            'window_height' => $windowDimensions[1],
+            'os' => $this->faker->randomElement(self::OPERATING_SYSTEMS),
+            'platform_name' => $this->faker->randomElement(self::PLATFORM_NAMES),
+            'version' => '114.0.0',
+            'video_status' => SessionVideoStatusEnum::CONVERTED->value,
+            'video_extension' => 'webm',
+            'video_size_in_megabytes' => rand(1000, 5000),
+            'video_conversion_percentage' => 100,
+            'video_duration_in_seconds' => rand(10, 1500),
+            'started_video_conversion_at' => now(),
+            'ended_video_conversion_at' => now()->addSeconds(rand(1, 5)),
+            'secret_token' => Str::random(60),
         ];
     }
 }
