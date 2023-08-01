@@ -19,8 +19,9 @@ jobs:
     defaults:
       run:
         working-directory: apps/api
+
     container:
-      image: kirschbaumdevelopment/laravel-test-runner:7.3
+      image: kirschbaumdevelopment/laravel-test-runner:8.2
 
     services:
       postgres:
@@ -40,7 +41,7 @@ jobs:
 
       - name: Install composer dependencies
         run: |
-          pwd && composer install --no-scripts
+          composer install
 
       - name: Prepare Laravel Application
         run: |
