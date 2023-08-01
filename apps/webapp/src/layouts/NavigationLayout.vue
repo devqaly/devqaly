@@ -18,11 +18,11 @@
 
           <div
             class="mx-3 p-3 mt-2 border-round-md flex align-items-center text-white bg-bluegray-900 cursor-pointer"
+            @click="onToggleCompaniesMenu"
           >
             <div
               class="flex flex-column flex-grow-1"
               aria-controls="companies-menu"
-              @click="onToggleCompaniesMenu"
             >
               <div class="font-semibold text-2xl">
                 {{ appStore.activeCompany ? appStore.activeCompany.name : '...' }}
