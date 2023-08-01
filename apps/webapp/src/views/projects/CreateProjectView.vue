@@ -55,7 +55,7 @@
 </template>
 
 <script lang="ts" setup>
-import { array, object, string } from 'yup'
+import { object, string } from 'yup'
 import { getSubmitFn } from '@/services/validations'
 import { displayGeneralError } from '@/services/ui'
 import { ref } from 'vue'
@@ -64,6 +64,7 @@ import { useProjectsStore } from '@/stores/projects'
 import { Field, Form } from 'vee-validate'
 import { useAppStore } from '@/stores/app'
 import type { WrappedResponse } from '@/services/api/axios'
+import { assertsIsCompanyCodec } from '@/services/resources/Company'
 
 const isCreatingProject = ref(false)
 
@@ -81,12 +82,14 @@ const validationSchema = object({
 })
 
 const onSubmit = getSubmitFn(validationSchema, async (values) => {
+  assertsIsCompanyCodec(appStore.activeCompany)
+
   try {
     isCreatingProject.value = true
 
-    const { data } = await projectStore.createProject(appStore.loggedUser.company.id, values)
+    const { data } = await projectStore.createProject(appStore.activeCompany.id, values)
 
-    router.push({ name: 'projectDashboard', params: { projectId: data.data.id } })
+    await router.push({ name: 'projectDashboard', params: { projectId: data.data.id } })
   } catch (e) {
     displayGeneralError(e as WrappedResponse, { group: 'bottom-center' })
   } finally {

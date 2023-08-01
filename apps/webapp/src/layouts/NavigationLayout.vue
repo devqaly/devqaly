@@ -15,8 +15,35 @@
               height="45"
             />
           </div>
+
+          <div
+            class="mx-3 p-3 mt-2 border-round-md flex align-items-center text-white bg-bluegray-900 cursor-pointer"
+          >
+            <div
+              class="flex flex-column flex-grow-1"
+              aria-controls="companies-menu"
+              @click="onToggleCompaniesMenu"
+            >
+              <div class="font-semibold text-2xl">
+                {{ appStore.activeCompany ? appStore.activeCompany.name : '...' }}
+              </div>
+              <div class="font-medium">
+                {{ appStore.loggedUser ? appStore.loggedUser.fullName : '...' }}
+              </div>
+            </div>
+
+            <Menu
+              ref="companiesMenu"
+              id="companies-menu"
+              :model="companiesItems"
+              :popup="true"
+            />
+
+            <div class="flex-grow-0"><i class="pi pi-chevron-down"></i></div>
+          </div>
+
           <div class="overflow-y-auto">
-            <ul class="list-none p-3 m-0">
+            <ul class="list-none px-3 pt-0">
               <!--              <li>-->
               <!--                <router-link-->
               <!--                  active-class="bg-bluegray-900 text-bluegray-50"-->
@@ -33,7 +60,7 @@
                   active-class="bg-bluegray-900 text-bluegray-50"
                   :to="{
                     name: 'listCompanyMembers',
-                    params: { companyId: appStore.loggedUser.company.id }
+                    params: { companyId: appStore.activeCompany!.id }
                   }"
                   v-ripple
                   class="flex align-items-center cursor-pointer p-3 mt-1 hover:bg-bluegray-900 border-round text-bluegray-100 hover:text-bluegray-50 transition-duration-150 transition-colors p-ripple no-underline"
@@ -130,10 +157,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import Menu from 'primevue/menu'
 import { useAppStore } from '@/stores/app'
 import { usePrimeVue } from 'primevue/config'
+import type { CompanyCodec } from '@/services/api/resources/company/codec'
+import { useRouter } from 'vue-router'
 
 // @see: https://github.com/primefaces/primevue/issues/2454
 const $primevue = usePrimeVue()
@@ -145,16 +174,30 @@ defineExpose({
 
 const menu = ref<InstanceType<typeof Menu>>()
 
-const items = [
-  { separator: true },
-  { label: 'Profile', icon: 'pi pi-fw pi-user' },
-  { label: 'Settings', icon: 'pi pi-fw pi-cog' },
-  { separator: true }
-]
+const router = useRouter()
+
+const companiesMenu = ref<InstanceType<typeof Menu>>()
+
+const companiesItems = computed(() =>
+  appStore.loggedUserCompanies.data.map((company) => ({
+    label: company.name,
+    command: () => setActiveCompany(company)
+  }))
+)
 
 const appStore = useAppStore()
 
 function onToggleMenu(event: Event) {
   menu.value?.toggle(event)
+}
+
+function onToggleCompaniesMenu(event: Event) {
+  companiesMenu.value?.toggle(event)
+}
+
+function setActiveCompany(company: CompanyCodec) {
+  appStore.activeCompany = company
+
+  router.push({ name: 'listProjects' })
 }
 </script>

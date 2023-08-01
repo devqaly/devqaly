@@ -92,6 +92,7 @@ import { getPaginationPropsForMeta } from '@/services/ui'
 import type { PageState } from 'primevue/paginator'
 import { useAppStore } from '@/stores/app'
 import SetupSDKDialog from '@/components/resources/project/SetupSDKDialog.vue'
+import { assertsIsCompanyCodec } from '@/services/resources/Company'
 
 const isFetchingProjects = ref(false)
 
@@ -108,17 +109,21 @@ const filters = ref<GetProjectsParameters>({})
 const activeProjectForIntegration = ref<ProjectCodec | null>(null)
 
 onMounted(async () => {
+  assertsIsCompanyCodec(appStore.activeCompany)
+
   isFetchingProjects.value = true
-  await projectStore.fetchProjects(appStore.loggedUser.company.id, { perPage: perPage.value })
+  await projectStore.fetchProjects(appStore.activeCompany.id, { perPage: perPage.value })
   isFetchingProjects.value = false
 })
 
 watch(filters, async (filters) => {
+  assertsIsCompanyCodec(appStore.activeCompany)
+
   currentPage.value = 1
   projectStore.projectsRequest = emptyPagination()
 
   isFetchingProjects.value = true
-  await projectStore.fetchProjects(appStore.loggedUser.company.id, {
+  await projectStore.fetchProjects(appStore.activeCompany.id, {
     ...filters,
     perPage: perPage.value,
     page: currentPage.value
@@ -126,15 +131,28 @@ watch(filters, async (filters) => {
   isFetchingProjects.value = false
 })
 
+watch(
+  () => appStore.activeCompany,
+  async (company) => {
+    if (company === null) return
+
+    isFetchingProjects.value = true
+    await projectStore.fetchProjects(company.id, { perPage: perPage.value })
+    isFetchingProjects.value = false
+  }
+)
+
 function onFilterUpdate(_filters: GetProjectsParameters) {
   filters.value = _filters
 }
 
 async function onPageUpdate(page: PageState) {
+  assertsIsCompanyCodec(appStore.activeCompany)
+
   currentPage.value = page.page
 
   isFetchingProjects.value = true
-  await projectStore.fetchProjects(appStore.loggedUser.company.id, {
+  await projectStore.fetchProjects(appStore.activeCompany.id, {
     ...filters.value,
     page: currentPage.value,
     perPage: perPage.value

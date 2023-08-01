@@ -5,6 +5,5 @@ export const loggedUserCodecFactory = (): LoggedUserCodec => ({
   firstName: '',
   lastName: '',
   timezone: '',
-  fullName: '',
-  company: { id: '' }
+  fullName: ''
 })

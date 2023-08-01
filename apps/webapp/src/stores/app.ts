@@ -5,14 +5,21 @@ import type { LoginBody } from '@/services/api/auth/codec'
 import { defineStore } from 'pinia'
 import { loginUser, logoutUser } from '@/services/api/auth/actions'
 import { axios } from '@/services/api/axios'
-import { getLoggedUserInformation } from '@/services/api/resources/user/actions'
+import {
+  getLoggedUserCompanies,
+  getLoggedUserInformation
+} from '@/services/api/resources/user/actions'
 import { loggedUserCodecFactory } from '@/services/factories/userFactory'
 import { emptyPagination } from '@/services/api'
+import type { CompanyCodec } from '@/services/api/resources/company/codec'
+import type { GetLoggedUserCompaniesParameters } from '@/services/api/resources/user/requests'
 
 interface AppStoreState {
   isAuthenticated: boolean
   loggedUser: LoggedUserCodec
   loggedUserProjectsRequest: PaginatableRecord<ProjectCodec>
+  loggedUserCompanies: PaginatableRecord<CompanyCodec>
+  activeCompany: CompanyCodec | null
 }
 
 export const TOKEN_KEY = '_token'
@@ -21,7 +28,9 @@ export const useAppStore = defineStore('appStore', {
   state: (): AppStoreState => ({
     isAuthenticated: false,
     loggedUser: loggedUserCodecFactory(),
-    loggedUserProjectsRequest: emptyPagination()
+    loggedUserProjectsRequest: emptyPagination(),
+    loggedUserCompanies: emptyPagination(),
+    activeCompany: null
   }),
   actions: {
     async loginUser(loginBody: LoginBody) {
@@ -48,6 +57,14 @@ export const useAppStore = defineStore('appStore', {
       this.loggedUser = loggedUserData.data
     },
 
+    async fetchLoggedUserCompanies(userId: string, params: GetLoggedUserCompaniesParameters = {}) {
+      const { data } = await getLoggedUserCompanies(userId, params)
+
+      this.loggedUserCompanies = data
+
+      this.activeCompany = data.data[0] as CompanyCodec
+    },
+
     async onLoadApp() {
       const token = window.localStorage.getItem(TOKEN_KEY)
 
@@ -55,6 +72,7 @@ export const useAppStore = defineStore('appStore', {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
         this.isAuthenticated = true
         await this.getLoggedUserInformation()
+        await this.fetchLoggedUserCompanies(this.loggedUser.id, { perPage: 50 })
       }
     }
   }
