@@ -41,6 +41,7 @@ export const useAppStore = defineStore('appStore', {
       this.isAuthenticated = true
 
       await this.getLoggedUserInformation()
+      await this.fetchLoggedUserCompanies(this.loggedUser.id, { perPage: 50 })
     },
 
     async logoutUser() {
