@@ -8,5 +8,13 @@ export const companyRoutes: RouteRecordRaw[] = [
     meta: {
       requiresAuth: true
     }
+  },
+  {
+    path: '/company/create',
+    name: 'createCompany',
+    component: () => import('@/views/companies/CreateCompanyView.vue'),
+    meta: {
+      requiresAuth: true
+    }
   }
 ]

@@ -178,12 +178,19 @@ const router = useRouter()
 
 const companiesMenu = ref<InstanceType<typeof Menu>>()
 
-const companiesItems = computed(() =>
-  appStore.loggedUserCompanies.data.map((company) => ({
+const companiesItems = computed(() => [
+  ...appStore.loggedUserCompanies.data.map((company) => ({
     label: company.name,
+    icon: 'pi pi-building',
     command: () => setActiveCompany(company)
-  }))
-)
+  })),
+  { separator: true },
+  {
+    icon: 'pi pi-plus',
+    label: 'Create Company',
+    command: () => router.push({ name: 'createCompany' })
+  }
+])
 
 const appStore = useAppStore()
 
