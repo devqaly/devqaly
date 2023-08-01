@@ -2,6 +2,8 @@ name: 'Deploy api'
 
 on:
   push:
+    paths:
+      - apps/api/**
     branches:
       - master
 

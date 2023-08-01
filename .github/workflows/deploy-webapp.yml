@@ -2,6 +2,8 @@ name: Deploy Webapp
 
 on:
   push:
+    paths:
+      - apps/webapp/**
     branches:
       - master
 
