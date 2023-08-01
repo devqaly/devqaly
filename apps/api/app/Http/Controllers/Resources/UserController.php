@@ -59,7 +59,6 @@ class UserController extends Controller
                 'lastName' => $user->last_name,
                 'timezone' => $user->timezone,
                 'fullName' => sprintf('%s %s', $user->first_name, $user->last_name),
-                'company' => $user->companiesMember()->first()->company->only(['id']),
             ]
         ]);
     }
