@@ -40,7 +40,7 @@ jobs:
 
       - name: Install composer dependencies
         run: |
-          composer install --no-scripts
+          pwd && composer install --no-scripts
 
       - name: Prepare Laravel Application
         run: |
