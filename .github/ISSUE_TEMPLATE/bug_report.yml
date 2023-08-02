@@ -37,7 +37,7 @@ body:
         - Safari
         - Microsoft Edge (why?)
   - type: textarea
-    id: logs
+    id: version
     attributes:
       label: Which version of Devqaly are you using? (if applicable)
       description: You tell us by the git tag by running the command "git describe --tags"
