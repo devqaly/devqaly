@@ -34,9 +34,9 @@ class ProjectPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user, Company $company): bool
     {
-        //
+        return $company->members()->where('member_id', $user->id)->exists();
     }
 
     /**
