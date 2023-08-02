@@ -22,8 +22,8 @@ class CompanyMemberService
                 $builder
                     ->whereHas('member', function (Builder $q) use ($filters) {
                         $q->where(
-                            DB::raw('CONCAT(users.first_name, " ", users.last_name)'),
-                            'LIKE',
+                            DB::raw("CONCAT(users.first_name, ' ', users.last_name)"),
+                            'ILIKE',
                             $filters->get('memberName') . '%'
                         );
                     })
@@ -39,8 +39,8 @@ class CompanyMemberService
                 $builder
                     ->whereHas('invitedBy', function (Builder $q) use ($filters) {
                         $q->where(
-                            DB::raw('CONCAT(users.first_name, " ", users.last_name)'),
-                            'LIKE',
+                            DB::raw("CONCAT(users.first_name, ' ', users.last_name)"),
+                            'ILIKE',
                             $filters->get('invitedByName') . '%'
                         );
                     });
