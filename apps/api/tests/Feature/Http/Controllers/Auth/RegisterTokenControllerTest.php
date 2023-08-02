@@ -5,6 +5,8 @@ namespace tests\Feature\Http\Controllers\Auth;
 use app\Enum\User\UserCurrentPositionEnum;
 use App\Mail\Auth\SignupEmail;
 use App\Models\Auth\RegisterToken;
+use App\Models\Company\Company;
+use App\Models\Company\CompanyMember;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -137,17 +139,21 @@ class RegisterTokenControllerTest extends TestCase
         $timezone = $this->faker->timezone;
         $password = 'password123';
 
-        $token = RegisterToken::factory()->unrevoked()->create(['email' => $email]);
+        $company = Company::factory()->create();
 
-        $response = $this->putJson(route('registerTokens.update', ['registerToken' => $token]), [
-            'firstName' => $firstName,
-            'lastName' => $lastName,
-            'timezone' => $timezone,
-            'password' => $password,
-            'currentPosition' => UserCurrentPositionEnum::QA
-        ]);
+        $token = RegisterToken::factory()
+            ->withCompanyMember($company)
+            ->unrevoked()
+            ->create(['email' => $email]);
 
-        $response
+        $this
+            ->putJson(route('registerTokens.update', ['registerToken' => $token]), [
+                'firstName' => $firstName,
+                'lastName' => $lastName,
+                'timezone' => $timezone,
+                'password' => $password,
+                'currentPosition' => UserCurrentPositionEnum::QA
+            ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonPath('data.user.email', $email);
 
@@ -157,6 +163,18 @@ class RegisterTokenControllerTest extends TestCase
             'last_name' => $lastName,
             'timezone' => $timezone,
         ]);
+
+        $token->refresh();
+
+        $user = User::query()->where('email', $email)->firstOrFail();
+
+        $this->assertDatabaseHas((new CompanyMember())->getTable(), [
+            'member_id' => $user->id,
+            'register_token_id' => $token->id,
+        ]);
+
+        $this->assertNotNull($token->used_at, 'The token should have been marked as been used');
+
     }
 
     /**
@@ -243,11 +261,90 @@ class RegisterTokenControllerTest extends TestCase
         Mail::assertQueued(SignupEmail::class);
 
         $this->assertTrue(
-            (bool) RegisterToken::find($token->id)->revoked,
+            (bool)RegisterToken::find($token->id)->revoked,
             'The old token should be revoked while a new one should be created'
         );
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $this->assertDatabaseCount((new User())->getTable(), 0);
+    }
+
+    public function test_user_is_attached_to_company_after_being_sent_new_email_after_trying_to_use_expired_token()
+    {
+        Mail::fake();
+
+        $email = $this->faker->email;
+        $firstName = $this->faker->firstName;
+        $lastName = $this->faker->lastName;
+        $timezone = $this->faker->timezone;
+        $password = 'password123';
+
+        $company = Company::factory()->create();
+
+        $token = RegisterToken::factory()
+            ->withCompanyMember($company)
+            ->unrevoked()
+            ->expired()
+            ->create(['email' => $email]);
+
+        $this->assertDatabaseHas((new CompanyMember())->getTable(), [
+            'company_id' => $company->id,
+            'register_token_id' => $token->id,
+        ]);
+
+        Mail::assertNothingQueued();
+
+        $this
+            ->putJson(route('registerTokens.update', ['registerToken' => $token]), [
+                'firstName' => $firstName,
+                'lastName' => $lastName,
+                'timezone' => $timezone,
+                'password' => $password,
+                'currentPosition' => UserCurrentPositionEnum::QA
+            ])
+            ->assertForbidden()
+            ->assertJsonPath('message', 'Current token have expired. We have sent a new token to the email associated with this token');
+
+        Mail::assertQueued(SignupEmail::class);
+
+        $token->refresh();
+
+        $this->assertTrue($token->revoked, 'The token should be revoked since it was expired');
+
+        $this->assertDatabaseHas((new RegisterToken())->getTable(), [
+            'email' => $email,
+        ]);
+
+        $this->assertDatabaseCount((new RegisterToken())->getTable(), 2);
+
+        $newToken = RegisterToken::query()->orderBy('created_at', 'DESC')->first();
+
+        $this->assertDatabaseHas((new CompanyMember())->getTable(), [
+            'company_id' => $company->id,
+            'register_token_id' => $newToken->id
+        ]);
+
+        $this
+            ->putJson(route('registerTokens.update', ['registerToken' => $newToken]), [
+                'firstName' => $firstName,
+                'lastName' => $lastName,
+                'timezone' => $timezone,
+                'password' => $password,
+                'currentPosition' => UserCurrentPositionEnum::QA
+            ])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('data.user.email', $email);
+
+        $user = User::query()->where('email', $email)->first();
+
+        $this->assertDatabaseHas((new CompanyMember())->getTable(), [
+            'company_id' => $company->id,
+            'register_token_id' => $newToken->id,
+            'member_id' => $user->id,
+        ]);
+
+        $newToken->refresh();
+
+        $this->assertNotNull($newToken->used_at, 'The token should have been marked as been used');
     }
 }

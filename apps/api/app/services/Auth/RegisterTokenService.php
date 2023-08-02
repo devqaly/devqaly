@@ -77,7 +77,13 @@ class RegisterTokenService
         if ($token->created_at->diffInDays(Carbon::now()) > 2) {
             $token->update(['revoked' => true]);
 
-            $this->createToken(collect(['email' => $token->email]));
+            $newRegisterToken = $this->createToken(collect(['email' => $token->email]));
+
+            // A new token is created, and we need to reference this new token in `company_members` table
+            // so that we can attach this user to the company whenever he uses the newly generated token.
+            CompanyMember::where('register_token_id', $token->id)->update([
+                'register_token_id' => $newRegisterToken->id
+            ]);
 
             abort(Response::HTTP_FORBIDDEN, 'Current token have expired. We have sent a new token to the email associated with this token');
         }

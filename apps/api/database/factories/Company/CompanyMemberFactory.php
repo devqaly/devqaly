@@ -2,6 +2,9 @@
 
 namespace Database\Factories\Company;
 
+use App\Models\Company\Company;
+use App\Models\Company\CompanyMember;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +20,10 @@ class CompanyMemberFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'company_id' => Company::factory(),
+            'member_id' => User::factory(),
+            'register_token_id' => null,
+            'invited_by_id' => User::factory(),
         ];
     }
 }
