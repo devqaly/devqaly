@@ -1,13 +1,13 @@
 <template>
   <div class="p-5">
-    <div class="text-3xl font-medium text-900">Create Project</div>
+    <div class="text-3xl font-medium text-900">Create Company</div>
     <div class="font-medium text-500 mb-3">
-      A project allows you to group your sessions in a logical manner and collaborate with
-      colleagues
+      A company allows you to aggregate projects inside an organization
     </div>
 
     <Form
       :validation-schema="validationSchema"
+      autofocus
       @submit="onSubmit"
     >
       <div class="surface-card p-4 shadow-2 border-round">
@@ -19,16 +19,16 @@
         </div>
 
         <Field
-          name="title"
+          name="name"
           v-slot="{ field, errorMessage }"
         >
-          <label for="title">Title</label>
+          <label for="title">Name</label>
           <InputText
             v-bind="field"
-            id="title"
+            id="name"
             type="text"
             autofocus
-            placeholder="Project Name"
+            placeholder="Company Name"
             :class="{ 'p-invalid': errorMessage, 'w-full': true }"
             aria-describedby="title-help"
           />
@@ -42,10 +42,10 @@
         <div class="flex justify-content-end">
           <Button
             class="mt-4"
-            :loading="isCreatingProject"
+            :loading="isCreatingCompany"
             icon="pi pi-chevron-right"
             icon-pos="right"
-            label="Create Project"
+            label="Create Company"
             type="submit"
           ></Button>
         </div>
@@ -54,46 +54,44 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { object, string } from 'yup'
 import { getSubmitFn } from '@/services/validations'
-import { displayGeneralError } from '@/services/ui'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useProjectsStore } from '@/stores/projects'
 import { Field, Form } from 'vee-validate'
+import { ref } from 'vue'
 import { useAppStore } from '@/stores/app'
+import { createCompany } from '@/services/api/resources/company/actions'
+import { displayGeneralError } from '@/services/ui'
 import type { WrappedResponse } from '@/services/api/axios'
-import { assertsIsCompanyCodec } from '@/services/resources/Company'
-
-const isCreatingProject = ref(false)
-
-const router = useRouter()
-
-const projectStore = useProjectsStore()
-
-const appStore = useAppStore()
+import { useRouter } from 'vue-router'
 
 const validationSchema = object({
-  title: string()
-    .required('Title is required')
-    .min(2, 'Minimum of 2 characters')
+  name: string()
+    .required('Name is required')
+    .min(1, 'Minimum of 1 characters')
     .max(255, 'Maximum 255 characters')
 })
 
+const appStore = useAppStore()
+
+const isCreatingCompany = ref(false)
+
+const router = useRouter()
+
 const onSubmit = getSubmitFn(validationSchema, async (values) => {
-  assertsIsCompanyCodec(appStore.activeCompany)
-
   try {
-    isCreatingProject.value = true
+    isCreatingCompany.value = true
 
-    const { data } = await projectStore.createProject(appStore.activeCompany.id, values)
+    const { data } = await createCompany(values)
 
-    await router.push({ name: 'projectDashboard', params: { projectId: data.data.id } })
+    appStore.activeCompany = data.data
+    appStore.loggedUserCompanies.data.push(data.data)
+
+    await router.push({ name: 'listProjects' })
   } catch (e) {
-    displayGeneralError(e as WrappedResponse, { group: 'bottom-center' })
+    displayGeneralError(e as WrappedResponse)
   } finally {
-    isCreatingProject.value = false
+    isCreatingCompany.value = false
   }
 })
 </script>

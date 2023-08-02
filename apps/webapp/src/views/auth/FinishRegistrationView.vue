@@ -207,9 +207,9 @@ const onSubmit = getSubmitFn(validationSchema, async (values) => {
     })
 
     if (route.query.redirectTo) {
-      router.push(route.query.redirectTo as string)
+      await router.push(route.query.redirectTo as string)
     } else {
-      router.push({ name: 'listProjects' })
+      await router.push({ name: 'listProjects' })
     }
   } catch (e) {
     if (isError(e as WrappedResponse, HttpStatusCode.NotFound)) {

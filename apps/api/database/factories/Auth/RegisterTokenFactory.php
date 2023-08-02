@@ -2,6 +2,9 @@
 
 namespace Database\Factories\Auth;
 
+use App\Models\Auth\RegisterToken;
+use App\Models\Company\Company;
+use App\Models\Company\CompanyMember;
 use App\services\Auth\RegisterTokenService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Collection;
@@ -66,5 +69,16 @@ class RegisterTokenFactory extends Factory
                 'revoked' => 0,
             ];
         });
+    }
+
+    public function withCompanyMember(?Company $company): RegisterTokenFactory
+    {
+        return $this->afterCreating(function (RegisterToken $registerToken) use ($company) {
+                CompanyMember::factory()->create([
+                    'member_id' => null,
+                    'register_token_id' => $registerToken->id,
+                    'company_id' => $company?->id ?? Company::factory(),
+                ]);
+            });
     }
 }

@@ -50,7 +50,8 @@ class CompanyService
         $unregisteredUsersEmails = $emails->diff($registeredUsers->pluck('email'));
 
         /** @var Collection $registerTokens */
-        $registerTokens = RegisterToken::whereIn('email', $unregisteredUsersEmails)
+        $registerTokens = RegisterToken::query()
+            ->whereIn('email', $unregisteredUsersEmails)
             ->where('revoked', false)
             ->whereNull('used_at')
             ->get();
@@ -60,29 +61,53 @@ class CompanyService
             /** @var RegisterToken|null $oldRegisterToken */
             $oldRegisterToken = $registerTokens->first(fn(RegisterToken $r) => $r->email === $email);
 
-            // In case the user was already invited to join the platform, we will revoke the last token
-            $oldRegisterToken?->update(['revoked' => 1]);
-
-            // We will create the RegisterToken for the user being invited.
-            // Whenever the user finishes registration, we will attach
-            // the user created to this CompanyMember.
-            $newRegisterToken = $this->registerTokenService->createToken(collect(['email' => $email]), false);
-
+            // 1. The current email has no token associated to it?
+            // YES: The user is being invited for the first time.
+            //      THEN: Create a register token and send the sign-up email
             if ($oldRegisterToken === null) {
+                $newRegisterToken = $this->registerTokenService->createToken(collect(['email' => $email]), false);
+
                 CompanyMember::create([
                     'company_id' => $company->id,
                     'member_id' => null,
                     'register_token_id' => $newRegisterToken->id,
                     'invited_by_id' => $invitedBy->id,
                 ]);
-            } else {
-                CompanyMember::where('register_token_id', $oldRegisterToken->id)
-                    ->update(['register_token_id' => $newRegisterToken->id]);
+
+                $this->registerTokenService->sendEmail($email, $newRegisterToken);
+
+                continue;
             }
 
-            if ($sendInvitationEmail) {
-                $this->registerTokenService->sendEmail($email, $newRegisterToken);
+            // 2. Is the current register token assigned to the company that is inviting the user?
+            // YES: It means the user is being re-invited
+            //      THEN: Extend the token and re-send the email
+            $isTokenAssignedToCompany = CompanyMember::query()
+                ->where('register_token_id', $oldRegisterToken->id)
+                ->whereNull('member_id')
+                ->where('company_id', $company->id)
+                ->exists();
+
+            $oldRegisterToken->created_at = now();
+            $oldRegisterToken->updated_at = now();
+            $oldRegisterToken->save();
+
+            if ($isTokenAssignedToCompany) {
+                $this->registerTokenService->sendEmail($email, $oldRegisterToken);
+
+                continue;
             }
+
+
+            // 2. Is the current register token assigned to the company that is inviting the user?
+            // NO: It means the user is being invited to a new company
+            //      THEN: Extend the token and add the register token as a company member
+            CompanyMember::create([
+                'company_id' => $company->id,
+                'member_id' => null,
+                'register_token_id' => $oldRegisterToken->id,
+                'invited_by_id' => $invitedBy->id,
+            ]);
         }
     }
 }

@@ -13,6 +13,8 @@ class Company extends Model
 {
     use HasFactory, HasUuids;
 
+    const MAX_NUMBER_COMPANIES_PER_USER = 50;
+
     protected $fillable = [
         'name',
         'created_by_id'

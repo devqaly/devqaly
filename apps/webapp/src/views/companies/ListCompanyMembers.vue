@@ -11,7 +11,7 @@
         />
 
         <InviteCompanyMember
-          :company-id="appStore.loggedUser.company.id"
+          :company-id="appStore.activeCompany!.id"
           @invited:members="onInvitedMembers"
         />
       </div>
@@ -84,6 +84,7 @@ import InviteCompanyMember from '@/components/resources/companyMember/InviteComp
 import { getPaginationPropsForMeta } from '@/services/ui'
 import type { PageState } from 'primevue/paginator'
 import { OrderBy } from '@/services/api'
+import { assertsIsCompanyCodec } from '@/services/resources/Company'
 
 const companyMemberStore = useCompanyMembersStore()
 
@@ -100,27 +101,33 @@ const isFetchingMembers = ref(false)
 const perPage = ref(50)
 
 onMounted(() => {
-  companyMemberStore.fetchCompanyMembers(appStore.loggedUser.company.id, {
+  assertsIsCompanyCodec(appStore.activeCompany)
+
+  companyMemberStore.fetchCompanyMembers(appStore.activeCompany.id, {
     ...filters.value,
     perPage: perPage.value
   })
 })
 
 async function onInvitedMembers() {
+  assertsIsCompanyCodec(appStore.activeCompany)
+
   currentPage.value = 1
   filters.value = { orderByCreatedAt: OrderBy.DESC }
 
   isFetchingMembers.value = true
-  await companyMemberStore.fetchCompanyMembers(appStore.loggedUser.company.id, filters.value)
+  await companyMemberStore.fetchCompanyMembers(appStore.activeCompany.id, filters.value)
   isFetchingMembers.value = false
 }
 
 async function onFilterUpdate(_filters: GetCompanyMembersParameters) {
+  assertsIsCompanyCodec(appStore.activeCompany)
+
   filters.value = _filters
   currentPage.value = 0
 
   isFetchingMembers.value = true
-  await companyMemberStore.fetchCompanyMembers(appStore.loggedUser.company.id, {
+  await companyMemberStore.fetchCompanyMembers(appStore.activeCompany.id, {
     ...filters.value,
     perPage: perPage.value,
     page: currentPage.value
@@ -129,10 +136,12 @@ async function onFilterUpdate(_filters: GetCompanyMembersParameters) {
 }
 
 async function onPageUpdate(page: PageState) {
+  assertsIsCompanyCodec(appStore.activeCompany)
+
   currentPage.value = page.page
 
   isFetchingMembers.value = true
-  await companyMemberStore.fetchCompanyMembers(appStore.loggedUser.company.id, {
+  await companyMemberStore.fetchCompanyMembers(appStore.activeCompany.id, {
     ...filters.value,
     page: currentPage.value,
     perPage: perPage.value

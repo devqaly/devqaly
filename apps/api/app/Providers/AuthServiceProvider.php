@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\Company\Company;
 use App\Models\Company\CompanyMember;
 use App\Models\Project\Project;
 use App\Models\Session\Session;
 use App\Models\User;
 use App\Policies\CompanyMemberPolicy;
+use App\Policies\CompanyPolicy;
 use App\Policies\ProjectPolicy;
 use App\Policies\SessionPolicy;
 use Illuminate\Auth\Notifications\ResetPassword;
@@ -20,9 +22,10 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-         Project::class => ProjectPolicy::class,
-         Session::class => SessionPolicy::class,
-         CompanyMember::class => CompanyMemberPolicy::class,
+        Project::class => ProjectPolicy::class,
+        Session::class => SessionPolicy::class,
+        CompanyMember::class => CompanyMemberPolicy::class,
+        Company::class => CompanyPolicy::class,
     ];
 
     /**
