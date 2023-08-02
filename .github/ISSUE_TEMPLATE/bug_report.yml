@@ -1,0 +1,51 @@
+name: "🐛 Bug Report"
+description: "Submit a bug report to help us improve"
+title: "🐛 Bug Report: "
+labels: ["type: bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! We appreciate your time to help us improve
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 📜 Description
+      description: Also tell us, what did you expect to happen?
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    validations:
+      required: true
+    attributes:
+      label: "👟 Reproduction steps"
+      description: "How do you trigger this bug? Please walk us through it step by step."
+      placeholder: "1. Go to '...'
+                    2. Click on '....'
+                    3. Scroll down to '....'
+                    4. See error"
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Which browser are you seeing the problem on? (if applicable)
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge (why?)
+  - type: textarea
+    id: logs
+    attributes:
+      label: Which version of Devqaly are you using? (if applicable)
+      description: You tell us by the git tag by running the command "git describe --tags"
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
