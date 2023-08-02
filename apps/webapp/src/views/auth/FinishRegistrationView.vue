@@ -119,7 +119,7 @@
 
             <Button
               :loading="isCreatingUser"
-              label="Create project"
+              label="Finish Set Up"
               icon="pi pi-chevron-right"
               iconPos="right"
               class="w-full mt-4"
