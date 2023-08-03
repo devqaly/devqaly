@@ -26,8 +26,10 @@ class SessionController extends Controller
 
     }
 
-    public function show(Session $session): SessionResource
+    public function show(Session $session, Request $request): SessionResource
     {
+        $this->authorize('view', $session);
+
         $session->load('createdBy');
 
         return new SessionResource($session);
