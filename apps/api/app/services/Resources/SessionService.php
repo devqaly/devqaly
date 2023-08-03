@@ -41,8 +41,8 @@ class SessionService
         if ($filters->has('createdByName')) {
             $sessions->whereHas('createdBy', function (Builder $builder) use ($filters) {
                 $builder->where(
-                    DB::raw('CONCAT(users.first_name, " ", users.last_name)'),
-                    'LIKE',
+                    DB::raw("CONCAT(users.first_name, ' ', users.last_name)"),
+                    'ILIKE',
                     $filters->get('createdByName') . '%'
                 );
             });
