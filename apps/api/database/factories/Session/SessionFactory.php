@@ -68,4 +68,13 @@ class SessionFactory extends Factory
             'secret_token' => Str::random(60),
         ];
     }
+
+    public function unassigned(): SessionFactory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'created_by_id' => null,
+            ];
+        });
+    }
 }

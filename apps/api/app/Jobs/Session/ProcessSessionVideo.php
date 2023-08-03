@@ -20,7 +20,7 @@ class ProcessSessionVideo implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private Session $session;
+    public Session $session;
 
     public $timeout = 10000;
 
