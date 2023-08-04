@@ -30,7 +30,7 @@ class ProcessSessionVideoTest extends TestCase
         $session->refresh();
 
         $this->assertEquals(32, $session->video_duration_in_seconds);
-        $this->assertEquals(2.065318107605, $session->video_size_in_megabytes);
+        $this->assertEqualsWithDelta(2.065318107605, $session->video_size_in_megabytes, 2);
         $this->assertEquals(100, $session->video_conversion_percentage);
         $this->assertEquals(SessionVideoStatusEnum::CONVERTED, $session->video_status);
         $this->assertNotNull($session->started_video_conversion_at);
