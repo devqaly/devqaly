@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class EventLogFactory extends Factory
 {
+
     /**
      * Define the model's default state.
      *
