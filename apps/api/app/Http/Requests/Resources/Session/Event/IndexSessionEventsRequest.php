@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Resources\Session\Event;
 
+use App\Models\Session\Session;
+use App\Models\User;
 use App\Rules\OrderRule;
 use App\Traits\UsesPaginate;
 use Illuminate\Foundation\Http\FormRequest;
@@ -12,7 +14,13 @@ class IndexSessionEventsRequest extends FormRequest
 
     public function authorize(): bool
     {
-        return true;
+        /** @var User $loggedUser */
+        $loggedUser = $this->user();
+
+        /** @var Session $session */
+        $session = $this->projectSession;
+
+        return $loggedUser->can('view', $session);
     }
 
     /**

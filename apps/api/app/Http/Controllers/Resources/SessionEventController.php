@@ -19,10 +19,10 @@ class SessionEventController extends Controller
     public function index(
         IndexSessionEventsRequest $request,
         SessionEventService $service,
-        Session $session
+        Session $projectSession
     ): AnonymousResourceCollection
     {
-        $events = $service->getSessionEvents(collect($request->validated()), $session);
+        $events = $service->getSessionEvents(collect($request->validated()), $projectSession);
 
         return EventResource::collection($events);
     }
