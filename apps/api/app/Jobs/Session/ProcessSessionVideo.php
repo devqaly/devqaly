@@ -37,19 +37,19 @@ class ProcessSessionVideo implements ShouldQueue
         $this->processWebmVideo();
     }
 
-    private function isUsingS3Bucket(): bool
+    protected function isUsingS3Bucket(): bool
     {
         return config('filesystems.default') === 's3';
     }
 
-    private function isWebmVideo(): bool
+    protected function isWebmVideo(): bool
     {
         return $this->session->video_extension === 'webm';
     }
 
     // Currently we are only accepting webm videos but we will leave this here in case
     // we need to transcode non-webm videos to webm
-    private function processNotWebmVideo(): void
+    protected function processNotWebmVideo(): void
     {
         try {
             $ffmpeg = FFMpeg::create();
@@ -103,7 +103,7 @@ class ProcessSessionVideo implements ShouldQueue
         }
     }
 
-    private function processWebmVideo(): void
+    protected function processWebmVideo(): void
     {
         try {
             $this->session->video_conversion_percentage = 100;
@@ -142,13 +142,13 @@ class ProcessSessionVideo implements ShouldQueue
         }
     }
 
-    private function downloadFileFromS3(): void
+    protected function downloadFileFromS3(): void
     {
         $s3File = Storage::disk('s3')->get(sprintf("%s/%s", S3NamespacesEnum::VIDEOS_TO_CONVERT->value, "{$this->session->id}.{$this->session->video_extension}"));
         Storage::disk('local')->put("videos-to-convert/{$this->session->id}.{$this->session->video_extension}", $s3File);
     }
 
-    private function uploadFileToS3(): void
+    protected function uploadFileToS3(): void
     {
         $localFile = Storage::disk('local')->get("videos/{$this->session->id}.{$this->session->video_extension}");
 
@@ -166,12 +166,12 @@ class ProcessSessionVideo implements ShouldQueue
         Storage::disk('local')->delete("videos/{$this->session->id}.{$this->session->video_extension}");
     }
 
-    private function deleteOriginalVideo(): void
+    protected function deleteOriginalVideo(): void
     {
         Storage::disk('local')->delete("videos-to-convert/{$this->session->id}.{$this->session->video_extension}");
     }
 
-    private function getVideoSizeInMegabytes(): float
+    protected function getVideoSizeInMegabytes(): float
     {
         $videoSizeBytes = Storage::disk('local')->size("videos/{$this->session->id}.{$this->session->video_extension}");
 
