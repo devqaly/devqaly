@@ -33,3 +33,5 @@ coverage
 .env.local
 .env.*.local
 .env.production
+
+cypress.env.json

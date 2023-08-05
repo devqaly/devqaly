@@ -13,3 +13,7 @@ require 'resources/events.php';
 Route::get('test', function () {
     return response()->json(['status' => 'okay']);
 });
+
+if (config('app.env') === 'local') {
+    require 'cypress.php';
+}

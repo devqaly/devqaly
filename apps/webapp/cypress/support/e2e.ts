@@ -13,6 +13,23 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      /**
+       * Custom command to select DOM element by data-cy attribute.
+       * @example cy.dataCy('greeting')
+       */
+      // @ts-ignore
+      dataCy(value: string): Chainable<JQuery<HTMLElement>>
+    }
+  }
+}
+
+Cypress.Commands.add('dataCy', (value) => {
+  return cy.get(`[data-cy=${value}]`)
+})
+
 // Import commands.js using ES2015 syntax:
 import './commands'
 

@@ -32,6 +32,7 @@
           >
             <label for="email">Email Address</label>
             <InputText
+              data-cy="login-view__email"
               v-bind="field"
               id="email"
               type="text"
@@ -54,6 +55,7 @@
             >
               <label for="password">Password</label>
               <InputText
+                data-cy="login-view__password"
                 v-bind="field"
                 id="password"
                 type="password"
@@ -70,6 +72,7 @@
           </div>
 
           <Button
+            data-cy="login-view__submit"
             :loading="isLoggingIn"
             label="Sign in"
             class="w-full mt-4"
@@ -90,6 +93,7 @@
             <div class="mt-4">
               Forgot your password?
               <router-link
+                data-cy="login-view__reset-password"
                 :to="{ name: 'authRequestPasswordLink' }"
                 class="font-medium no-underline text-blue-500 text-right cursor-pointer"
               >
