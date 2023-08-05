@@ -24,7 +24,10 @@
               class="flex flex-column flex-grow-1"
               aria-controls="companies-menu"
             >
-              <div class="font-semibold text-2xl">
+              <div
+                class="font-semibold text-2xl"
+                data-cy="navigation-layout__active-company"
+              >
                 {{ appStore.activeCompany ? appStore.activeCompany.name : '...' }}
               </div>
               <div class="font-medium">
