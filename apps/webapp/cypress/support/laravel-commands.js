@@ -10,27 +10,30 @@
  *          cy.login({ attributes: { name: 'JohnDoe' }, state: 'guest', load: ['comments] });
  */
 Cypress.Commands.add('login', (attributes = {}) => {
-  // Are we using the new object system?
   let requestBody =
-    attributes.attributes || attributes.state || attributes.load ? attributes : { attributes }
+    attributes.attributes || attributes.state || attributes.load || attributes.options
+      ? attributes
+      : { attributes }
 
   return cy
-    .then((token) => {
-      return cy.request({
-        method: 'POST',
-        url: Cypress.env('BACKEND_API_URL') + '/__cypress__/login',
-        body: { ...requestBody, _token: token },
-        log: false
-      })
+    .request({
+      method: 'POST',
+      url: Cypress.env('BACKEND_API_URL') + '/__cypress__/login',
+      body: requestBody,
+      log: false
     })
     .then(({ body }) => {
-      Cypress.Laravel.currentUser = body
+      const options = attributes.options ?? {}
 
-      Cypress.log({
-        name: 'login',
-        message: JSON.stringify(body),
-        consoleProps: () => ({ user: body })
-      })
+      if (!Object.prototype.hasOwnProperty.call(options, 'skipAddingTokenToCookies')) {
+        window.localStorage.setItem('_token', body.token.plainTextToken)
+      } else {
+        Cypress.log({
+          name: 'login',
+          message: JSON.stringify(body),
+          consoleProps: () => ({ user: body })
+        })
+      }
     })
     .its('body', { log: false })
 })
