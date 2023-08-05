@@ -32,6 +32,7 @@
             >
               <label for="firstName">First Name</label>
               <InputText
+                data-cy="finish-registration__first-name"
                 v-bind="field"
                 id="firstName"
                 placeholder="First Name"
@@ -53,6 +54,7 @@
               >
                 <label for="lastName">Last Name</label>
                 <InputText
+                  data-cy="finish-registration__last-name"
                   v-bind="field"
                   placeholder="Last Name"
                   id="lastName"
@@ -75,6 +77,7 @@
               >
                 <label for="password">Password</label>
                 <InputText
+                  data-cy="finish-registration__password"
                   v-bind="field"
                   placeholder="Password"
                   id="password"
@@ -98,6 +101,7 @@
                 <div class="field">
                   <label for="position">Current Position</label>
                   <Dropdown
+                    data-cy="finish-registration__current-position"
                     :class="{ 'p-invalid': errorMessage, 'w-full': true }"
                     @update:model-value="handleChange"
                     :model-value="value"
@@ -118,6 +122,7 @@
             </div>
 
             <Button
+              data-cy="finish-registration__submit"
               :loading="isCreatingUser"
               label="Finish Set Up"
               icon="pi pi-chevron-right"
