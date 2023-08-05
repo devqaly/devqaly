@@ -23,6 +23,7 @@
 
           <div
             v-if="linkRequested"
+            data-cy="request-password-reset__link-requested"
             class="mt-2 text-left"
           >
             If the email is in our database, you will receive an email.
@@ -39,6 +40,7 @@
             >
               <label for="email">Email</label>
               <InputText
+                data-cy="request-password-reset__email"
                 v-bind="field"
                 id="email"
                 type="text"
@@ -54,6 +56,7 @@
             </Field>
 
             <Button
+              data-cy="request-password-reset__submit"
               :loading="isRequestingPasswordLink"
               label="Request Link"
               class="w-full mt-4"
