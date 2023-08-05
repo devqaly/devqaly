@@ -24,6 +24,7 @@
         >
           <label for="title">Name</label>
           <InputText
+            data-cy="create-company-view__company-name"
             v-bind="field"
             id="name"
             type="text"
@@ -41,6 +42,7 @@
 
         <div class="flex justify-content-end">
           <Button
+            data-cy="create-company-view__submit"
             class="mt-4"
             :loading="isCreatingCompany"
             icon="pi pi-chevron-right"
