@@ -71,7 +71,7 @@ class RegisterTokenFactory extends Factory
         });
     }
 
-    public function withCompanyMember(?Company $company): RegisterTokenFactory
+    public function withCompanyMember(?Company $company = null): RegisterTokenFactory
     {
         return $this->afterCreating(function (RegisterToken $registerToken) use ($company) {
                 CompanyMember::factory()->create([
