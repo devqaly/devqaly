@@ -32,6 +32,7 @@
             >
               <label for="email">Email</label>
               <InputText
+                data-cy="reset-password-view__email"
                 v-bind="field"
                 id="email"
                 type="text"
@@ -54,6 +55,7 @@
               >
                 <label for="password">New Password</label>
                 <InputText
+                  data-cy="reset-password-view__new-password"
                   v-bind="field"
                   id="password"
                   type="password"
@@ -70,6 +72,7 @@
             </div>
 
             <Button
+              data-cy="reset-password-view__submit"
               :loading="isResettingPassword"
               label="Reset Password"
               class="w-full mt-4"
@@ -126,7 +129,7 @@ const onSubmit = getSubmitFn(validationSchema, async (values) => {
 
     await resetPassword(values)
 
-    router.push({ name: 'authLogin' })
+    await router.push({ name: 'authLogin' })
   } catch (e) {
     if (isError(e as WrappedResponse, HttpStatusCode.BadRequest)) {
       toast.add({
