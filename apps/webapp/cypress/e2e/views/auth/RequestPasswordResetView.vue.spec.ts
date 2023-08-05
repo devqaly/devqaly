@@ -1,4 +1,4 @@
-describe('LoginView.vue.spec.ts', () => {
+describe('RequestPasswordResetView.vue', () => {
   before(() => {
     cy.refreshDatabase()
     cy.seed('DatabaseSeederCypress')
