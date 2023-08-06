@@ -70,8 +70,9 @@ jobs:
       - uses: cypress-io/github-action@v5
         with:
           working-directory: apps/webapp
+          start: npx vite dev --host 0.0.0.0 --port 4173
         id: setup-cypress
 
-      - name: Run Testsuite
-        working-directory: apps/webapp
-        run: npm run test:e2e
+#      - name: Run Testsuite
+#        working-directory: apps/webapp
+#        run: npm run test:e2e
