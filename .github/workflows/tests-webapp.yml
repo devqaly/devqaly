@@ -60,7 +60,7 @@ jobs:
 
       - name: Start Laravel app
         run: |
-          php artisan serve &
+          php artisan serve --port=80 &
 
       - name: Check Laravel App
         run: |
