@@ -72,6 +72,11 @@ jobs:
         run: |
           cp .env.ci .env
 
+      - name: Copy cypress.env.example.json to cypress.env.json
+        working-directory: apps/webapp
+        run: |
+          cp cypress.env.example.json cypress.env.json
+
       - uses: cypress-io/github-action@v5
         with:
           working-directory: apps/webapp
