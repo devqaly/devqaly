@@ -24,6 +24,7 @@
         >
           <label for="title">Title</label>
           <InputText
+            data-cy="create-project-view__title"
             v-bind="field"
             id="title"
             type="text"
@@ -41,6 +42,7 @@
 
         <div class="flex justify-content-end">
           <Button
+            data-cy="create-project-view__submit"
             class="mt-4"
             :loading="isCreatingProject"
             icon="pi pi-chevron-right"
