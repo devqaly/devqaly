@@ -1,0 +1,52 @@
+name: Run E2E tests [Cypress]
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  run-e2e-tests:
+    name: 'Run PHP Unit tests'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+
+    container:
+      image: devqaly/docker-image-e2e-testing:v1
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: sail
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: testing
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: FedericoCarboni/setup-ffmpeg@v2
+        id: setup-ffmpeg
+
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+
+      - name: Install composer dependencies
+        run: |
+          composer install
+
+      - name: Prepare Laravel Application
+        run: |
+          cp .env.ci .env
+          cp .env.ci .env.testing
+          php artisan key:generate
+
+      - name: Run Testsuite
+        run: vendor/bin/phpunit tests/
