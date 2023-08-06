@@ -3,6 +3,7 @@
     <span class="p-input-icon-left">
       <i class="pi pi-search" />
       <InputText
+        data-cy="list-projects-view__title-filter"
         type="text"
         placeholder="Search by title"
         v-model="_title"

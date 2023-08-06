@@ -40,7 +40,11 @@
         </Column>
         <Column>
           <template #body="{ data }: { data: ProjectCodec }">
-            <router-link :to="{ name: 'projectDashboard', params: { projectId: data.id } }">
+            <router-link
+              data-cy="list-projects-view__project-dashboard"
+              :data-project-id="data.id"
+              :to="{ name: 'projectDashboard', params: { projectId: data.id } }"
+            >
               <Button
                 v-tooltip.left="'Dashboard'"
                 severity="secondary"
@@ -50,7 +54,11 @@
               />
             </router-link>
 
-            <router-link :to="{ name: 'projectSessions', params: { projectId: data.id } }">
+            <router-link
+              data-cy="list-projects-view__project-sessions"
+              :data-project-id="data.id"
+              :to="{ name: 'projectSessions', params: { projectId: data.id } }"
+            >
               <Button
                 v-tooltip.left="'Sessions'"
                 severity="secondary"
@@ -61,6 +69,8 @@
             </router-link>
 
             <Button
+              data-cy="list-projects-view__project-integration-details"
+              :data-project-id="data.id"
               v-tooltip.left="'Integration details'"
               severity="secondary"
               icon="pi pi-eye"
@@ -149,7 +159,7 @@ function onFilterUpdate(_filters: GetProjectsParameters) {
 async function onPageUpdate(page: PageState) {
   assertsIsCompanyCodec(appStore.activeCompany)
 
-  currentPage.value = page.page
+  currentPage.value = page.page + 1
 
   isFetchingProjects.value = true
   await projectStore.fetchProjects(appStore.activeCompany.id, {
