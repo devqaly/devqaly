@@ -38,11 +38,10 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Install nodejs
-        run: |
-          curl -sLS https://deb.nodesource.com/setup_18.x | bash - &&
-          apt-get install -y nodejs &&
-          npm install -g npm
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.x'
 
       - name: Install composer dependencies
         run: |
@@ -54,5 +53,10 @@ jobs:
           cp .env.ci .env.testing
           php artisan key:generate
 
+      - name: Start Laravel app
+        run: |
+          php artisan serve > /dev/null 2>&1 &
+
       - name: Run Testsuite
-        run: vendor/bin/phpunit tests/
+        working-directory: apps/webapp
+        run: npm run test:e2e
