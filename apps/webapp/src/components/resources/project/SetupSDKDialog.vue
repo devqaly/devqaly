@@ -1,5 +1,6 @@
 <template>
   <Dialog
+    data-cy="setup-sdk-dialog"
     v-model:visible="visible"
     modal
     header="How to setup your SDK"
