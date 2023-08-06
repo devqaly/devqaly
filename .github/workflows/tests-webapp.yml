@@ -17,9 +17,7 @@ jobs:
         working-directory: apps/api
 
     container:
-      image: actions/hello-world-docker-action@v2
-      with:
-        who-to-greet: 'Mona the Octocat'
+      image: kirschbaumdevelopment/laravel-test-runner:8.2
 
     services:
       postgres:
@@ -39,6 +37,12 @@ jobs:
       - uses: actions/checkout@v1
         with:
           fetch-depth: 1
+
+      - name: Install nodejs
+        run: |
+          curl -sLS https://deb.nodesource.com/setup_18.x | bash - &&
+          apt-get install -y nodejs &&
+          npm install -g npm
 
       - name: Install composer dependencies
         run: |
