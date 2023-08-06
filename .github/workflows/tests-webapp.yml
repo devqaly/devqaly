@@ -57,6 +57,14 @@ jobs:
         run: |
           php artisan serve > /dev/null 2>&1 &
 
+      - name: Install webapp dependencies
+        run: |
+          npm install
+
+      - name: Copy .env.ci to .env
+        run: |
+          cp .env.ci .env
+
       - name: Run Testsuite
         working-directory: apps/webapp
         run: npm run test:e2e
