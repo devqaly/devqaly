@@ -1,0 +1,93 @@
+name: Run E2E tests [Cypress]
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  run-e2e-tests:
+    name: 'Run PHP Unit tests'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+
+    container:
+      image: kirschbaumdevelopment/laravel-test-runner:8.2
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: sail
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: testing
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: FedericoCarboni/setup-ffmpeg@v2
+        id: setup-ffmpeg
+
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.x'
+
+      - name: Setup xvfb (Linux)
+        shell: bash
+        run: |
+          apt-get update && apt-get install --no-install-recommends -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+
+      - name: Install composer dependencies
+        run: |
+          composer install
+
+      - name: Prepare Laravel Application
+        run: |
+          cp .env.ci .env
+          cp .env.ci .env.testing
+          php artisan key:generate
+
+      - name: Start Laravel app
+        run: |
+          php artisan serve --port=80 &
+
+      - name: Check Laravel App
+        run: |
+          curl -H "Accept: application/json" http://localhost/api/test
+
+      - name: Install webapp dependencies
+        working-directory: apps/webapp
+        run: |
+          npm install
+
+      - name: Copy .env.ci to .env
+        working-directory: apps/webapp
+        run: |
+          cp .env.ci .env
+
+      - name: Copy cypress.env.example.json to cypress.env.json
+        working-directory: apps/webapp
+        run: |
+          cp cypress.env.example.json cypress.env.json
+
+      - uses: cypress-io/github-action@v5
+        with:
+          working-directory: apps/webapp
+          start: npx vite dev --host 0.0.0.0 --port 4173
+          wait-on: 'http://0.0.0.0:4173'
+        id: setup-cypress
+
+#      - name: Run Testsuite
+#        working-directory: apps/webapp
+#        run: npm run test:e2e
