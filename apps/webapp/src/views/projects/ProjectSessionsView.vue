@@ -67,6 +67,8 @@
       <Column>
         <template v-slot:body="{ data }: { data: SessionCodec }">
           <router-link
+            data-cy="project-sessions__see-session"
+            :data-session-id="data.id"
             :to="{ name: 'projectSession', params: { ...route.params, sessionId: data.id } }"
           >
             <Button

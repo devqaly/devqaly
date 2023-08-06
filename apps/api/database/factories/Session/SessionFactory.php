@@ -38,6 +38,13 @@ class SessionFactory extends Factory
         'Firefox',
     ];
 
+    const VERSIONS = [
+        '114.0.0',
+        '113.0.0',
+        '98.0.0',
+        '98.0.1'
+    ];
+
     /**
      * Define the model's default state.
      *
@@ -57,7 +64,7 @@ class SessionFactory extends Factory
             'window_height' => $windowDimensions[1],
             'os' => $this->faker->randomElement(self::OPERATING_SYSTEMS),
             'platform_name' => $this->faker->randomElement(self::PLATFORM_NAMES),
-            'version' => '114.0.0',
+            'version' => $this->faker->randomElement(self::VERSIONS),
             'video_status' => SessionVideoStatusEnum::CONVERTED->value,
             'video_extension' => 'webm',
             'video_size_in_megabytes' => rand(1000, 5000),
