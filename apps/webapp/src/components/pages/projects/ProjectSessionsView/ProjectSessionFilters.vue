@@ -3,6 +3,7 @@
     <span class="p-input-icon-left">
       <i class="pi pi-search" />
       <InputText
+        data-cy="project-sessions-view__created-by-filter"
         type="text"
         placeholder="Search by creator"
         :value="filters['createdByName']"
@@ -13,6 +14,7 @@
     <span class="p-input-icon-left">
       <i class="pi pi-search" />
       <InputText
+        data-cy="project-sessions-view__os-filter"
         type="text"
         placeholder="OS"
         :value="filters['os']"
@@ -23,6 +25,7 @@
     <span class="p-input-icon-left">
       <i class="pi pi-search" />
       <InputText
+        data-cy="project-sessions-view__platform-filter"
         type="text"
         placeholder="Platform"
         :value="filters['platform']"
@@ -33,6 +36,7 @@
     <span class="p-input-icon-left">
       <i class="pi pi-search" />
       <InputText
+        data-cy="project-sessions-view__version-filter"
         type="text"
         placeholder="Version"
         :value="filters['version']"
