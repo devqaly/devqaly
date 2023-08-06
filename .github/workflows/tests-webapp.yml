@@ -31,9 +31,6 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-      - uses: cypress-io/github-action@v5
-        id: setup-cypress
-        
       - uses: FedericoCarboni/setup-ffmpeg@v2
         id: setup-ffmpeg
 
@@ -69,6 +66,10 @@ jobs:
         working-directory: apps/webapp
         run: |
           cp .env.ci .env
+
+      - uses: cypress-io/github-action@v5
+        working-directory: apps/webapp
+        id: setup-cypress
 
       - name: Run Testsuite
         working-directory: apps/webapp
