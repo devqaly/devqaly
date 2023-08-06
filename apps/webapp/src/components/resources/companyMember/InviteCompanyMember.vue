@@ -1,6 +1,7 @@
 <template>
   <div>
     <Button
+      data-cy="invite-company-member__open-invite-member-dialog"
       severity="primary"
       icon="pi pi-user"
       label="Invite Member"
@@ -20,6 +21,7 @@
       >
         <div class="flex gap-1">
           <InputText
+            data-cy="invite-company-member__input-email"
             v-model="email"
             id="title"
             type="text"
@@ -30,6 +32,7 @@
           />
 
           <Button
+            data-cy="invite-company-member__add-email-to-invited-emails"
             class="add-email-button"
             icon="pi pi-plus"
             outlined
@@ -71,6 +74,7 @@
 
         <div class="mt-4 flex justify-content-between gap-4">
           <Button
+            data-cy="invite-company-member__close-dialog"
             @click="closeDialog"
             label="Cancel"
             text
@@ -78,6 +82,7 @@
           ></Button>
 
           <Button
+            data-cy="invite-company-member__invite-button"
             label="Invite Members"
             type="button"
             :disabled="emails.length < 1"
