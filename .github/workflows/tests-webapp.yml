@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: Setup xvfb (Linux)
-        if: runner.os == 'Linux'
+        shell: sh
         run: |
           apt-get update
           apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
@@ -77,6 +77,7 @@ jobs:
         with:
           working-directory: apps/webapp
           start: npx vite dev --host 0.0.0.0 --port 4173
+          wait-on: 'http://0.0.0.0:4173'
         id: setup-cypress
 
 #      - name: Run Testsuite
