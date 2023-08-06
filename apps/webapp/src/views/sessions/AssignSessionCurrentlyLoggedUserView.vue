@@ -27,7 +27,7 @@ onMounted(async () => {
       userId: appStore.loggedUser.id
     })
 
-    router.push({
+    await router.push({
       name: 'projectSession',
       params: {
         projectId: response.data.data.project!.id,
