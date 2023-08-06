@@ -17,7 +17,7 @@ jobs:
         working-directory: apps/api
 
     container:
-      image: devqaly/docker-image-e2e-testing@master
+      image: devqaly/docker-image-e2e-testing
 
     services:
       postgres:
