@@ -60,7 +60,11 @@ jobs:
 
       - name: Start Laravel app
         run: |
-          php artisan serve > /dev/null 2>&1 &
+          php artisan serve &
+
+      - name: Check Laravel App
+        run: |
+          curl -H "Accept: application/json" http://localhost/api/test
 
       - name: Install webapp dependencies
         working-directory: apps/webapp
