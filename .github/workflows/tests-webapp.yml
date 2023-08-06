@@ -58,10 +58,12 @@ jobs:
           php artisan serve > /dev/null 2>&1 &
 
       - name: Install webapp dependencies
+        working-directory: apps/webapp
         run: |
           npm install
 
       - name: Copy .env.ci to .env
+        working-directory: apps/webapp
         run: |
           cp .env.ci .env
 
