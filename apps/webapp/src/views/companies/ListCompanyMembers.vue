@@ -124,7 +124,7 @@ async function onFilterUpdate(_filters: GetCompanyMembersParameters) {
   assertsIsCompanyCodec(appStore.activeCompany)
 
   filters.value = _filters
-  currentPage.value = 0
+  currentPage.value = 1
 
   isFetchingMembers.value = true
   await companyMemberStore.fetchCompanyMembers(appStore.activeCompany.id, {
@@ -138,7 +138,7 @@ async function onFilterUpdate(_filters: GetCompanyMembersParameters) {
 async function onPageUpdate(page: PageState) {
   assertsIsCompanyCodec(appStore.activeCompany)
 
-  currentPage.value = page.page
+  currentPage.value = page.page + 1
 
   isFetchingMembers.value = true
   await companyMemberStore.fetchCompanyMembers(appStore.activeCompany.id, {

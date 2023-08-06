@@ -3,6 +3,7 @@
     <span class="p-input-icon-left">
       <i class="pi pi-search" />
       <InputText
+        data-cy="list-company-members__member-name-filter"
         type="text"
         placeholder="Member name"
         v-model="_memberName"
@@ -12,6 +13,7 @@
     <span class="p-input-icon-left">
       <i class="pi pi-search" />
       <InputText
+        data-cy="list-company-members__invite-by-name-filter"
         type="text"
         placeholder="Invited by"
         v-model="_invitedByName"
