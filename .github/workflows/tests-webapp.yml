@@ -58,8 +58,6 @@ jobs:
           libxtst6 \
           xauth \
           xvfb \
-          # install Chinese fonts
-          # this list was copied from https://github.com/jim3ma/docker-leanote
           fonts-arphic-bkai00mp \
           fonts-arphic-bsmi00lp \
           fonts-arphic-gbsn00lp \
