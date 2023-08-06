@@ -17,7 +17,9 @@ jobs:
         working-directory: apps/api
 
     container:
-      image: devqaly/docker-image-e2e-testing@v3
+      image: actions/hello-world-docker-action@v2
+      with:
+        who-to-greet: 'Mona the Octocat'
 
     services:
       postgres:
