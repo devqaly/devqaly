@@ -84,4 +84,22 @@ class SessionFactory extends Factory
             ];
         });
     }
+
+    public function convertedVideoStatus(): SessionFactory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'video_status' => SessionVideoStatusEnum::CONVERTED->value,
+            ];
+        });
+    }
+
+    public function inQueueForConversionVideoStatus(): SessionFactory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'video_status' => SessionVideoStatusEnum::IN_QUEUE_FOR_CONVERSION->value,
+            ];
+        });
+    }
 }

@@ -2,6 +2,7 @@
   <div class="video-container">
     <div class="video-container border-round-lg overflow-hidden">
       <video
+        data-cy="project-session-view__video"
         ref="videoNode"
         class="w-full border-round-md"
         controls

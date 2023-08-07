@@ -16,6 +16,7 @@
 
         <div
           class="flex flex-column align-items-center justify-content-center"
+          data-cy="project-session-view__video-being-converted-info"
           v-else
         >
           <Image
@@ -35,6 +36,7 @@
     </div>
 
     <EventsSection
+      data-cy="project-session-view__bottom-events-section"
       :key="sessionStore.activeSession.id"
       class="mt-2"
       v-if="isVideoConverted(sessionStore.activeSession.videoStatus)"

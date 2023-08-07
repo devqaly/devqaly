@@ -1,5 +1,7 @@
 <template>
   <BaseEvent
+    data-cy="list-event__event"
+    data-event-type="network-request"
     :session="props.session"
     :event="props.event"
     @see:details="onSeeDetails"
