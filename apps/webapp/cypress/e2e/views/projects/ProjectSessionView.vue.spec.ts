@@ -1,3 +1,21 @@
+function whenClickingTabEventsShowUp({
+  tabIdentifier,
+  eventType,
+  events
+}: {
+  tabIdentifier: string
+  eventType: string
+  events: any[]
+}) {
+  cy.dataCy(tabIdentifier).click()
+
+  cy.get(
+    `[data-cy="project-session-view__bottom-events-section"] [data-cy="list-event__event"][data-event-type="${eventType}"]`
+  )
+    .should('have.length', events.length)
+    .and('be.visible')
+}
+
 describe('ProjectSessionView.vue', () => {
   let loggedUser: any
   let project: any
@@ -125,7 +143,7 @@ describe('ProjectSessionView.vue', () => {
       // TBD
     })
 
-    it.only('should open events details when clicking on button to view more details', () => {
+    it('should open events details when clicking on button to view more details', () => {
       cy.intercept('GET', `**/api/sessions/${sessionWithConvertedVideo.id}`).as('fetchSession')
       cy.intercept('GET', `**/api/sessions/${sessionWithConvertedVideo.id}/events**`).as(
         'fetchSessionEvents'
@@ -393,7 +411,86 @@ describe('ProjectSessionView.vue', () => {
   })
 
   context('events [bottom tabs]', () => {
-    it('should show events for the event type when clicking the tab', () => {})
+    it('should show events for the event type when clicking the tab', () => {
+      cy.intercept('GET', `**/api/sessions/${sessionWithConvertedVideo.id}`).as('fetchSession')
+      cy.intercept('GET', `**/api/sessions/${sessionWithConvertedVideo.id}/events**`).as(
+        'fetchSessionEvents'
+      )
+
+      cy.visit(`projects/${project.id}/sessions/${sessionWithConvertedVideo.id}`)
+
+      cy.wait('@fetchSession')
+
+      const dbTransactionsEvents = sessionWithConvertedVideo.events.filter(
+        (e: any) => e.event_type === 'App\\Models\\Session\\Event\\EventDatabaseTransaction'
+      )
+
+      const clickEvents = sessionWithConvertedVideo.events.filter(
+        (e: any) => e.event_type === 'App\\Models\\Session\\Event\\EventElementClick'
+      )
+
+      const scrollEvents = sessionWithConvertedVideo.events.filter(
+        (e: any) => e.event_type === 'App\\Models\\Session\\Event\\EventElementScroll'
+      )
+
+      const logEvents = sessionWithConvertedVideo.events.filter(
+        (e: any) => e.event_type === 'App\\Models\\Session\\Event\\EventLog'
+      )
+
+      const networkRequestEvents = sessionWithConvertedVideo.events.filter(
+        (e: any) => e.event_type === 'App\\Models\\Session\\Event\\EventNetworkRequest'
+      )
+
+      const resizeEvents = sessionWithConvertedVideo.events.filter(
+        (e: any) => e.event_type === 'App\\Models\\Session\\Event\\EventResizeScreen'
+      )
+
+      const changeUrlEvents = sessionWithConvertedVideo.events.filter(
+        (e: any) => e.event_type === 'App\\Models\\Session\\Event\\EventUrlChanged'
+      )
+
+      whenClickingTabEventsShowUp({
+        tabIdentifier: 'project-session-view__activate-db-transaction-events-tab',
+        eventType: 'database-transaction',
+        events: dbTransactionsEvents
+      })
+
+      whenClickingTabEventsShowUp({
+        tabIdentifier: 'project-session-view__activate-click-events-tab',
+        eventType: 'element-click',
+        events: clickEvents
+      })
+
+      whenClickingTabEventsShowUp({
+        tabIdentifier: 'project-session-view__activate-scroll-events-tab',
+        eventType: 'scroll',
+        events: scrollEvents
+      })
+
+      whenClickingTabEventsShowUp({
+        tabIdentifier: 'project-session-view__activate-log-events-tab',
+        eventType: 'log',
+        events: logEvents
+      })
+
+      whenClickingTabEventsShowUp({
+        tabIdentifier: 'project-session-view__activate-network-events-tab',
+        eventType: 'network-request',
+        events: networkRequestEvents
+      })
+
+      whenClickingTabEventsShowUp({
+        tabIdentifier: 'project-session-view__activate-resize-events-tab',
+        eventType: 'resize-screen',
+        events: resizeEvents
+      })
+
+      whenClickingTabEventsShowUp({
+        tabIdentifier: 'project-session-view__activate-change-url-events-tab',
+        eventType: 'changed-url',
+        events: changeUrlEvents
+      })
+    })
   })
 
   context('network request', () => {
