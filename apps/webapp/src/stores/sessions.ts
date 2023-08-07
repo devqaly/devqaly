@@ -134,7 +134,10 @@ export const useSessionsStore = defineStore('sessionsStore', {
     },
 
     async getActiveSessionEventsForPartition(videoCurrentTimeInSecond: number) {
-      const currentPartition = Math.floor(videoCurrentTimeInSecond / this.partitionSize)
+      // At `SessionsService::createPartitionsForVideo` we start the range at index 1
+      // Therefore we need to take care that the current partition CAN NOT be zero here
+      const _currentPartition = Math.floor(videoCurrentTimeInSecond / this.partitionSize)
+      const currentPartition = _currentPartition < 1 ? 1 : _currentPartition
 
       if (this.videoPartitions[currentPartition] === undefined) {
         throw new Error(
@@ -162,12 +165,12 @@ export const useSessionsStore = defineStore('sessionsStore', {
           this.activeSession.createdAt
         )
 
+        this.videoPartitions[currentPartition].hasFetchedEvents = true
+
         await this.getActiveSessionEvents(this.activeSession.id, {
           startCreatedAt: delta.startDelta.toISOString(),
           endCreatedAt: delta.endDelta.toISOString()
-        })
-
-        this.videoPartitions[currentPartition].hasFetchedEvents = true
+        }).catch(() => (this.videoPartitions[currentPartition].hasFetchedEvents = false))
       }
 
       if (!hasFetchedEventsForRightPartition) {
@@ -177,12 +180,12 @@ export const useSessionsStore = defineStore('sessionsStore', {
           this.activeSession.createdAt
         )
 
+        this.videoPartitions[rightPartition].hasFetchedEvents = true
+
         await this.getActiveSessionEvents(this.activeSession.id, {
           startCreatedAt: delta.startDelta.toISOString(),
           endCreatedAt: delta.endDelta.toISOString()
-        })
-
-        this.videoPartitions[rightPartition].hasFetchedEvents = true
+        }).catch(() => (this.videoPartitions[rightPartition].hasFetchedEvents = false))
       }
 
       if (leftPartition > -1 && !hasFetchedEventsForLeftPartition) {
@@ -192,12 +195,12 @@ export const useSessionsStore = defineStore('sessionsStore', {
           this.activeSession.createdAt
         )
 
+        this.videoPartitions[leftPartition].hasFetchedEvents = true
+
         await this.getActiveSessionEvents(this.activeSession.id, {
           startCreatedAt: delta.startDelta.toISOString(),
           endCreatedAt: delta.endDelta.toISOString()
-        })
-
-        this.videoPartitions[leftPartition].hasFetchedEvents = true
+        }).catch(() => (this.videoPartitions[leftPartition].hasFetchedEvents = false))
       }
     },
     async getActiveSessionEvents(sessionId: string, params: GetSessionEventsParameters = {}) {
