@@ -508,7 +508,7 @@ describe('ProjectSessionView.vue', () => {
   })
 
   context('network request', () => {
-    it.only('should open modal displaying resources used when clicking on request id', () => {
+    it('should open modal displaying resources used when clicking on request id', () => {
       const requestEvent = sessionWithConvertedVideo.events.find(
         (e: any) => e.event_type === 'App\\Models\\Session\\Event\\EventNetworkRequest'
       )
