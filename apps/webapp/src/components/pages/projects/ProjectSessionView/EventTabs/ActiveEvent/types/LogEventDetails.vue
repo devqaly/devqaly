@@ -1,9 +1,13 @@
 <template>
-  <BaseEventDetails>
+  <BaseEventDetails
+    data-cy="project-session-view__active-event"
+    data-event-type="log"
+  >
     <div class="text-gray-500">Source</div>
 
     <DCopyble :content="props.event.source">
       <div
+        data-cy="project-session-view__active-event--log-source"
         class="font-medium"
         v-text="props.event.source"
       />
@@ -13,6 +17,7 @@
 
     <DCopyble :content="props.event.event.level">
       <div
+        data-cy="project-session-view__active-event--log-level"
         style="word-break: break-all"
         class="font-medium"
         v-text="props.event.event.level"
@@ -23,6 +28,7 @@
 
     <DCopyble :content="props.event.event.log">
       <div
+        data-cy="project-session-view__active-event--log-log"
         style="word-break: break-all"
         class="font-medium"
         v-text="props.event.event.log"

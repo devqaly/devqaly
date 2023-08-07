@@ -4,6 +4,8 @@ namespace Database\Factories\Session;
 
 use App\Enum\Sessions\SessionVideoStatusEnum;
 use App\Models\Project\Project;
+use App\Models\Session\Event;
+use App\Models\Session\Session;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -100,6 +102,48 @@ class SessionFactory extends Factory
             return [
                 'video_status' => SessionVideoStatusEnum::IN_QUEUE_FOR_CONVERSION->value,
             ];
+        });
+    }
+
+    public function withOneEventForEachType(): SessionFactory
+    {
+        return $this->afterCreating(function (Session $session) {
+            $clientEventCreatedAt = $session->created_at->clone()->addSeconds(1);
+
+            Event::factory()->databaseTransaction()->create([
+                'session_id' => $session->id,
+                'client_utc_event_created_at' => $clientEventCreatedAt
+            ]);
+
+            Event::factory()->clickElementEvent()->create([
+                'session_id' => $session->id,
+                'client_utc_event_created_at' => $clientEventCreatedAt
+            ]);
+
+            Event::factory()->scrollEvent()->create([
+                'session_id' => $session->id,
+                'client_utc_event_created_at' => $clientEventCreatedAt
+            ]);
+
+            Event::factory()->logEvent()->create([
+                'session_id' => $session->id,
+                'client_utc_event_created_at' => $clientEventCreatedAt
+            ]);
+
+            Event::factory()->networkRequestEvent()->create([
+                'session_id' => $session->id,
+                'client_utc_event_created_at' => $clientEventCreatedAt
+            ]);
+
+            Event::factory()->resizeScreenEvent()->create([
+                'session_id' => $session->id,
+                'client_utc_event_created_at' => $clientEventCreatedAt
+            ]);
+
+            Event::factory()->urlChangeEvent()->create([
+                'session_id' => $session->id,
+                'client_utc_event_created_at' => $clientEventCreatedAt
+            ]);
         });
     }
 }

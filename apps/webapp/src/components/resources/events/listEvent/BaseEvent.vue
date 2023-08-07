@@ -23,6 +23,8 @@
       style="width: fit-content"
     >
       <Button
+        data-cy="list-event__open-details"
+        :data-event-id="event.id"
         class="z-0"
         icon="pi pi-chevron-right"
         severity="primary"
