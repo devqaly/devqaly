@@ -1,3 +1,11 @@
+import differenceInSeconds from 'date-fns/differenceInSeconds'
+import isSameSecond from 'date-fns/isSameSecond'
+import isSameMinute from 'date-fns/isSameMinute'
+import isSameHour from 'date-fns/isSameHour'
+import isSameDay from 'date-fns/isSameDay'
+import isSameMonth from 'date-fns/isSameMonth'
+import isSameYear from 'date-fns/isSameYear'
+
 function selectTab(tabIdentifier: string) {
   cy.dataCy(tabIdentifier).click()
 }
@@ -106,7 +114,13 @@ describe('ProjectSessionView.vue', () => {
 
     cy.dataCy('project-session-view__video')
       .should('have.attr', 'src')
-      .and('contain', `${sessionWithConvertedVideo.id}.webm`)
+      // If the filesystem is using `S3` adapter, the `src` attribute will have a
+      // link to amazon S3 bucket and, it will be something like "{sessionId}.webm".
+      // If the filesystem is using the `local` adapter, the `src` attribute will have a
+      // link to route that will be handling the streaming of the video.
+      // For both reasons above, we will simply check
+      // if the `src` contains the session id
+      .and('contain', `${sessionWithConvertedVideo.id}`)
 
     cy.dataCy('project-session-view__live-preview-section').should('be.visible')
 
@@ -140,18 +154,30 @@ describe('ProjectSessionView.vue', () => {
         'fetchSessionEvents'
       )
 
+      const VIDEO_PARTITION_SIZES = 10
+
       cy.visit(`projects/${project.id}/sessions/${sessionWithConvertedVideo.id}`)
 
       cy.wait('@fetchSession')
 
-      // @TODO: [BUG] The first partition is being fetched in the past
       // E.g.: The video starts at 10:00:00, the first partition
       // is trying to get events created at 09:59:50
-      cy.wait('@fetchSessionEvents')
-
       cy.wait('@fetchSessionEvents').then(({ request, response }) => {
         expect(request.url).to.include('endCreatedAt=')
         expect(request.url).to.include('startCreatedAt=')
+
+        const url = new URL(request.url)
+        const videoStart = new Date(sessionWithConvertedVideo.created_at)
+        const deltaStart = new Date(url.searchParams.get('startCreatedAt') as string)
+        const deltaEnd = new Date(url.searchParams.get('endCreatedAt') as string)
+
+        expect(differenceInSeconds(deltaEnd, videoStart)).to.be.eq(VIDEO_PARTITION_SIZES)
+        expect(isSameSecond(deltaStart, videoStart)).to.be.true
+        expect(isSameMinute(deltaStart, videoStart)).to.be.true
+        expect(isSameHour(deltaStart, videoStart)).to.be.true
+        expect(isSameDay(deltaStart, videoStart)).to.be.true
+        expect(isSameMonth(deltaStart, videoStart)).to.be.true
+        expect(isSameYear(deltaStart, videoStart)).to.be.true
 
         expect(response?.statusCode).to.be.eq(200)
         expect(response?.body.data).to.be.an('array')
