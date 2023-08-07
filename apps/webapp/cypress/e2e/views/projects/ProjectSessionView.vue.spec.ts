@@ -22,6 +22,12 @@ function whenClickingTabEventsShowUp({
   })
 }
 
+function openEventDetailsFromLivePreview(eventId: string) {
+  cy.get(
+    `[data-cy="project-session-view__live-preview-section"] [data-cy="list-event__open-details"][data-event-id="${eventId}"]`
+  ).click()
+}
+
 describe('ProjectSessionView.vue', () => {
   let loggedUser: any
   let project: any
@@ -168,9 +174,7 @@ describe('ProjectSessionView.vue', () => {
         (e: any) => e.event_type === 'App\\Models\\Session\\Event\\EventLog'
       )
 
-      cy.get(
-        `[data-cy="project-session-view__live-preview-section"] [data-cy="list-event__open-details"][data-event-id="${eventLog.id}"]`
-      ).click()
+      openEventDetailsFromLivePreview(eventLog.id)
 
       cy.dataCy('project-session-view__active-event--log-source').should('contain', eventLog.source)
 
@@ -188,9 +192,7 @@ describe('ProjectSessionView.vue', () => {
         (e: any) => e.event_type === 'App\\Models\\Session\\Event\\EventDatabaseTransaction'
       )
 
-      cy.get(
-        `[data-cy="project-session-view__live-preview-section"] [data-cy="list-event__open-details"][data-event-id="${eventDatabaseTransaction.id}"]`
-      ).click()
+      openEventDetailsFromLivePreview(eventDatabaseTransaction.id)
 
       cy.dataCy('project-session-view__active-event--db-source').should(
         'contain',
@@ -209,9 +211,7 @@ describe('ProjectSessionView.vue', () => {
         (e: any) => e.event_type === 'App\\Models\\Session\\Event\\EventElementClick'
       )
 
-      cy.get(
-        `[data-cy="project-session-view__live-preview-section"] [data-cy="list-event__open-details"][data-event-id="${eventClick.id}"]`
-      ).click()
+      openEventDetailsFromLivePreview(eventClick.id)
 
       cy.dataCy('project-session-view__active-event--click-source').should(
         'contain',
@@ -246,9 +246,7 @@ describe('ProjectSessionView.vue', () => {
         (e: any) => e.event_type === 'App\\Models\\Session\\Event\\EventElementScroll'
       )
 
-      cy.get(
-        `[data-cy="project-session-view__live-preview-section"] [data-cy="list-event__open-details"][data-event-id="${eventScroll.id}"]`
-      ).click()
+      openEventDetailsFromLivePreview(eventScroll.id)
 
       cy.dataCy('project-session-view__active-event--scroll-source').should(
         'contain',
@@ -279,9 +277,7 @@ describe('ProjectSessionView.vue', () => {
         (e: any) => e.event_type === 'App\\Models\\Session\\Event\\EventNetworkRequest'
       )
 
-      cy.get(
-        `[data-cy="project-session-view__live-preview-section"] [data-cy="list-event__open-details"][data-event-id="${eventNetworkRequest.id}"]`
-      ).click()
+      openEventDetailsFromLivePreview(eventNetworkRequest.id)
 
       cy.dataCy('project-session-view__active-event--network-source').should(
         'contain',
@@ -382,9 +378,7 @@ describe('ProjectSessionView.vue', () => {
         (e: any) => e.event_type === 'App\\Models\\Session\\Event\\EventResizeScreen'
       )
 
-      cy.get(
-        `[data-cy="project-session-view__live-preview-section"] [data-cy="list-event__open-details"][data-event-id="${resizeEvent.id}"]`
-      ).click()
+      openEventDetailsFromLivePreview(resizeEvent.id)
 
       cy.dataCy('project-session-view__active-event--resize-source').should(
         'contain',
@@ -405,9 +399,7 @@ describe('ProjectSessionView.vue', () => {
         (e: any) => e.event_type === 'App\\Models\\Session\\Event\\EventUrlChanged'
       )
 
-      cy.get(
-        `[data-cy="project-session-view__live-preview-section"] [data-cy="list-event__open-details"][data-event-id="${eventUrlChanged.id}"]`
-      ).click()
+      openEventDetailsFromLivePreview(eventUrlChanged.id)
 
       cy.dataCy('project-session-view__active-event--url-change-source').should(
         'contain',
