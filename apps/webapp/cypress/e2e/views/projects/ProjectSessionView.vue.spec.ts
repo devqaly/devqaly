@@ -1,3 +1,7 @@
+function selectTab(tabIdentifier: string) {
+  cy.dataCy(tabIdentifier).click()
+}
+
 function whenClickingTabEventsShowUp({
   tabIdentifier,
   eventType,
@@ -7,7 +11,7 @@ function whenClickingTabEventsShowUp({
   eventType: string
   events: any[]
 }) {
-  cy.dataCy(tabIdentifier).click()
+  selectTab(tabIdentifier)
 
   cy.get(
     `[data-cy="project-session-view__bottom-events-section"] [data-cy="list-event__event"][data-event-type="${eventType}"]`
@@ -504,6 +508,80 @@ describe('ProjectSessionView.vue', () => {
   })
 
   context('network request', () => {
-    it('should open modal displaying resources used when clicking on request id', () => {})
+    it.only('should open modal displaying resources used when clicking on request id', () => {
+      const requestEvent = sessionWithConvertedVideo.events.find(
+        (e: any) => e.event_type === 'App\\Models\\Session\\Event\\EventNetworkRequest'
+      )
+
+      let databaseTransactionEvent: any
+
+      cy.create({
+        model: 'App\\Models\\Session\\Event\\EventDatabaseTransaction',
+        attributes: { request_id: requestEvent.eventable.request_id }
+      })
+        .then((_databaseTransaction) => (databaseTransactionEvent = _databaseTransaction))
+        .then(() =>
+          cy.create({
+            model: 'App\\Models\\Session\\Event',
+            attributes: {
+              session_id: sessionWithConvertedVideo.id,
+              event_type: 'App\\Models\\Session\\Event\\EventDatabaseTransaction',
+              event_id: databaseTransactionEvent.id
+            }
+          })
+        )
+        .then(() => {
+          cy.intercept('GET', `**/api/sessions/${sessionWithConvertedVideo.id}`).as('fetchSession')
+          cy.intercept('GET', `**/api/sessions/${sessionWithConvertedVideo.id}/events**`).as(
+            'fetchSessionEvents'
+          )
+
+          cy.intercept(
+            'GET',
+            `api/events/networkRequest/byRequestId/${requestEvent.eventable.request_id}/databaseTransactions**`
+          ).as('fetchDatabaseTransactions')
+          cy.intercept(
+            'GET',
+            `api/events/networkRequest/byRequestId/${requestEvent.eventable.request_id}/logs**`
+          ).as('fetchLogs')
+
+          cy.visit(`projects/${project.id}/sessions/${sessionWithConvertedVideo.id}`)
+
+          cy.wait(['@fetchSession', '@fetchSessionEvents'])
+
+          selectTab('project-session-view__activate-network-events-tab')
+
+          cy.get(
+            `[data-cy="project-session-view__bottom-events-section"] [data-cy="list-event__open-details"][data-event-id=${requestEvent.id}]`
+          ).click()
+
+          cy.contains(
+            '[data-cy="project-session-view__active-event--network-request-id"]',
+            requestEvent.eventable.request_id
+          ).click()
+
+          cy.wait(['@fetchDatabaseTransactions', '@fetchLogs'])
+
+          cy.dataCy('project-session-view__active-network-request-sidebar').should('be.visible')
+
+          cy.dataCy('project-session-view__active-network-request-sidebar--db-transaction-title')
+            .should('have.attr', 'data-total-number-database-transactions')
+            .and('contain', 1)
+
+          cy.dataCy('project-session-view__active-network-request-sidebar--logs-title')
+            .should('have.attr', 'data-total-number-logs')
+            .and('contain', 0)
+
+          cy.dataCy('project-session-view__active-network-request-sidebar--db-transaction').should(
+            'contain',
+            databaseTransactionEvent.sql
+          )
+
+          cy.dataCy('project-session-view__active-network-request-sidebar--log').should(
+            'have.length',
+            0
+          )
+        })
+    })
   })
 })
