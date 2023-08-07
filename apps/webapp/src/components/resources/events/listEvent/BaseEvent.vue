@@ -2,6 +2,7 @@
   <div
     class="grid border-bottom-1 border-gray-300 max-w-full align-items-center px-2 py-1"
     style="margin: 0"
+    :data-event-id="event.id"
   >
     <div
       class="col-fixed cursor-pointer p-0"

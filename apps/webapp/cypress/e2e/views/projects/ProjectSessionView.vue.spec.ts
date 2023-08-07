@@ -14,6 +14,12 @@ function whenClickingTabEventsShowUp({
   )
     .should('have.length', events.length)
     .and('be.visible')
+
+  events.forEach((event) => {
+    cy.get(
+      `[data-cy="project-session-view__bottom-events-section"] [data-event-id="${event.id}"]`
+    ).should('be.visible')
+  })
 }
 
 describe('ProjectSessionView.vue', () => {
@@ -83,7 +89,12 @@ describe('ProjectSessionView.vue', () => {
       .and('contain', `${sessionWithConvertedVideo.id}.webm`)
 
     cy.dataCy('project-session-view__live-preview-section').should('be.visible')
-    cy.dataCy('list-event__event').should('have.length', 0)
+
+    // In the preview mode we should be able to see NUMBER_EVENT_TYPES events
+    // Since we are creating one event of each type of event
+    cy.dataCy('project-session-view__live-preview-section').within(() => {
+      cy.dataCy('list-event__event').should('have.length', NUMBER_EVENT_TYPES)
+    })
 
     cy.dataCy('project-session-view__bottom-events-section').should('be.visible')
   })
