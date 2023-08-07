@@ -28,6 +28,16 @@ function openEventDetailsFromLivePreview(eventId: string) {
   ).click()
 }
 
+function shouldContainSourceInActiveEvent({
+  source,
+  sourceId
+}: {
+  source: string
+  sourceId: string
+}) {
+  cy.dataCy(sourceId).should('contain', source)
+}
+
 describe('ProjectSessionView.vue', () => {
   let loggedUser: any
   let project: any
@@ -175,8 +185,10 @@ describe('ProjectSessionView.vue', () => {
       )
 
       openEventDetailsFromLivePreview(eventLog.id)
-
-      cy.dataCy('project-session-view__active-event--log-source').should('contain', eventLog.source)
+      shouldContainSourceInActiveEvent({
+        source: eventLog.source,
+        sourceId: 'project-session-view__active-event--log-source'
+      })
 
       cy.dataCy('project-session-view__active-event--log-level').should(
         'contain',
@@ -193,11 +205,11 @@ describe('ProjectSessionView.vue', () => {
       )
 
       openEventDetailsFromLivePreview(eventDatabaseTransaction.id)
+      shouldContainSourceInActiveEvent({
+        source: eventDatabaseTransaction.source,
+        sourceId: 'project-session-view__active-event--db-source'
+      })
 
-      cy.dataCy('project-session-view__active-event--db-source').should(
-        'contain',
-        eventDatabaseTransaction.source
-      )
       cy.dataCy('project-session-view__active-event--db-execution').should(
         'contain',
         eventDatabaseTransaction.eventable.execution_time_in_milliseconds
@@ -212,11 +224,10 @@ describe('ProjectSessionView.vue', () => {
       )
 
       openEventDetailsFromLivePreview(eventClick.id)
-
-      cy.dataCy('project-session-view__active-event--click-source').should(
-        'contain',
-        eventClick.source
-      )
+      shouldContainSourceInActiveEvent({
+        source: eventClick.source,
+        sourceId: 'project-session-view__active-event--click-source'
+      })
 
       cy.dataCy('project-session-view__active-event--click-position-x').should(
         'contain',
@@ -247,11 +258,10 @@ describe('ProjectSessionView.vue', () => {
       )
 
       openEventDetailsFromLivePreview(eventScroll.id)
-
-      cy.dataCy('project-session-view__active-event--scroll-source').should(
-        'contain',
-        eventScroll.source
-      )
+      shouldContainSourceInActiveEvent({
+        source: eventScroll.source,
+        sourceId: 'project-session-view__active-event--scroll-source'
+      })
 
       cy.dataCy('project-session-view__active-event--scroll-height').should(
         'contain',
@@ -278,11 +288,10 @@ describe('ProjectSessionView.vue', () => {
       )
 
       openEventDetailsFromLivePreview(eventNetworkRequest.id)
-
-      cy.dataCy('project-session-view__active-event--network-source').should(
-        'contain',
-        eventNetworkRequest.source
-      )
+      shouldContainSourceInActiveEvent({
+        source: eventNetworkRequest.source,
+        sourceId: 'project-session-view__active-event--network-source'
+      })
 
       cy.dataCy('project-session-view__active-event--network-url').should(
         'contain',
@@ -379,11 +388,10 @@ describe('ProjectSessionView.vue', () => {
       )
 
       openEventDetailsFromLivePreview(resizeEvent.id)
-
-      cy.dataCy('project-session-view__active-event--resize-source').should(
-        'contain',
-        resizeEvent.source
-      )
+      shouldContainSourceInActiveEvent({
+        source: resizeEvent.source,
+        sourceId: 'project-session-view__active-event--resize-source'
+      })
 
       cy.dataCy('project-session-view__active-event--resize-inner-width').should(
         'contain',
@@ -400,11 +408,10 @@ describe('ProjectSessionView.vue', () => {
       )
 
       openEventDetailsFromLivePreview(eventUrlChanged.id)
-
-      cy.dataCy('project-session-view__active-event--url-change-source').should(
-        'contain',
-        eventUrlChanged.source
-      )
+      shouldContainSourceInActiveEvent({
+        source: eventUrlChanged.source,
+        sourceId: 'project-session-view__active-event--url-change-source'
+      })
 
       cy.dataCy('project-session-view__active-event--url-change-url').should(
         'contain',
