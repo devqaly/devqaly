@@ -196,8 +196,33 @@ describe('ProjectSessionView.vue', () => {
       })
     })
 
-    it('should show new events when user skips the video to X seconds', () => {
-      // TBD
+    it.only('should show new events when user skips the video to X seconds', () => {
+      cy.intercept('GET', `**/sessions/${sessionWithConvertedVideo.id}/video`, {
+        fixture: 'test-video.webm,null'
+      }).as('videoRequest')
+
+      cy.visit(`projects/${project.id}/sessions/${sessionWithConvertedVideo.id}`)
+
+      cy.dataCy('project-session-view__video')
+        .should('have.prop', 'paused', true)
+        .and('have.prop', 'ended', false)
+        .then(($video) => {
+          // @ts-ignore
+          $video[0].play()
+        })
+
+      cy.dataCy('project-session-view__video')
+        .should('have.prop', 'paused', false)
+        .and('have.prop', 'ended', false)
+
+      cy.get('video').should('have.prop', 'duration', 32.48)
+
+      cy.wait(2000)
+
+      cy.dataCy('project-session-view__video').then(($video) => {
+        // @ts-ignore
+        $video[0].currentTime = 20000
+      })
     })
 
     it('should open events details when clicking on button to view more details', () => {
