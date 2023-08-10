@@ -7,6 +7,7 @@
       <div
         class="font-medium"
         v-if="!fetchingSession"
+        data-cy="project-session-view__os"
         v-text="sessionStore.activeSession.os"
       />
       <Skeleton
@@ -20,6 +21,7 @@
       <div class="text-gray-500">Platform</div>
       <div
         class="font-medium"
+        data-cy="project-session-view__platform"
         v-if="!fetchingSession"
         v-text="sessionStore.activeSession.platformName"
       />
@@ -34,6 +36,7 @@
       <div class="text-gray-500">Version</div>
       <div
         class="font-medium"
+        data-cy="project-session-view__version"
         v-if="!fetchingSession"
         v-text="sessionStore.activeSession.version"
       />
@@ -48,6 +51,7 @@
       <div class="text-gray-500">Screen (px)</div>
       <div
         class="font-medium"
+        data-cy="project-session-view__screen-size"
         v-if="!fetchingSession"
         v-text="
           `${sessionStore.activeSession.windowWidth}x${sessionStore.activeSession.windowHeight}`
@@ -66,6 +70,7 @@
       <div
         class="font-medium"
         v-if="!fetchingSession"
+        data-cy="project-session-view__created-by"
         v-text="sessionStore.activeSession.createdBy?.fullName"
       />
       <Skeleton
@@ -79,6 +84,7 @@
       <div class="text-gray-500">Video Status</div>
       <div
         class="font-medium"
+        data-cy="project-session-view__video-status"
         v-text="videoStatusConversion"
         v-if="!fetchingSession"
       />
@@ -93,6 +99,7 @@
       <div class="text-gray-500">Created At</div>
       <div
         class="font-medium"
+        data-cy="project-session-view__created-at"
         v-if="!fetchingSession"
         v-text="formatToDateTime(sessionStore.activeSession.createdAt)"
       />

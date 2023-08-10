@@ -75,9 +75,12 @@ export const createPartitionsForVideo = (durationInSeconds: number, partitionSiz
   if (partitionSize < 1) {
     throw new Error(`partitionSize must be higher than 1. Received: ${partitionSize}`)
   }
+
   const numberPartitions = Math.ceil(durationInSeconds / partitionSize)
 
-  return range(0, numberPartitions).reduce((accumulator, partition) => {
+  // The range starts at 1 because it's much easier to make
+  // calculations in `findStartAndEndDateForVideoPartition` function
+  return range(1, numberPartitions).reduce((accumulator, partition) => {
     return { ...accumulator, [partition]: { hasFetchedEvents: false } }
   }, {} as Record<number, { hasFetchedEvents: boolean }>)
 }

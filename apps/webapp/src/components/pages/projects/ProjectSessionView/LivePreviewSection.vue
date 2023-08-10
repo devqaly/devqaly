@@ -1,5 +1,6 @@
 <template>
   <section
+    data-cy="project-session-view__live-preview-section"
     ref="sectionContainer"
     class="border-round-md border-1 border-gray-300 h-full flex flex-column"
   >

@@ -1,9 +1,13 @@
 <template>
-  <BaseEventDetails>
+  <BaseEventDetails
+    data-cy="project-session-view__active-event"
+    data-event-type="scroll"
+  >
     <div class="text-gray-500">Source</div>
 
     <DCopyble :content="props.event.source">
       <div
+        data-cy="project-session-view__active-event--scroll-source"
         class="font-medium"
         v-text="props.event.source"
       />
@@ -20,6 +24,7 @@
     <DCopyble :content="props.event.event.scrollHeight">
       <div
         class="font-medium"
+        data-cy="project-session-view__active-event--scroll-height"
         v-text="props.event.event.scrollHeight"
       />
     </DCopyble>
@@ -35,6 +40,7 @@
     <DCopyble :content="props.event.event.scrollWidth">
       <div
         class="font-medium"
+        data-cy="project-session-view__active-event--scroll-width"
         v-text="props.event.event.scrollWidth"
       />
     </DCopyble>
@@ -50,6 +56,7 @@
     <DCopyble :content="props.event.event.scrollTop">
       <div
         class="font-medium"
+        data-cy="project-session-view__active-event--scroll-top"
         v-text="props.event.event.scrollTop"
       />
     </DCopyble>
@@ -66,6 +73,7 @@
     <DCopyble :content="props.event.event.scrollLeft">
       <div
         class="font-medium"
+        data-cy="project-session-view__active-event--scroll-left"
         v-text="props.event.event.scrollLeft"
       />
     </DCopyble>

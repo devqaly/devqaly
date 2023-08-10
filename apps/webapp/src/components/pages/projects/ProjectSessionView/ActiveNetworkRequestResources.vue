@@ -1,6 +1,7 @@
 <template>
   <Sidebar
     class="w-full md:w-20rem lg:w-30rem"
+    data-cy="project-session-view__active-network-request-sidebar"
     v-model:visible="isNetworkRequestSidebarOpen"
   >
     <template v-if="sessionStore.activeNetworkRequest">
@@ -9,7 +10,12 @@
         style="word-break: break-all"
       />
 
-      <h4>Database Transactions ({{ databaseTransactionsRequest.meta.total }})</h4>
+      <h4
+        data-cy="project-session-view__active-network-request-sidebar--db-transaction-title"
+        :data-total-number-database-transactions="databaseTransactionsRequest.meta.total"
+      >
+        Database Transactions ({{ databaseTransactionsRequest.meta.total }})
+      </h4>
 
       <template v-if="isLoadingDatabaseTransactions">
         <Skeleton height="60px" />
@@ -21,6 +27,7 @@
 
       <DCopyble
         v-for="event in databaseTransactionsRequest.data"
+        data-cy="project-session-view__active-network-request-sidebar--db-transaction"
         :content="event.event.sql"
         :key="`active-network-request-db-${event.id}`"
         class="p-2 border-bottom-1 border-gray-300"
@@ -37,7 +44,12 @@
         >Load more</Button
       >
 
-      <h4>Logs ({{ logsRequest.meta.total }})</h4>
+      <h4
+        data-cy="project-session-view__active-network-request-sidebar--logs-title"
+        :data-total-number-logs="logsRequest.meta.total"
+      >
+        Logs ({{ logsRequest.meta.total }})
+      </h4>
 
       <template v-if="isLoadingLogs">
         <Skeleton height="60px" />
@@ -49,6 +61,7 @@
 
       <DCopyble
         v-for="event in logsRequest.data"
+        data-cy="project-session-view__active-network-request-sidebar--log"
         :content="event.event.log"
         :key="`active-log-request-db-${event.id}`"
         class="p-2 border-bottom-1 border-gray-300"

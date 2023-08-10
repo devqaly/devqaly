@@ -34,6 +34,7 @@ const TABS_TITLE: Record<EventTypesEnum, string> = {
 
 const tabs: {
   type: EventTypesEnum
+  'data-cy': string
   icon: string
   storeGetter:
     | 'networkEvents'
@@ -44,22 +45,45 @@ const tabs: {
     | 'databaseTransactionEvents'
     | 'logEvents'
 }[] = [
-  { type: EventTypesEnum.NETWORK_REQUEST, icon: 'pi pi-desktop', storeGetter: 'networkEvents' },
-  { type: EventTypesEnum.CHANGED_URL, icon: 'pi pi-at', storeGetter: 'changedUrlEvents' },
-  { type: EventTypesEnum.ELEMENT_CLICKED, icon: 'pi pi-eye', storeGetter: 'clickEvents' },
-  { type: EventTypesEnum.SCROLL, icon: 'pi pi-arrows-v', storeGetter: 'scrollEvents' },
+  {
+    type: EventTypesEnum.NETWORK_REQUEST,
+    'data-cy': 'project-session-view__activate-network-events-tab',
+    icon: 'pi pi-desktop',
+    storeGetter: 'networkEvents'
+  },
+  {
+    type: EventTypesEnum.CHANGED_URL,
+    'data-cy': 'project-session-view__activate-change-url-events-tab',
+    icon: 'pi pi-at',
+    storeGetter: 'changedUrlEvents'
+  },
+  {
+    type: EventTypesEnum.ELEMENT_CLICKED,
+    'data-cy': 'project-session-view__activate-click-events-tab',
+    icon: 'pi pi-eye',
+    storeGetter: 'clickEvents'
+  },
+  {
+    type: EventTypesEnum.SCROLL,
+    'data-cy': 'project-session-view__activate-scroll-events-tab',
+    icon: 'pi pi-arrows-v',
+    storeGetter: 'scrollEvents'
+  },
   {
     type: EventTypesEnum.RESIZE_SCREEN,
+    'data-cy': 'project-session-view__activate-resize-events-tab',
     icon: 'pi pi-arrows-h',
     storeGetter: 'resizedScreenEvents'
   },
   {
     type: EventTypesEnum.DATABASE_TRANSACTION,
+    'data-cy': 'project-session-view__activate-db-transaction-events-tab',
     icon: 'pi pi-server',
     storeGetter: 'databaseTransactionEvents'
   },
   {
     type: EventTypesEnum.LOG,
+    'data-cy': 'project-session-view__activate-log-events-tab',
     icon: 'pi pi-paperclip',
     storeGetter: 'logEvents'
   }
@@ -104,7 +128,7 @@ export const EventsSection = defineComponent({
                   ]),
                 header: () =>
                   h('div', [
-                    h('i', { class: `${tab.icon} mr-2` }),
+                    h('i', { class: `${tab.icon} mr-2`, 'data-cy': tab['data-cy'] }),
                     h('span', `${TABS_TITLE[tab.type]} (${sessionStore[tab.storeGetter].length})`)
                   ])
               }

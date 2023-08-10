@@ -1,9 +1,13 @@
 <template>
-  <BaseEventDetails>
+  <BaseEventDetails
+    data-cy="project-session-view__active-event"
+    data-event-type="element-click"
+  >
     <div class="text-gray-500">Source</div>
 
     <DCopyble :content="props.event.source">
       <div
+        data-cy="project-session-view__active-event--click-source"
         class="font-medium"
         v-text="props.event.source"
       />
@@ -13,6 +17,7 @@
     <DCopyble :content="props.event.event.positionX">
       <div
         class="font-medium"
+        data-cy="project-session-view__active-event--click-position-x"
         v-text="props.event.event.positionX"
       />
     </DCopyble>
@@ -20,6 +25,7 @@
     <div class="text-gray-500 mt-2">Position Y</div>
     <DCopyble :content="props.event.event.positionY">
       <div
+        data-cy="project-session-view__active-event--click-position-y"
         class="font-medium"
         v-text="props.event.event.positionY"
       />
@@ -29,6 +35,7 @@
     <DCopyble :content="props.event.event.elementClasses ?? 'no-classes'">
       <div
         class="font-medium"
+        data-cy="project-session-view__active-event--click-classes"
         v-text="props.event.event.elementClasses"
       />
     </DCopyble>
@@ -37,6 +44,7 @@
     <DCopyble :content="props.event.event.innerText ?? 'no-inner-text'">
       <div
         class="font-medium"
+        data-cy="project-session-view__active-event--click-inner-text"
         v-text="props.event.event.innerText"
       />
     </DCopyble>

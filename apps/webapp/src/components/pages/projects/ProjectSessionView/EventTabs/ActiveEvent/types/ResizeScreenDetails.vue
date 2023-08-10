@@ -1,10 +1,14 @@
 <template>
-  <BaseEventDetails>
+  <BaseEventDetails
+    data-cy="project-session-view__active-event"
+    data-event-type="resize-screen"
+  >
     <div class="text-gray-500">Source</div>
 
     <DCopyble :content="props.event.source">
       <div
         class="font-medium"
+        data-cy="project-session-view__active-event--resize-source"
         v-text="props.event.source"
       />
     </DCopyble>
@@ -14,6 +18,7 @@
     <DCopyble :content="props.event.event.innerWidth">
       <div
         class="font-medium"
+        data-cy="project-session-view__active-event--resize-inner-width"
         v-text="props.event.event.innerWidth"
       />
     </DCopyble>
@@ -23,6 +28,7 @@
     <DCopyble :content="props.event.event.innerHeight">
       <div
         class="font-medium"
+        data-cy="project-session-view__active-event--resize-inner-height"
         v-text="props.event.event.innerHeight"
       />
     </DCopyble>

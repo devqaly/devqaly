@@ -1,9 +1,13 @@
 <template>
-  <BaseEventDetails>
+  <BaseEventDetails
+    data-cy="project-session-view__active-event"
+    data-event-type="database-transaction"
+  >
     <div class="text-gray-500">Source</div>
 
     <DCopyble :content="props.event.source">
       <div
+        data-cy="project-session-view__active-event--db-source"
         class="font-medium"
         v-text="props.event.source"
       />
@@ -14,6 +18,7 @@
     <DCopyble :content="props.event.event.executionTimeInMilliseconds ?? 'no-execution-time'">
       <div
         class="font-medium"
+        data-cy="project-session-view__active-event--db-execution"
         v-text="props.event.event.executionTimeInMilliseconds"
       />
     </DCopyble>
@@ -22,6 +27,7 @@
     <DCopyble :content="props.event.event.sql">
       <div
         class="font-medium max-w-full max-h-5rem overflow-auto"
+        data-cy="project-session-view__active-event--db-sql"
         style="word-break: break-all"
         v-text="props.event.event.sql"
       />
