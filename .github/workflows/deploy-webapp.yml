@@ -23,7 +23,7 @@ jobs:
 
       - name: Build
         working-directory: apps/webapp
-        run: yarn build
+        run: VITE_BASE_API_URL=https://api.devqaly.com/api yarn build
 
       - name: Deploy
         uses: reggionick/s3-deploy@v3
