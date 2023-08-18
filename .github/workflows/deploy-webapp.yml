@@ -21,9 +21,13 @@ jobs:
         working-directory: apps/webapp
         run: yarn
 
+      - name: Copy .env.production.example
+        working-directory: apps/webapp
+        run: cp .env.production.example .env.production
+
       - name: Build
         working-directory: apps/webapp
-        run: VITE_BASE_API_URL=https://api.devqaly.com/api yarn build
+        run: yarn build
 
       - name: Deploy
         uses: reggionick/s3-deploy@v3
