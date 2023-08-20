@@ -23,7 +23,7 @@ jobs:
 
       - name: Copy .env.production.example
         working-directory: apps/webapp
-        run: cp .env.production.example .env.production
+        run: cp .env.staging.example .env.production
 
       - name: Build
         working-directory: apps/webapp
