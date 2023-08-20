@@ -21,7 +21,7 @@ jobs:
         working-directory: apps/webapp
         run: yarn
 
-      - name: Copy .env.production.example
+      - name: Copy .env.staging.example
         working-directory: apps/webapp
         run: cp .env.staging.example .env.production
 
