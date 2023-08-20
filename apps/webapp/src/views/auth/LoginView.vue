@@ -1,7 +1,5 @@
 <template>
   <div class="flex flex-column h-screen">
-    Testing things
-
     <div class="flex-shrink-1 flex-grow-0 border-bottom-1 border-200 px-6 py-2">
       <Image
         src="/logo--dark.svg"
