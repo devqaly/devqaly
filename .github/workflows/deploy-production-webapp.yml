@@ -1,0 +1,42 @@
+name: [PRODUCTION] Deploy Webapp
+
+on:
+  push:
+    paths:
+      - apps/webapp/**
+    branches:
+      - master
+
+jobs:
+  deploy-webapp:
+    name: 'Deploy webapp'
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.WEBAPP_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.WEBAPP_AWS_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        working-directory: apps/webapp
+        run: yarn
+
+      - name: Copy .env.production.example
+        working-directory: apps/webapp
+        run: cp .env.production.example .env.production
+
+      - name: Build
+        working-directory: apps/webapp
+        run: yarn build
+
+      - name: Deploy
+        uses: reggionick/s3-deploy@v3
+        with:
+          folder: apps/webapp/dist
+          bucket: ${{ secrets.WEBAPP_S3_BUCKET }}
+          bucket-region: ${{ secrets.WEBAPP_S3_BUCKET_REGION }}
+          dist-id: ${{ secrets.WEBAPP_CLOUDFRONT_DISTRIBUTION_ID }}
+          invalidation: /
+          delete-removed: true
+          no-cache: true
+          private: true

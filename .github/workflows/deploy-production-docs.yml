@@ -1,4 +1,4 @@
-name: Deploy Docs
+name: [PRODUCTION] Deploy Docs
 
 on:
   push:
