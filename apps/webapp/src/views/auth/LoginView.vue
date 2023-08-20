@@ -1,6 +1,8 @@
 <template>
   <div class="flex flex-column h-screen">
     <div class="flex-shrink-1 flex-grow-0 border-bottom-1 border-200 px-6 py-2">
+      EE
+
       <Image
         src="/logo--dark.svg"
         alt="Logo"
