@@ -1,4 +1,4 @@
-name: [PRODUCTION] Deploy Webapp
+name: '[PRODUCTION] Deploy Webapp'
 
 on:
   push:

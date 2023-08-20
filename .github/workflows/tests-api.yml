@@ -1,4 +1,4 @@
-name: Run backend tests
+name: 'Run backend tests'
 
 on:
   pull_request:

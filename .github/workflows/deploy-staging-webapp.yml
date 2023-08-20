@@ -1,4 +1,4 @@
-name: [STAGING] Deploy Webapp
+name: '[STAGING] Deploy Webapp'
 
 on:
   push:
