@@ -1,11 +1,11 @@
-name: 'Deploy api'
+name: '[STAGING] Deploy api'
 
 on:
   push:
     paths:
       - apps/api/**
     branches:
-      - master
+      - next
 
 jobs:
   forge-deploy:
@@ -16,4 +16,4 @@ jobs:
       - name: Deploy
         uses: jbrooksuk/laravel-forge-action@v1.0.2
         with:
-          trigger_url: ${{ secrets.API_TRIGGER_URL }}
+          trigger_url: ${{ secrets.API_STAGING_TRIGGER_URL }}

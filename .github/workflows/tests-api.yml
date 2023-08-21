@@ -1,4 +1,4 @@
-name: Run backend tests
+name: 'Run backend tests'
 
 on:
   pull_request:
@@ -6,11 +6,13 @@ on:
       - apps/api/**
     branches:
       - master
+      - next
   push:
     paths:
       - apps/api/**
     branches:
       - master
+      - next
 
 jobs:
   phpunit:

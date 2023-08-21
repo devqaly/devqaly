@@ -1,12 +1,14 @@
-name: Run E2E tests [Cypress]
+name: 'Run E2E tests [Cypress]'
 
 on:
   pull_request:
     branches:
       - master
+      - next
   push:
     branches:
       - master
+      - next
 
 jobs:
   run-e2e-tests:
