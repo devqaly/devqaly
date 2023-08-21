@@ -133,3 +133,20 @@ const devqalySDK = new DevqalySDK({
   }
 })
 ```
+
+# Self-hosting
+
+In case you are self-hosting Devqaly you will need to pass the URL for both frontend and backend of Devqaly's servers.
+
+You can achieve this by passing `frontendUrl` and `apiUrl` when initializing your SDK:
+
+```typescript
+const devqaly = new DevqalySDK({
+  // We are assuming that you are hosting your devqaly instance under two subdomains:
+  // 1. api-devqaly -> the ingest server that will receive the events
+  // 2. devqaly -> the frontend application that will allow to see sessions recorded
+  apiUrl: 'https://api-devqaly.my-domain.com',
+  frontendUrl: 'https://devqaly.my-domain.com',
+  projectKey: '<project-key>',
+})
+```
