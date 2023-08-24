@@ -63,10 +63,14 @@ class ProjectControllerTest extends TestCase
             ->assertCreated()
             ->assertJsonPath('data.title', $projectName);
 
+        $project = Project::query()->where('title', $projectName)->firstOrFail();
+
         $this->assertDatabaseHas((new Project())->getTable(), [
             'title' => $projectName,
             'company_id' => $company->id,
             'created_by_id' => $projectMember->id,
+            'security_token' => $project->security_token,
+            'project_key' => $project->project_key
         ]);
     }
 
