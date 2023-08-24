@@ -94,4 +94,45 @@ class ProjectControllerTest extends TestCase
 
         $this->assertDatabaseEmpty((new Project())->getTable());
     }
+
+    public function test_non_company_member_cant_revoke_project_security_token(): void
+    {
+        $project = Project::factory()->create();
+
+        $loggedUser = User::factory()->create();
+
+        Sanctum::actingAs($loggedUser, ['*']);
+
+        $this
+            ->putJson(route('projects.securityToken.update', [
+                'project' => $project
+            ]))
+            ->assertForbidden();
+    }
+
+    public function test_company_member_can_revoke_project_security_token(): void
+    {
+        $project = Project::factory()->create();
+
+        $oldSecurityToken = $project->security_token;
+
+        Sanctum::actingAs($project->company->createdBy, ['*']);
+
+        $response = $this
+            ->putJson(route('projects.securityToken.update', [
+                'project' => $project
+            ]))
+            ->assertOk()
+            ->assertJsonPath('data.id', $project->id);
+
+        $this->assertDatabaseMissing((new Project())->getTable(), [
+            'security_token' => $oldSecurityToken
+        ]);
+
+        $response = json_decode($response->getContent(), true)['data'];
+
+        $project->refresh();
+
+        $this->assertEquals($response['securityToken'], $project->security_token);
+    }
 }

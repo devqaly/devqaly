@@ -13,6 +13,7 @@ class ProjectResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'projectKey' => $this->project_key,
+            'securityToken' => $this->security_token,
             'createdAt' => $this->created_at,
         ];
     }

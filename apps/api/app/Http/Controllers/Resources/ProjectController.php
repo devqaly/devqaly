@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Resources;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Resources\Project\IndexProjectRequest;
+use App\Http\Requests\Resources\Project\RevokeSecurityTokenRequest;
 use App\Http\Requests\Resources\Project\StoreProjectRequest;
 use App\Http\Resources\Resources\ProjectResource;
 use App\Models\Company\Company;
@@ -60,5 +61,16 @@ class ProjectController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function revokeSecurityToken(
+        RevokeSecurityTokenRequest $request,
+        ProjectService $service,
+        Project $project
+    ): ProjectResource
+    {
+        $project = $service->revokeProjectSecurityToken($project);
+
+        return new ProjectResource($project);
     }
 }
