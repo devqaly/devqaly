@@ -87,6 +87,14 @@ const projectNavigationItems = computed(() => [
       name: 'projectSessions',
       params: { projectId: projectStore.activeProject?.id }
     }
+  },
+  {
+    label: 'Settings',
+    icon: 'pi pi-fw pi-cog',
+    to: {
+      name: 'projectSettings',
+      params: { projectId: projectStore.activeProject?.id }
+    }
   }
 ])
 

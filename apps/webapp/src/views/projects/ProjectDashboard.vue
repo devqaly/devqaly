@@ -24,6 +24,16 @@ import { DevqalySDK } from '@devqaly/browser'
 
         devqaly.showRecordingButton()
     </pre>
+
+    <Message :closable="false">
+      You can
+      <a
+        href="https://docs.devqaly.com/getting-started/quickstart/"
+        target="_blank"
+        >read the docs</a
+      >
+      to see all the methods and configuration possibilities to pass to Devqaly's SDK
+    </Message>
   </div>
 </template>
 <script setup lang="ts">

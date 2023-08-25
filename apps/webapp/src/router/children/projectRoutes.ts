@@ -36,6 +36,14 @@ export const projectRoutes: RouteRecordRaw[] = [
         meta: {
           requiresAuth: true
         }
+      },
+      {
+        path: '/projects/:projectId/settings',
+        name: 'projectSettings',
+        component: () => import('@/views/projects/ProjectSettingsView.vue'),
+        meta: {
+          requiresAuth: true
+        }
       }
     ]
   },
