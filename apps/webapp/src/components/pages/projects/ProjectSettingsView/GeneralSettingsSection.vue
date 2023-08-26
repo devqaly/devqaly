@@ -8,21 +8,18 @@
           <span class="font-medium">Project Name</span>
           <div class="text-gray-500 text-xs mt-1">
             The current name of the project.
-            <span class="font-bold">Currently it is not possible to change the name.</span>
+            <div class="font-bold">Currently it is not possible to change the name.</div>
           </div>
         </div>
         <div class="col-6">
-          <div class="p-inputgroup flex-1">
-            <InputText
-              class="surface-ground"
-              :value="projectStore.activeProject!.title"
-              id="title"
-              type="text"
-              readonly
-              disabled
-              aria-describedby="title-help"
-            />
-          </div>
+          <InputText
+            data-cy="project-settings-page__project-title"
+            class="surface-ground w-full"
+            :value="projectStore.activeProject!.title"
+            type="text"
+            readonly
+            disabled
+          />
         </div>
       </div>
     </div>
@@ -37,6 +34,7 @@
               class="block"
               href="https://docs.devqaly.com"
               target="_blank"
+              data-cy="project-settings-page__read-docs-link"
             >
               Read our docs
             </a>
@@ -45,16 +43,16 @@
         <div class="col-6">
           <div class="p-inputgroup flex-1">
             <InputText
+              data-cy="project-settings-page__project-key"
               class="surface-ground"
               :value="projectStore.activeProject!.projectKey"
-              id="title"
               type="text"
               readonly
               disabled
-              aria-describedby="title-help"
             />
 
             <Button
+              data-cy="project-settings-page__copy-project-key"
               class="surface-ground surface-border border-left-0 text-black-alpha-90"
               icon="pi pi-copy"
               severity="warning"
@@ -91,6 +89,8 @@ function onCopyProjectKeyClick() {
       life: 3000
     })
   } catch (e) {
+    console.error(e)
+
     toast.add({
       severity: 'error',
       summary: 'Error Copying',

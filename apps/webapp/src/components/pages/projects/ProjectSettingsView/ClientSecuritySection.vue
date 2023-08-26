@@ -8,7 +8,12 @@
           <div class="text-gray-500 text-xs mt-1">
             The security token is used to identify your backend when sending events to Devqaly's
             server.
-            <div class="font-bold">This is a secret and should not be publicly available.</div>
+            <div
+              data-cy="project-settings-page__security-token--warning"
+              class="font-bold"
+            >
+              This is a secret and should not be publicly available.
+            </div>
           </div>
         </div>
         <div class="col-6">
@@ -19,6 +24,7 @@
             />
 
             <InputText
+              data-cy="project-settings-page__security-token"
               class="surface-ground"
               :value="projectStore.activeProject && projectStore.activeProject.securityToken"
               id="title"
@@ -28,6 +34,7 @@
               aria-describedby="title-help"
             />
             <Button
+              data-cy="project-settings-page__copy-security-token"
               class="surface-ground surface-border border-left-0 text-black-alpha-90"
               icon="pi pi-copy"
               severity="warning"
@@ -35,6 +42,7 @@
               @click="onCopyClick"
             />
             <Button
+              data-cy="project-settings-page__refresh-security-token"
               icon="pi pi-refresh"
               v-tooltip.left="'Refresh Token'"
               :loading="isRefreshingSecurityToken"
@@ -101,6 +109,8 @@ function onCopyClick() {
       life: 3000
     })
   } catch (e) {
+    console.error(e)
+
     toast.add({
       severity: 'error',
       summary: 'Error Copying',
