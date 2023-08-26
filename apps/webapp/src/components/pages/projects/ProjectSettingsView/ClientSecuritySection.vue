@@ -8,7 +8,7 @@
           <div class="text-gray-500 text-xs mt-1">
             The security token is used to identify your backend when sending events to Devqaly's
             server.
-            <span class="font-bold">This is a secret and should not be publicly available.</span>
+            <div class="font-bold">This is a secret and should not be publicly available.</div>
           </div>
         </div>
         <div class="col-6">
@@ -53,6 +53,7 @@ import { updateProjectSecurityToken } from '@/services/api/resources/project/act
 import { assertIsProjectCodec } from '@/services/resources/Project'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
+import { copyToClipboard } from '@/services/ui'
 
 const projectStore = useProjectsStore()
 
@@ -90,23 +91,22 @@ async function refreshSecurityToken() {
 function onCopyClick() {
   assertIsProjectCodec(projectStore.activeProject)
 
-  navigator.clipboard
-    .writeText(projectStore.activeProject.securityToken)
-    .then(() => {
-      toast.add({
-        severity: 'success',
-        summary: 'Copied successfully',
-        detail: 'Successfully copied security token to clipboard',
-        life: 3000
-      })
+  try {
+    copyToClipboard(projectStore.activeProject.securityToken)
+
+    toast.add({
+      severity: 'success',
+      summary: 'Copied successfully',
+      detail: 'Successfully copied security token to clipboard',
+      life: 3000
     })
-    .catch(() => {
-      toast.add({
-        severity: 'error',
-        summary: 'Error Copying',
-        detail: 'There was an error copying the security token',
-        life: 3000
-      })
+  } catch (e) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error Copying',
+      detail: 'There was an error copying the security token',
+      life: 3000
     })
+  }
 }
 </script>
