@@ -143,6 +143,7 @@ class SessionEventControllerTest extends TestCase
             'sql' => 'select * from users where 1 = 1',
             'executionTimeInMilliseconds' => $this->faker->numberBetween(1, 500),
             'requestId' => null,
+            'securityToken' => $session->project->security_token
         ];
 
         $this

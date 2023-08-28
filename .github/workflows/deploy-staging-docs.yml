@@ -1,0 +1,34 @@
+name: '[STAGING] Deploy Docs'
+
+on:
+  push:
+    paths:
+      - docs/**
+    branches:
+      - next
+
+jobs:
+  deploy-docs:
+    name: 'Deploy docs'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.DOCS_STAGING_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DOCS_STAGING_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Install modules
+        working-directory: docs
+        run: npm ci
+      - name: Build application
+        working-directory: docs
+        run: npm run build
+      - name: Deploy to S3
+        working-directory: docs
+        run: aws s3 sync ./dist/ s3://${{ secrets.DOCS_STAGING_BUCKET_ID }}
+      - name: Create CloudFront invalidation
+        working-directory: docs
+        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.DOCS_STAGING_DISTRIBUTION_ID }} --paths "/*"
