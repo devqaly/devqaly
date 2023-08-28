@@ -67,9 +67,28 @@ return [
     |   logs: report all logs that were created in the request
     |
     */
-    'events' => env('DEVQALY_EVENTS_TO_LOG', 'databaseTransactions,logs')
+    'events' => env('DEVQALY_EVENTS_TO_LOG', 'databaseTransactions,logs'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Security token
+    |--------------------------------------------------------------------------
+    |
+    | You should be able to see this value in your project's settings page.
+    | This value will authenticate your backend in Devqaly's backend servers.
+    |
+    */
+    'securityToken' => env('DEVQALY_SECURITY_TOKEN'),
 ];
 ```
+
+:::tip[Be mindful]
+
+The <strong>securityToken</strong> is mandatory.
+This is a way to authenticate your backend server on Devqaly's backend.
+You can find this value in your project's settings.
+
+:::
 
 ## Usage
 
