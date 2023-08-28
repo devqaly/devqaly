@@ -10,10 +10,12 @@ use App\Models\Session\Event\EventNetworkRequest;
 use App\Models\Session\Event\EventResizeScreen;
 use App\Models\Session\Event\EventUrlChanged;
 use App\Models\Session\Session;
+use App\services\Resources\Event\Types\BaseEventTypeService;
 use App\services\Resources\Event\Types\EventTypeFactory;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\Response;
 
 class CreateSessionEventRequest extends FormRequest
 {
@@ -57,6 +59,16 @@ class CreateSessionEventRequest extends FormRequest
         $factory = app()->make(EventTypeFactory::class);
 
         $service = $factory->getEventTypeService($this->request->get('type'));
+
+        if (
+            BaseEventTypeService::needsSecretTokenValidation($this->request->get('type'))
+            && $this->projectSession->project->security_token !== $this->request->get('securityToken')
+        ) {
+            abort(
+                Response::HTTP_FORBIDDEN,
+                "Security token passed is invalid. Please, check your project's settings to retrieve the correct one"
+            );
+        }
 
         return $service->createValidationRules();
     }

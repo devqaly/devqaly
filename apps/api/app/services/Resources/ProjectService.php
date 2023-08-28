@@ -7,6 +7,7 @@ use App\Models\Project\Project;
 use App\Models\User;
 use App\Traits\UsesPaginate;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class ProjectService
 {
@@ -41,5 +42,19 @@ class ProjectService
         }
 
         return $projects->paginate($this->getPerPage());
+    }
+
+    public function revokeProjectSecurityToken(Project $project): Project
+    {
+        $newSecurityToken = Str::random(60);
+
+        if (Project::where('security_token', $newSecurityToken)->exists()) {
+            $newSecurityToken = Str::random(60);
+        }
+
+        $project->security_token = $newSecurityToken;
+        $project->save();
+
+        return $project;
     }
 }

@@ -34,12 +34,18 @@ class Project extends Model
     {
         static::saving(function (Project $project) {
             $generatedProjectKey = Str::random(60);
+            $generatedSecurityToken = Str::random(60);
 
             if (Project::where('project_key', $generatedProjectKey)->exists()) {
                 $generatedProjectKey = Str::random(60);
             }
 
+            if (Project::where('security_token', $generatedSecurityToken)->exists()) {
+                $generatedSecurityToken = Str::random(60);
+            }
+
             $project->project_key = $generatedProjectKey;
+            $project->security_token = $generatedSecurityToken;
         });
     }
 }

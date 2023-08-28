@@ -20,3 +20,6 @@ export const getProject = (projectId: string) =>
 
 export const getProjectSessions = (projectId: string, params: GetProjectSessionsParameters = {}) =>
   axios.get<PaginatableRecord<SessionCodec>>(`/projects/${projectId}/sessions`, { params })
+
+export const updateProjectSecurityToken = (projectId: string) =>
+  axios.put<BaseSingleResource<ProjectCodec>>(`/projects/${projectId}/securityToken`)

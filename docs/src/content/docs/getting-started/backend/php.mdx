@@ -15,18 +15,49 @@ composer require devqaly/devqaly-php
 Before anything, you will need to start the client:
 
 ```php
-$devqaly = new Devqaly\DevqalyClient();
+// You can use named arguments from PHP 8.0
+// @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
+$devqaly = new Devqaly\DevqalyClient(securityToken: '<SECURITY-TOKEN>');
+
+// OR without named arguments
+$devqaly = new Devqaly\DevqalyClient(null, null, '<SECURITY-TOKEN>');
+
 ```
+
+:::tip[Be mindful]
+
+The <strong>securityToken</strong> is mandatory.
+This is a way to authenticate your backend server on Devqaly's backend.
+You can find this value in your project's settings.
+
+:::
 
 In case you are self-hosting Devqaly, you can pass your self-hosted Devqaly's backend URL when initializing the client:
 
 ```php
+// You can use named arguments from PHP 8.0
+// @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
+$devqaly = new Devqaly\DevqalyClient(
+    backendUrl: 'https://api-devqaly.my-domain.com',
+    securityToken: '<SECURITY-TOKEN>'
+);
+
+// OR without named arguments
 $devqaly = new Devqaly\DevqalyClient('https://api-devqaly.my-domain.com');
 ```
 
 You can also pass the `source` where this event comes from:
 
 ```php
+// You can use named arguments from PHP 8.0
+// @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
+$devqaly = new Devqaly\DevqalyClient(
+    backendUrl: 'https://api-devqaly.my-domain.com',
+    sourceIdentifier: 'authentication-service',
+    securityToken: '<SECURITY-TOKEN>'
+);
+
+// OR without named arguments
 $devqaly = new Devqaly\DevqalyClient('https://api-devqaly.my-domain.com', 'authentication-service');
 ```
 

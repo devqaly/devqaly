@@ -6,6 +6,7 @@ export interface ProjectCodec {
   id: ResourceID
   title: string
   projectKey: string
+  securityToken: string
   createdBy?: UserCodec
   createdAt: DateTime
 }

@@ -28,3 +28,7 @@ export const getPaginationPropsForMeta = (meta: Meta, perPage: number): Paginato
 export const hasNextPage = (links: Links): boolean => {
   return !!links.next
 }
+
+export const copyToClipboard = (text: string): Promise<void> => {
+  return navigator.clipboard.writeText(text)
+}
