@@ -8,6 +8,7 @@
         "php": "^8.2",
         "aws/aws-sdk-php": "~3.0",
         "guzzlehttp/guzzle": "^7.7",
+        "laravel/cashier": "^14.12",
         "laravel/framework": "^10.2",
         "laravel/sanctum": "dev-develop",
         "laravel/tinker": "dev-develop",
