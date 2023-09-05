@@ -2,6 +2,7 @@
 
 namespace App\services\Resources;
 
+use App\Models\Company\Company;
 use App\Models\Project\Project;
 use App\Models\Session\Session;
 use App\Models\User;
@@ -26,6 +27,10 @@ class SessionService
             'project_id' => $project->id,
             'created_by_id' => $user?->id,
         ]);
+
+        if ($this->shouldDeletePastSessions($project)) {
+            $this->deletePastSessionsForFreemium($project);
+        }
 
         return $session;
     }
@@ -61,5 +66,33 @@ class SessionService
         }
 
         return $sessions->paginate($this->getPerPage());
+    }
+
+    private function shouldDeletePastSessions(Project $project): bool
+    {
+        if (config('devqaly.isSelfHosting')) {
+            return false;
+        }
+
+        $currentNumberSessions = Session::query()
+            ->where('project_id', $project->id)
+            ->count();
+
+        return $currentNumberSessions >= Session::MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES
+            && $project->company->subscribed('freemium');
+    }
+
+    private function deletePastSessionsForFreemium(Project $project): void
+    {
+        $sessionsToDelete = Session::query()
+            ->select('id')
+            ->where('project_id', $project->id)
+            ->orderBy('created_at', 'DESC')
+            ->skip(Session::MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES)
+            ->get();
+
+        Session::query()
+            ->whereIn('id', $sessionsToDelete->pluck('id'))
+            ->delete();
     }
 }

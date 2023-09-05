@@ -17,6 +17,8 @@ class Session extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    const MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES = 50;
+
     protected $fillable = [
         'video_status',
         'video_extension',

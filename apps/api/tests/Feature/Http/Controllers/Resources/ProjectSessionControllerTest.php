@@ -2,12 +2,14 @@
 
 namespace Tests\Feature\Http\Controllers\Resources;
 
+use App\Models\Company\Company;
 use App\Models\Project\Project;
 use App\Models\Session\Session;
 use App\Models\User;
 use Database\Factories\Session\SessionFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Config;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -25,8 +27,8 @@ class ProjectSessionControllerTest extends TestCase
 
         $this
             ->getJson(route('projects.sessions.index', [
-            'project' => $session->project,
-        ]))
+                'project' => $session->project,
+            ]))
             ->assertOk()
             ->assertJsonPath('meta.total', 1)
             ->assertJsonPath('data.0.id', $session->id);
@@ -63,6 +65,86 @@ class ProjectSessionControllerTest extends TestCase
             ->assertJsonPath('data.windowHeight', $sessionPayload['windowHeight']);
 
         $this->assertDatabaseCount((new Session())->getTable(), 1);
+    }
+
+    public function test_last_x_sessions_are_soft_deleted_when_creating_session_in_freemium_and_not_self_hosting()
+    {
+        /** @var Project $project */
+        $project = Project::factory()->create();
+
+        /** @var Company $company */
+        $company = $project->company;
+
+        $company
+            ->newSubscription('freemium', 'price_1NmbwXGaq6OMdWB2XZSiENQx')
+            ->create(customerOptions: [
+                'metadata' => [
+                    'createdFromTests' => true,
+                    'environment' => \config('app.env')
+                ]
+            ]);
+
+        Session::factory()
+            ->count(Session::MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES)
+            ->create([
+                'project_id' => $project->id,
+                'created_at' => now()->subMonth()
+            ]);
+
+        $sessionPayload = $this->createSessionPayload();
+
+        $this
+            ->postJson(route('projects.sessions.store', [
+                'project' => $project
+            ]), $sessionPayload)
+            ->assertCreated();
+
+        $numberSessionsInDatabase = $project->sessions()->orderBy('created_at', 'DESC')->get();
+
+        $this->assertEquals(
+            Session::MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES,
+            $numberSessionsInDatabase->count(),
+        );
+
+        $numberTrashedSessionsInDatabase = $project->sessions()->withTrashed()->count();
+
+        $this->assertEquals(
+            Session::MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES + 1,
+            $numberTrashedSessionsInDatabase
+        );
+    }
+
+    public function test_sessions_are_not_deleted_when_self_hosting()
+    {
+        /** @var Project $project */
+        $project = Project::factory()->create();
+
+        $numberSessions = Session::MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES;
+
+        Session::factory()
+            ->count($numberSessions)
+            ->create([
+                'project_id' => $project->id,
+                'created_at' => now()->subMonth()
+            ]);
+
+        Config::set('devqaly.isSelfHosting', true);
+
+        $sessionPayload = $this->createSessionPayload();
+
+        $this
+            ->postJson(route('projects.sessions.store', [
+                'project' => $project
+            ]), $sessionPayload)
+            ->assertCreated();
+
+        $numberSessionsInDatabase = $project->sessions()->orderBy('created_at', 'DESC')->get();
+
+        $this->assertEquals($numberSessions + 1, $numberSessionsInDatabase->count());
+
+        $numberTrashedSessionsInDatabase = $project->sessions()->withTrashed()->count();
+
+        $this->assertEquals($numberSessions + 1, $numberTrashedSessionsInDatabase);
     }
 
     private function createSessionPayload(): array
