@@ -47,7 +47,14 @@ class CreateAccounts extends Command
 
             /** @var User $owner */
             $owner = $data->get('user');
-            $company = $companyService->createCompany(collect(['name' => $companyName]), $data->get('user'));
+            $company = $companyService->createCompany(
+                data: collect(['name' => $companyName]),
+                createdBy: $data->get('user'),
+                customerOptionsMetadata: [
+                    'createdFromInvitationCommand' => true,
+                    'environment' => config('app.env')
+                ]
+            );
 
             $companyService->addMemberToCompany(
                 data: collect(['emails' => $owner->email]),

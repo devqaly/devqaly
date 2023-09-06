@@ -2,6 +2,7 @@
 
 namespace App\services\Resources;
 
+use App\Enum\Subscription\SubscriptionIdentifiersEnum;
 use App\Models\Company\Company;
 use App\Models\Project\Project;
 use App\Models\Session\Session;
@@ -79,7 +80,7 @@ class SessionService
             ->count();
 
         return $currentNumberSessions >= Session::MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES
-            && $project->company->subscribed('freemium');
+            && $project->company->subscribed(SubscriptionIdentifiersEnum::FREEMIUM_PLAN_NAME->value);
     }
 
     private function deletePastSessionsForFreemium(Project $project): void

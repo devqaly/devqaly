@@ -1,5 +1,6 @@
 <?php
 
+use App\Enum\Subscription\SubscriptionIdentifiersEnum;
 use App\Models\Company\Company;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Collection;
@@ -19,7 +20,10 @@ return new class extends Migration
                     'email' => $company->createdBy->email,
                 ]);
 
-                $company->newSubscription('freemium', 'price_1NmbwXGaq6OMdWB2XZSiENQx')->create();
+                $company->newSubscription(
+                    SubscriptionIdentifiersEnum::FREEMIUM_PLAN_NAME->value,
+                    SubscriptionIdentifiersEnum::FREEMIUM_PRICE_ID_MONTHLY->value
+                )->create();
             });
         });
     }

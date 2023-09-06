@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers\Resources;
 
+use App\Enum\Subscription\SubscriptionIdentifiersEnum;
 use App\Models\Company\Company;
 use App\Models\Project\Project;
 use App\Models\Session\Session;
@@ -76,7 +77,10 @@ class ProjectSessionControllerTest extends TestCase
         $company = $project->company;
 
         $company
-            ->newSubscription('freemium', 'price_1NmbwXGaq6OMdWB2XZSiENQx')
+            ->newSubscription(
+                SubscriptionIdentifiersEnum::FREEMIUM_PLAN_NAME->value,
+                SubscriptionIdentifiersEnum::FREEMIUM_PRICE_ID_MONTHLY->value
+            )
             ->create(customerOptions: [
                 'metadata' => [
                     'createdFromTests' => true,
