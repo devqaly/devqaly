@@ -12,6 +12,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SessionService
 {
@@ -31,6 +32,10 @@ class SessionService
 
         if ($this->shouldDeletePastSessions($project)) {
             $this->deletePastSessionsForFreemium($project);
+        }
+
+        if ($this->isEnterpriseCustomer($project->company)) {
+            $this->updateMeteredUsage($project->company);
         }
 
         return $session;
@@ -69,6 +74,22 @@ class SessionService
         return $sessions->paginate($this->getPerPage());
     }
 
+    private function isEnterpriseCustomer(Company $company): bool
+    {
+        return $company->subscribedToProduct(SubscriptionIdentifiersEnum::ENTERPRISE_PRODUCT_ID->value);
+    }
+
+    private function updateMeteredUsage(Company $company): void
+    {
+        try {
+            $company
+                ->subscription()
+                ->reportUsageFor(SubscriptionIdentifiersEnum::ENTERPRISE_PRICE_ID->value, 1);
+        } catch (\Exception $e) {
+            Log::info(sprintf('There was an error updating metered usage for company [%s] with ID [%s]', $company->name, $company->id));
+        }
+    }
+
     private function shouldDeletePastSessions(Project $project): bool
     {
         if (config('devqaly.isSelfHosting')) {
@@ -79,8 +100,11 @@ class SessionService
             ->where('project_id', $project->id)
             ->count();
 
+        /** @var Company $company */
+        $company = $project->company;
+
         return $currentNumberSessions >= Session::MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES
-            && $project->company->subscribed(SubscriptionIdentifiersEnum::FREEMIUM_PLAN_NAME->value);
+            && !$this->isEnterpriseCustomer($company);
     }
 
     private function deletePastSessionsForFreemium(Project $project): void

@@ -56,6 +56,6 @@ class CreateAccountsTest extends TestCase
             'member_id' => $user->id,
         ]);
 
-        $this->assertTrue($company->subscribed(SubscriptionIdentifiersEnum::FREEMIUM_PLAN_NAME->value));
+        $this->assertFalse($company->subscribed());
     }
 }

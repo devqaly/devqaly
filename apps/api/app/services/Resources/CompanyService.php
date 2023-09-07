@@ -33,14 +33,10 @@ class CompanyService
                 'created_by_id' => $createdBy->id
             ]);
 
-            $company
-                ->newSubscription(
-                    SubscriptionIdentifiersEnum::FREEMIUM_PLAN_NAME->value,
-                    SubscriptionIdentifiersEnum::FREEMIUM_PRICE_ID_MONTHLY->value,
-                )
-                ->create(customerOptions: [
-                    'metadata' => $customerOptionsMetadata
-                ]);
+            $company->createOrGetStripeCustomer([
+                'email' => $company->createdBy->email,
+                'name' => $company->name
+            ]);
 
             DB::commit();
 

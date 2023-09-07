@@ -36,7 +36,7 @@ class CompanyControllerTest extends TestCase
         $company = Company::query()->firstOrFail();
 
         $this->assertDatabaseCount((new Company())->getTable(), 1);
-        $this->assertTrue($company->subscribed(SubscriptionIdentifiersEnum::FREEMIUM_PLAN_NAME->value));
+        $this->assertFalse($company->subscribed());
     }
 
     public function test_logged_user_cant_create_more_than_x_number_companies(): void

@@ -73,21 +73,6 @@ class ProjectSessionControllerTest extends TestCase
         /** @var Project $project */
         $project = Project::factory()->create();
 
-        /** @var Company $company */
-        $company = $project->company;
-
-        $company
-            ->newSubscription(
-                SubscriptionIdentifiersEnum::FREEMIUM_PLAN_NAME->value,
-                SubscriptionIdentifiersEnum::FREEMIUM_PRICE_ID_MONTHLY->value
-            )
-            ->create(customerOptions: [
-                'metadata' => [
-                    'createdFromTests' => true,
-                    'environment' => \config('app.env')
-                ]
-            ]);
-
         Session::factory()
             ->count(Session::MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES)
             ->create([
@@ -149,6 +134,60 @@ class ProjectSessionControllerTest extends TestCase
         $numberTrashedSessionsInDatabase = $project->sessions()->withTrashed()->count();
 
         $this->assertEquals($numberSessions + 1, $numberTrashedSessionsInDatabase);
+    }
+
+    public function test_sessions_are_not_deleted_when_in_enterprise_plan()
+    {
+        /** @var Project $project */
+        $project = Project::factory()->create();
+
+        $numberSessions = Session::MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES;
+
+        Session::factory()
+            ->count($numberSessions)
+            ->create([
+                'project_id' => $project->id,
+                'created_at' => now()->subMonth()
+            ]);
+
+        /** @var Company $company */
+        $company = $project->company;
+
+        $company
+            ->newSubscription('default')
+            ->meteredPrice(SubscriptionIdentifiersEnum::ENTERPRISE_PRICE_ID->value)
+            ->create(customerOptions: [
+                'metadata' => [
+                    'environment' => \config('app.env')
+                ]
+            ]);
+
+        Config::set('devqaly.isSelfHosting', false);
+
+        $sessionPayload = $this->createSessionPayload();
+
+        $this
+            ->postJson(route('projects.sessions.store', [
+                'project' => $project
+            ]), $sessionPayload)
+            ->assertCreated();
+
+        $numberSessionsInDatabase = $project->sessions()->orderBy('created_at', 'DESC')->get();
+
+        $this->assertEquals($numberSessions + 1, $numberSessionsInDatabase->count());
+
+        $numberTrashedSessionsInDatabase = $project->sessions()->withTrashed()->count();
+
+        $this->assertEquals($numberSessions + 1, $numberTrashedSessionsInDatabase);
+
+        // We are only reporting the usage when calling the HTTP endpoint and not when creating the factory
+        $this->assertEquals(
+            1,
+            $company
+                ->subscription()
+                ->usageRecordsFor(SubscriptionIdentifiersEnum::ENTERPRISE_PRICE_ID->value)
+                ->reduce(fn ($carry, $item) => $carry + $item['total_usage'], 0)
+        );
     }
 
     private function createSessionPayload(): array

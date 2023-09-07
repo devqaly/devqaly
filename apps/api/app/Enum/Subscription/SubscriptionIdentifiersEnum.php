@@ -4,16 +4,6 @@ namespace App\Enum\Subscription;
 
 enum SubscriptionIdentifiersEnum: string
 {
-    // IMPORTANT
-    // These values should never change
-    // These values should never change
-    // These values should never change
-
-    case FREEMIUM_PLAN_NAME = 'freemium';
-    case FREEMIUM_PRICE_ID_MONTHLY = 'price_1NmbwXGaq6OMdWB2XZSiENQx';
-
-    // IMPORTANT
-    // These values should never change
-    // These values should never change
-    // These values should never change
+    case ENTERPRISE_PRODUCT_ID = 'prod_OasM0F1rAhhfIf';
+    case ENTERPRISE_PRICE_ID = 'price_1NngbuGaq6OMdWB2r9NANQ4v';
 }
