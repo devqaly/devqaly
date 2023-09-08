@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Http\Controllers\Resources;
 
-use App\Enum\Subscription\SubscriptionIdentifiersEnum;
 use App\Models\Company\Company;
 use App\Models\Project\Project;
 use App\Models\Session\Session;
@@ -155,7 +154,7 @@ class ProjectSessionControllerTest extends TestCase
 
         $company
             ->newSubscription('default')
-            ->meteredPrice(SubscriptionIdentifiersEnum::ENTERPRISE_PRICE_ID->value)
+            ->meteredPrice(config('stripe.products.enterprise.prices.default'))
             ->create(customerOptions: [
                 'metadata' => [
                     'environment' => \config('app.env')
@@ -185,7 +184,7 @@ class ProjectSessionControllerTest extends TestCase
             1,
             $company
                 ->subscription()
-                ->usageRecordsFor(SubscriptionIdentifiersEnum::ENTERPRISE_PRICE_ID->value)
+                ->usageRecordsFor(config('stripe.products.enterprise.prices.default'))
                 ->reduce(fn ($carry, $item) => $carry + $item['total_usage'], 0)
         );
     }

@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\app\Console\Commands\Register;
 
-use App\Enum\Subscription\SubscriptionIdentifiersEnum;
 use App\Models\Company\Company;
 use App\Models\Company\CompanyMember;
 use App\Models\User;

@@ -2,7 +2,6 @@
 
 namespace App\services\Resources;
 
-use App\Enum\Subscription\SubscriptionIdentifiersEnum;
 use App\Models\Company\Company;
 use App\Models\Project\Project;
 use App\Models\Session\Session;
@@ -76,7 +75,7 @@ class SessionService
 
     private function isEnterpriseCustomer(Company $company): bool
     {
-        return $company->subscribedToProduct(SubscriptionIdentifiersEnum::ENTERPRISE_PRODUCT_ID->value);
+        return $company->subscribedToProduct(config('stripe.products.enterprise.id'));
     }
 
     private function updateMeteredUsage(Company $company): void
@@ -84,7 +83,7 @@ class SessionService
         try {
             $company
                 ->subscription()
-                ->reportUsageFor(SubscriptionIdentifiersEnum::ENTERPRISE_PRICE_ID->value, 1);
+                ->reportUsageFor(config('stripe.products.enterprise.prices.default'), 1);
         } catch (\Exception $e) {
             Log::info(sprintf('There was an error updating metered usage for company [%s] with ID [%s]', $company->name, $company->id));
         }

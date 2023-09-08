@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Http\Controllers\Resources;
 
-use App\Enum\Subscription\SubscriptionIdentifiersEnum;
 use App\Models\Company\Company;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

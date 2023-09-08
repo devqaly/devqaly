@@ -2,7 +2,6 @@
 
 namespace App\services\Resources;
 
-use App\Enum\Subscription\SubscriptionIdentifiersEnum;
 use App\Models\Auth\RegisterToken;
 use App\Models\Company\Company;
 use App\Models\Company\CompanyMember;
