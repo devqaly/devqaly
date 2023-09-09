@@ -31,6 +31,10 @@ jobs:
           sed -i 's/VITE_DEVQALY_IS_SELF_HOSTING=true/VITE_DEVQALY_IS_SELF_HOSTING=false/g' .env.production
           cat .env.production
 
+      - name: Read `.env.production`
+        working-directory: apps/webapp
+        run: cat .env.production
+
       - name: Build
         working-directory: apps/webapp
         run: yarn build
