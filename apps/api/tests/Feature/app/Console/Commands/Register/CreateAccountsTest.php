@@ -47,11 +47,14 @@ class CreateAccountsTest extends TestCase
             'created_by_id' => $user->id,
         ]);
 
+        /** @var Company $company */
         $company = Company::query()->firstOrFail();
 
         $this->assertDatabaseHas((new CompanyMember())->getTable(), [
             'company_id' => $company->id,
             'member_id' => $user->id,
         ]);
+
+        $this->assertFalse($company->subscribed());
     }
 }

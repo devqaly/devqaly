@@ -3,11 +3,13 @@
 namespace App\Models\Project;
 
 use App\Models\Company\Company;
+use App\Models\Session\Session;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Project extends Model
@@ -28,6 +30,11 @@ class Project extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    public function sessions(): HasMany
+    {
+        return $this->hasMany(Session::class, 'project_id');
     }
 
     protected static function booted(): void

@@ -2,7 +2,6 @@
 
 namespace App\Models\Session;
 
-
 use App\Enum\Sessions\SessionVideoStatusEnum;
 use App\Models\Project\Project;
 use App\Models\User;
@@ -11,11 +10,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class Session extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, SoftDeletes;
+
+    const MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES = 50;
 
     protected $fillable = [
         'video_status',
