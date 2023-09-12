@@ -4,5 +4,5 @@ import type { SubscriptionCodec } from '@/services/api/resources/subscription/co
 export interface CompanyCodec {
   id: ResourceID
   name: string
-  subscription: SubscriptionCodec | null
+  subscription?: SubscriptionCodec | null
 }

@@ -20,7 +20,6 @@ class CompanyResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'createdAt' => $this->created_at,
-            'subscription' => $this->subscription(),
         ])
             ->when(!config('devqaly.isSelfHosting'), function (Collection $collection) {
                 $subscription = $this->subscription();
