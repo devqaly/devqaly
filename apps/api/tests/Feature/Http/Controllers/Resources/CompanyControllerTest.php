@@ -31,7 +31,11 @@ class CompanyControllerTest extends TestCase
             'name' => $companyName
         ]);
 
+        /** @var Company $company */
+        $company = Company::query()->firstOrFail();
+
         $this->assertDatabaseCount((new Company())->getTable(), 1);
+        $this->assertFalse($company->subscribed());
     }
 
     public function test_logged_user_cant_create_more_than_x_number_companies(): void

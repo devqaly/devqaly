@@ -25,6 +25,11 @@ jobs:
         working-directory: apps/webapp
         run: cp .env.production.example .env.production
 
+      - name: Set `VITE_DEVQALY_IS_SELF_HOSTING` to `false`
+        working-directory: apps/webapp
+        run:
+          sed -i 's/VITE_DEVQALY_IS_SELF_HOSTING=true/VITE_DEVQALY_IS_SELF_HOSTING=false/g' .env.production
+
       - name: Build
         working-directory: apps/webapp
         run: yarn build

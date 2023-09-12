@@ -50,8 +50,12 @@ jobs:
 
       - name: Prepare Laravel Application
         run: |
-          cp .env.ci .env
-          cp .env.ci .env.testing
+          cp .env.ci.example .env
+          cp .env.ci.example .env.testing
+          sed -i 's/STRIPE_KEY=/STRIPE_KEY=${{ secrets.STRIPE_KEY }}/g' .env
+          sed -i 's/STRIPE_KEY=/STRIPE_KEY=${{ secrets.STRIPE_KEY }}/g' .env.testing
+          sed -i 's/STRIPE_SECRET=/STRIPE_SECRET=${{ secrets.API_STRIPE_SECRET }}/g' .env
+          sed -i 's/STRIPE_SECRET=/STRIPE_SECRET=${{ secrets.API_STRIPE_SECRET }}/g' .env.testing
           php artisan key:generate
 
       - name: Run Testsuite

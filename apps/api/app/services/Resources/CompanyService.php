@@ -8,6 +8,9 @@ use App\Models\Company\CompanyMember;
 use App\Models\User;
 use App\services\Auth\RegisterTokenService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Laravel\Cashier\Exceptions\IncompletePayment;
 
 class CompanyService
 {
@@ -18,12 +21,36 @@ class CompanyService
         $this->registerTokenService = $registerTokenService;
     }
 
-    public function createCompany(Collection $data, User $createdBy): Company
+    public function createCompany(Collection $data, User $createdBy, array $customerOptionsMetadata = []): Company
     {
-        return Company::create([
-            'name' => $data->get('name'),
-            'created_by_id' => $createdBy->id
-        ]);
+        DB::beginTransaction();
+
+        try {
+            /** @var Company $company */
+            $company = Company::create([
+                'name' => $data->get('name'),
+                'created_by_id' => $createdBy->id
+            ]);
+
+            $company->createOrGetStripeCustomer([
+                'email' => $company->createdBy->email,
+                'name' => $company->name
+            ]);
+
+            DB::commit();
+
+            return $company;
+        } catch (IncompletePayment $e) {
+            DB::rollBack();
+
+            Log::critical(sprintf('Failed in creating company [%s] with error: %s', $data->get('name'), $e->getMessage()));
+
+            throw new \Exception($e);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            throw new \Exception($e);
+        }
     }
 
     public function addMemberToCompany(
