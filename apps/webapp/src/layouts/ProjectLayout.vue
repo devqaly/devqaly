@@ -152,7 +152,11 @@ function shouldShowSubscriptionWarning(): boolean {
   assertsIsCompanyCodec(appStore.activeCompany)
 
   // If no subscription is present, we are assuming the user is in free plan.
-  if (appStore.activeCompany.subscription === null) return true
+  if (
+    appStore.activeCompany.subscription === null ||
+    appStore.activeCompany.subscription === undefined
+  )
+    return true
 
   return !isActiveSubscription(appStore.activeCompany.subscription.status)
 }
