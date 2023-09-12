@@ -67,6 +67,48 @@ class ProjectSessionControllerTest extends TestCase
         $this->assertDatabaseCount((new Session())->getTable(), 1);
     }
 
+    public function test_session_returns_correct_maximum_session_length_for_company_with_enterprise(): void
+    {
+        /** @var Project $project */
+        $project = Project::factory()->create();
+
+        /** @var Company $company */
+        $company = $project->company;
+
+        $company
+            ->newSubscription('default')
+            ->meteredPrice(config('stripe.products.enterprise.prices.default'))
+            ->create(customerOptions: [
+                'metadata' => [
+                    'environment' => \config('app.env')
+                ]
+            ]);
+
+        $sessionPayload = $this->createSessionPayload();
+
+        $this
+            ->postJson(route('projects.sessions.store', [
+                'project' => $project
+            ]), $sessionPayload)
+            ->assertCreated()
+            ->assertJsonPath('meta.maximumSessionLengthInSeconds', 600);
+    }
+
+    public function test_session_returns_correct_maximum_session_length_for_company_on_free_plan(): void
+    {
+        /** @var Project $project */
+        $project = Project::factory()->create();
+
+        $sessionPayload = $this->createSessionPayload();
+
+        $this
+            ->postJson(route('projects.sessions.store', [
+                'project' => $project
+            ]), $sessionPayload)
+            ->assertCreated()
+            ->assertJsonPath('meta.maximumSessionLengthInSeconds', 300);
+    }
+
     public function test_last_x_sessions_are_soft_deleted_when_creating_session_in_freemium_and_not_self_hosting()
     {
         /** @var Project $project */
