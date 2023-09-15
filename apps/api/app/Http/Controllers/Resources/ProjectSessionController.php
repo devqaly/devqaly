@@ -15,8 +15,8 @@ class ProjectSessionController extends Controller
 {
     public function index(
         IndexSessionRequest $request,
-        Project $project,
-        SessionService $service
+        Project             $project,
+        SessionService      $service
     ): AnonymousResourceCollection
     {
         $sessions = $service->listSessions(
@@ -36,11 +36,24 @@ class ProjectSessionController extends Controller
             $project
         );
 
-        return (new SessionResource($session))->additional([
-            'data' => [
-                'secretToken' => $session->secret_token
-            ]
-        ]);
+        $sessionLengthInSeconds = 600;
+
+        if (!config('devqaly.isSelfHosting')) {
+            $sessionLengthInSeconds = $session
+                ->project
+                ->company
+                ->subscribedToProduct(config('stripe.products.enterprise.id')) ? 600 : 300;
+        }
+
+        return (new SessionResource($session))
+            ->additional([
+                'data' => [
+                    'secretToken' => $session->secret_token
+                ],
+                'meta' => [
+                    'maximumSessionLengthInSeconds' => $sessionLengthInSeconds
+                ]
+            ]);
     }
 
     /**
