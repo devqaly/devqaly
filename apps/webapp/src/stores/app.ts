@@ -13,6 +13,10 @@ import { loggedUserCodecFactory } from '@/services/factories/userFactory'
 import { emptyPagination } from '@/services/api'
 import type { CompanyCodec } from '@/services/api/resources/company/codec'
 import type { GetLoggedUserCompaniesParameters } from '@/services/api/resources/user/requests'
+import type { AxiosError } from 'axios'
+import { isAxiosError } from 'axios'
+import { StatusCodes } from 'http-status-codes'
+import { useRouter } from 'vue-router'
 
 interface AppStoreState {
   isAuthenticated: boolean
@@ -69,11 +73,20 @@ export const useAppStore = defineStore('appStore', {
     async onLoadApp() {
       const token = window.localStorage.getItem(TOKEN_KEY)
 
-      if (token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-        this.isAuthenticated = true
-        await this.getLoggedUserInformation()
-        await this.fetchLoggedUserCompanies(this.loggedUser.id, { perPage: 50 })
+      try {
+        if (token) {
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+          this.isAuthenticated = true
+          await this.getLoggedUserInformation()
+          await this.fetchLoggedUserCompanies(this.loggedUser.id, { perPage: 50 })
+        }
+      } catch (e: Error | unknown | AxiosError) {
+        if (isAxiosError(e) && e.response && e.response.status === StatusCodes.UNAUTHORIZED) {
+          delete axios.defaults.headers.common['Authorization']
+          window.localStorage.removeItem(TOKEN_KEY)
+          this.isAuthenticated = false
+          await this.$router.push({ name: 'authLogin' })
+        }
       }
     }
   }
