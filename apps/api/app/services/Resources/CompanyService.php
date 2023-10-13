@@ -32,10 +32,12 @@ class CompanyService
                 'created_by_id' => $createdBy->id
             ]);
 
-            $company->createOrGetStripeCustomer([
-                'email' => $company->createdBy->email,
-                'name' => $company->name
-            ]);
+            if (!config('devqaly.isSelfHosting')) {
+                $company->createOrGetStripeCustomer([
+                    'email' => $company->createdBy->email,
+                    'name' => $company->name
+                ]);
+            }
 
             DB::commit();
 

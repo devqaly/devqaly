@@ -6,7 +6,9 @@ use App\Models\Company\Company;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Config;
 use Laravel\Sanctum\Sanctum;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class CompanyControllerTest extends TestCase
@@ -36,6 +38,35 @@ class CompanyControllerTest extends TestCase
 
         $this->assertDatabaseCount((new Company())->getTable(), 1);
         $this->assertFalse($company->subscribed());
+    }
+
+    public function test_stripe_client_is_not_called_on_self_hosted_instance_when_creating_company()
+    {
+        $spy = $this->spy(Company::class)->makePartial();
+
+        $spy->shouldReceive('newInstance')->andReturn($spy);
+
+        $loggedUser = User::factory()->create();
+
+        $companyName = $this->faker->company();
+
+        Sanctum::actingAs($loggedUser, ['*']);
+
+        Config::set('devqaly.isSelfHosting', true);
+
+        $this
+            ->postJson(route('companies.store'), [
+                'name' => $companyName
+            ])
+            ->assertCreated();
+
+        $this->assertDatabaseHas((new Company())->getTable(), [
+            'name' => $companyName
+        ]);
+
+        $this->assertDatabaseCount((new Company())->getTable(), 1);
+        $spy->shouldNotReceive('createOrGetStripeCustomer');
+
     }
 
     public function test_logged_user_cant_create_more_than_x_number_companies(): void
