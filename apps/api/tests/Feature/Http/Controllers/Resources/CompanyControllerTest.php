@@ -42,7 +42,9 @@ class CompanyControllerTest extends TestCase
 
     public function test_stripe_client_is_not_called_on_self_hosted_instance_when_creating_company()
     {
-        $spy = $this->spy(Company::class);
+        $spy = $this->spy(Company::class)->makePartial();
+
+        $spy->shouldReceive('newInstance')->andReturn($spy);
 
         $loggedUser = User::factory()->create();
 
