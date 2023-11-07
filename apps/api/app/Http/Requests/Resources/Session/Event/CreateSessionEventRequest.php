@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Resources\Session\Event;
 
+use App\Models\Session\Event\EventCustomEvent;
 use App\Models\Session\Event\EventDatabaseTransaction;
 use App\Models\Session\Event\EventElementClick;
 use App\Models\Session\Event\EventElementScroll;
@@ -51,6 +52,7 @@ class CreateSessionEventRequest extends FormRequest
                 EventElementScroll::class,
                 EventResizeScreen::class,
                 EventDatabaseTransaction::class,
+                EventCustomEvent::class,
                 EventLog::class,
             ]),
         ]], $this->request->all());

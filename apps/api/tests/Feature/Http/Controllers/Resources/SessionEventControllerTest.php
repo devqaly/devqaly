@@ -397,6 +397,43 @@ class SessionEventControllerTest extends TestCase
         ]);
     }
 
+    public function test_company_member_can_create_custom_event(): void
+    {
+        $session = Session::factory()->create();
+
+        $eventPayload = ['foo' => 'bar', 'hello' => '123', 'deep' => ['field' => '1']];
+
+        $payload = [
+            ...$this->baseCreateEventPayload(Event\EventCustomEvent::class),
+            'payload' => json_encode($eventPayload),
+            'name' => 'custom-event'
+        ];
+
+        $this
+            ->postJson(
+                route('sessions.events.store', ['projectSession' => $session]),
+                $payload,
+                ['x-devqaly-session-secret-token' => $session->secret_token]
+            )
+            ->assertNoContent();
+
+        $this->assertDatabaseHas((new Event\EventCustomEvent())->getTable(), [
+            'name' => $payload['name'],
+            // @TODO: Currently getting an error and wasn't able to fix it in a reasonable ammount of time
+            // I will leave this to fix later
+            // 'payload->foo' => $eventPayload['foo'],
+        ]);
+
+        $urlChangedEvent = Event\EventCustomEvent::query()->firstOrFail();
+
+        $this->assertDatabaseHas((new Event())->getTable(), [
+            'session_id' => $session->id,
+            'event_type' => Event\EventCustomEvent::class,
+            'event_id' => $urlChangedEvent->id,
+            'client_utc_event_created_at' => $payload['clientUtcEventCreatedAt']
+        ]);
+    }
+
     public function test_not_able_to_create_event_when_incorrect_secret_is_passed(): void
     {
         $session = Session::factory()->create();

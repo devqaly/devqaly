@@ -5,7 +5,8 @@ export enum EventTypesEnum {
   SCROLL = 'App\\Models\\Session\\Event\\EventElementScroll',
   RESIZE_SCREEN = 'App\\Models\\Session\\Event\\EventResizeScreen',
   DATABASE_TRANSACTION = 'App\\Models\\Session\\Event\\EventDatabaseTransaction',
-  LOG = 'App\\Models\\Session\\Event\\EventLog'
+  LOG = 'App\\Models\\Session\\Event\\EventLog',
+  CUSTOM_EVENT = 'App\\Models\\Session\\Event\\EventCustomEvent'
 }
 
 export enum LOG_LEVEL {

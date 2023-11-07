@@ -2,6 +2,7 @@
 
 namespace App\services\Resources\Event\Types;
 
+use App\Models\Session\Event\EventCustomEvent;
 use App\Models\Session\Event\EventDatabaseTransaction;
 use App\Models\Session\Event\EventElementClick;
 use App\Models\Session\Event\EventElementScroll;
@@ -22,6 +23,7 @@ class EventTypeFactory
             EventResizeScreen::class => new EventTypeResizeScreenService(),
             EventDatabaseTransaction::class => new EventTypeDatabaseTransactionService(),
             EventLog::class => new EventTypeLogService(),
+            EventCustomEvent::class => new EventTypeCustomEventService(),
             default => throw new \Exception('This event type was not implemented yet: ' . $type),
         };
     }
