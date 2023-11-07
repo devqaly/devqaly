@@ -12,6 +12,7 @@ import ScrollEvent from '@/components/resources/events/listEvent/types/ScrollEve
 import ResizeScreenEvent from '@/components/resources/events/listEvent/types/ResizeScreenEvent.vue'
 import DatabaseTransactionEvent from '@/components/resources/events/listEvent/types/DatabaseTransactionEvent.vue'
 import LogEvent from '@/components/resources/events/listEvent/types/LogEvent.vue'
+import CustomEvent from '@/components/resources/events/listEvent/types/CustomEvent.vue'
 
 const EventsComponents: Record<EventTypesEnum, ReturnType<typeof defineComponent>> = {
   [EventTypesEnum.NETWORK_REQUEST]: NetworkEvent,
@@ -20,7 +21,8 @@ const EventsComponents: Record<EventTypesEnum, ReturnType<typeof defineComponent
   [EventTypesEnum.SCROLL]: ScrollEvent,
   [EventTypesEnum.RESIZE_SCREEN]: ResizeScreenEvent,
   [EventTypesEnum.DATABASE_TRANSACTION]: DatabaseTransactionEvent,
-  [EventTypesEnum.LOG]: LogEvent
+  [EventTypesEnum.LOG]: LogEvent,
+  [EventTypesEnum.CUSTOM_EVENT]: CustomEvent
 } as const
 
 export const ListEvents = defineComponent({

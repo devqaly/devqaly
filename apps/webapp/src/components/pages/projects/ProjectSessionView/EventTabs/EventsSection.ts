@@ -11,6 +11,7 @@ import ResizeScreenTab from '@/components/pages/projects/ProjectSessionView/Even
 import DatabaseTransactionTab from '@/components/pages/projects/ProjectSessionView/EventTabs/types/DatabaseTransactionTab.vue'
 import { ActiveEventDetail } from '@/components/pages/projects/ProjectSessionView/EventTabs/ActiveEvent/ActiveEventDetail'
 import LogEventTab from '@/components/pages/projects/ProjectSessionView/EventTabs/types/LogEventTab.vue'
+import CustomEventTab from '@/components/pages/projects/ProjectSessionView/EventTabs/types/CustomEventTab.vue'
 
 const COMPONENTS: Record<EventTypesEnum, ReturnType<typeof defineComponent>> = {
   [EventTypesEnum.NETWORK_REQUEST]: NetworkEventTab,
@@ -19,7 +20,8 @@ const COMPONENTS: Record<EventTypesEnum, ReturnType<typeof defineComponent>> = {
   [EventTypesEnum.SCROLL]: ScrollTab,
   [EventTypesEnum.RESIZE_SCREEN]: ResizeScreenTab,
   [EventTypesEnum.DATABASE_TRANSACTION]: DatabaseTransactionTab,
-  [EventTypesEnum.LOG]: LogEventTab
+  [EventTypesEnum.LOG]: LogEventTab,
+  [EventTypesEnum.CUSTOM_EVENT]: CustomEventTab
 }
 
 const TABS_TITLE: Record<EventTypesEnum, string> = {
@@ -29,7 +31,8 @@ const TABS_TITLE: Record<EventTypesEnum, string> = {
   [EventTypesEnum.SCROLL]: 'Scroll',
   [EventTypesEnum.RESIZE_SCREEN]: 'Resized Screen',
   [EventTypesEnum.DATABASE_TRANSACTION]: 'Database Transaction',
-  [EventTypesEnum.LOG]: 'Logs'
+  [EventTypesEnum.LOG]: 'Logs',
+  [EventTypesEnum.CUSTOM_EVENT]: 'Custom Events'
 }
 
 const tabs: {
@@ -44,6 +47,7 @@ const tabs: {
     | 'resizedScreenEvents'
     | 'databaseTransactionEvents'
     | 'logEvents'
+    | 'customEvents'
 }[] = [
   {
     type: EventTypesEnum.NETWORK_REQUEST,
@@ -86,6 +90,12 @@ const tabs: {
     'data-cy': 'project-session-view__activate-log-events-tab',
     icon: 'pi pi-paperclip',
     storeGetter: 'logEvents'
+  },
+  {
+    type: EventTypesEnum.CUSTOM_EVENT,
+    'data-cy': 'project-session-view__activate-custom-events-tab',
+    icon: 'pi pi-paperclip',
+    storeGetter: 'customEvents'
   }
 ]
 
