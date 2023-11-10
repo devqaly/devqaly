@@ -64,6 +64,12 @@ export interface BaseLogEvent {
   requestId: UUID | null
 }
 
+export interface BaseCustomEvent {
+  id: ResourceID
+  name: string
+  payload: object
+}
+
 export type NetworkRequestEvent = BaseEventCodec<BaseNetworkRequestEvent>
 export type UrlChanged = BaseEventCodec<BaseChangedUrlEvent>
 export type ElementClick = BaseEventCodec<BaseElementClick>
@@ -71,6 +77,7 @@ export type ScrollEvent = BaseEventCodec<BaseScroll>
 export type ResizeScreenEvent = BaseEventCodec<BaseResizeScreen>
 export type DatabaseTransactionEvent = BaseEventCodec<BaseDatabaseTransaction>
 export type LogEvent = BaseEventCodec<BaseLogEvent>
+export type CustomEvent = BaseEventCodec<BaseCustomEvent>
 
 export type EventCodec =
   | NetworkRequestEvent
@@ -80,3 +87,4 @@ export type EventCodec =
   | ResizeScreenEvent
   | DatabaseTransactionEvent
   | LogEvent
+  | CustomEvent

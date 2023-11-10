@@ -9,6 +9,7 @@ import NetworkEventDetails from '@/components/pages/projects/ProjectSessionView/
 import ResizeScreenDetails from '@/components/pages/projects/ProjectSessionView/EventTabs/ActiveEvent/types/ResizeScreenDetails.vue'
 import ScrollTabDetails from '@/components/pages/projects/ProjectSessionView/EventTabs/ActiveEvent/types/ScrollTabDetails.vue'
 import LogEventDetails from '@/components/pages/projects/ProjectSessionView/EventTabs/ActiveEvent/types/LogEventDetails.vue'
+import CustomEvent from '@/components/pages/projects/ProjectSessionView/EventTabs/ActiveEvent/types/CustomEvent.vue'
 
 const ACTIVE_EVENT_DETAILS: Record<EventTypesEnum, ReturnType<typeof defineComponent>> = {
   [EventTypesEnum.CHANGED_URL]: ChangeUrlDetails,
@@ -17,7 +18,8 @@ const ACTIVE_EVENT_DETAILS: Record<EventTypesEnum, ReturnType<typeof defineCompo
   [EventTypesEnum.NETWORK_REQUEST]: NetworkEventDetails,
   [EventTypesEnum.RESIZE_SCREEN]: ResizeScreenDetails,
   [EventTypesEnum.SCROLL]: ScrollTabDetails,
-  [EventTypesEnum.LOG]: LogEventDetails
+  [EventTypesEnum.LOG]: LogEventDetails,
+  [EventTypesEnum.CUSTOM_EVENT]: CustomEvent
 } as const
 
 export const ActiveEventDetail = defineComponent({

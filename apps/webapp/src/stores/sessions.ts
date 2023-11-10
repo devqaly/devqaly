@@ -5,6 +5,7 @@ import { getSession } from '@/services/api/resources/session/actions'
 import type { PaginatableRecord } from '@/services/api'
 import { emptyPagination } from '@/services/api'
 import type {
+  CustomEvent,
   DatabaseTransactionEvent,
   ElementClick,
   EventCodec,
@@ -117,7 +118,16 @@ export const useSessionsStore = defineStore('sessionsStore', {
           EventTypesEnum.LOG,
           state.activeSession.createdAt
         )
-      ) as LogEvent[]
+      ) as LogEvent[],
+    customEvents: (state: SessionStoreState) =>
+      state.activeSessionEventsRequest.data.filter((e) =>
+        filterEventsUntilVideoCurrentTime(
+          e,
+          state.currentVideoDuration,
+          EventTypesEnum.CUSTOM_EVENT,
+          state.activeSession.createdAt
+        )
+      ) as CustomEvent[]
   },
   actions: {
     async getActiveSession(sessionId: string) {
