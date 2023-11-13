@@ -1,0 +1,22 @@
+---
+title: Events - Scroll
+description: Understand which scrolls we record and why
+---
+
+import { Image } from 'astro:assets';
+import resizeScreenTabExample from '../../../../assets/images/resize-screen-tab-example.png';
+
+> Resizing the screen involves adjusting the dimensions of the display window on a computer or device, either by
+manually dragging the window edges or using specific controls, to change the visible area and alter the layout of
+content for improved visibility or multitasking.
+
+Every resize of the screen that happens during the recording of a session is recorded by Devqaly's SDK. This helps developers understand
+the journey a user took and what was the cause for a certain bug.
+
+<Image src={resizeScreenTabExample} alt="resize screen tab example"/>
+
+This is the information that is recorded when a user scrolls while in a session:
+
+- **Source**: The source where the event is coming from. The source of this event will always come from your frontend.
+- **Inner Width**: The total width (in pixels) of the visible screen
+- **Inner Height**: The total height (in pixels) of the visible screen

@@ -1,0 +1,20 @@
+---
+title: Events - URL Changes
+description: Understand which URL changes we record and why
+---
+
+import { Image } from 'astro:assets';
+import urlChangeTabExample from '../../../../assets/images/url-changes-tab-example.png';
+
+> A URL (Uniform Resource Locator) change occurs when the web address in a browser's address bar is modified,
+indicating a shift from the current web page to a new one, enabling navigation between different online locations.
+
+Every URL change that happens during the recording of a session is recorded by Devqaly's SDK. This helps developers understand
+the journey a user took and what was the cause for a certain bug.
+
+<Image src={urlChangeTabExample} alt="url changes tab example"/>
+
+This is the information that is recorded when a user URL changes while in a session:
+
+- **Source**: The source where the event is coming from. The source of this event will always come from your frontend.
+- **New URL**: The new URL that the user have navigated to.

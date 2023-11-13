@@ -1,0 +1,24 @@
+---
+title: Events - Scroll
+description: Understand which scrolls we record and why
+---
+
+import { Image } from 'astro:assets';
+import scrollTabExample from '../../../../assets/images/scroll-tab-example.png';
+
+> Scrolling, in the context of digital interfaces, refers to the action of moving content vertically or horizontally on a
+display, typically accomplished by using a mouse wheel, touchpad, or touchscreen gestures, allowing users to navigate
+through larger or overflowed portions of information.
+
+Every scroll that happens during the recording of a session is recorded by Devqaly's SDK. This helps developers understand
+the journey a user took and what was the cause for a certain bug.
+
+<Image src={scrollTabExample} alt="click tab example"/>
+
+This is the information that is recorded when a user scrolls while in a session:
+
+- **Source**: The source where the event is coming from. The source of this event will always come from your frontend.
+- **Scroll Height**: The total vertical pixels of the container that was scrolled
+- **Scroll Width**: The total horizontal pixels of the container that was scrolled
+- **Scroll Top**: How many pixels scrolled from the top
+- **Scroll Bottom**: How many pixels scrolled from the left

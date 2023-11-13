@@ -1,0 +1,39 @@
+---
+title: Events - Database Transactions
+description: Understand which database transactions we record and why
+---
+
+import { Image } from 'astro:assets';
+import databaseTransactionExample from '../../../../assets/images/database-transaction-tab-example.png';
+import databaseNPlusOneProblem from '../../../../assets/images/database-transaction-n-plus-1-problem.png';
+
+A database transaction is a unit of work comprising one or more operations that are executed as a single,
+indivisible and consistent task, ensuring data integrity and consistency in a database system.
+
+:::caution[Needs connection with backend]
+
+This feature is only possible to use when your backend is connected with your frontend. Learn <a href="/connect-your-backend/connect-backend/">how to connect your backend</a>.
+
+:::
+
+<Image src={databaseTransactionExample} alt="database transaction tab example"/>
+
+Here are the fields that we are currently tracing whenever a database transaction happens:
+
+- **Source**: The source where the event is coming from. Usually this will be from the single backend service you might have, but you can also
+generate database transaction from other backend servers that you might have
+- **Execution time (milliseconds)**: The time it took to run your database transaction
+- **SQL**: The query that was used to query the database
+- **Network Request**: If this database transaction happened due to an HTTP request to your backend, you will be able
+to see which HTTP request have started this database transaction
+
+
+:::tip[Easily find N+1 problems]
+
+You are able to easily find N+1 problems in your application by inspecting how many database transactions have happened
+during an HTTP request
+
+<Image src={databaseNPlusOneProblem} alt="database n+1 problem example" style="margin-top: 10px"/>
+
+:::
+

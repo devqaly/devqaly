@@ -1,0 +1,66 @@
+---
+title: Events - Introduction
+description: Understand how we record events and why we record them
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+Devqaly is an open-source session replay, built for engineering teams to help them build rich product
+experiences without constantly reinventing the wheel.
+
+Allow users during your staging and local development to record their screens while Devqaly records important
+information to help you, as a developer to debug issues faster.
+
+In order for Devqaly to help your teams, it needs to record events that are important for developers to debug
+issues faster and easier.
+
+There are a couple of events that Devqaly records. You can see the full list below:
+
+
+<CardGrid stagger>
+  <a href='/essentials/events/network-requests/' style="text-decoration: none">
+    <Card title="Network Requests">
+      See which HTTP requests were made
+    </Card>
+  </a>
+  <a href='/essentials/events/database-transactions/' style="text-decoration: none">
+    <Card title="Database Transactions">
+      Whenever there is a database transaction, Devqaly records it
+    </Card>
+  </a>
+
+  <a href='/essentials/events/clicks/' style="text-decoration: none">
+    <Card title="Clicks">
+      When a user clicks, it is recorded
+    </Card>
+  </a>
+  <a href='/essentials/events/scrolls/' style="text-decoration: none">
+    <Card title="Scrolls">
+      Whenever a scroll happens in the page, Devqaly records it
+    </Card>
+  </a>
+
+  <a href='/essentials/events/resize-screen/' style="text-decoration: none">
+    <Card title="Resize Screen">
+      When the screen is resized, Devqaly records it
+    </Card>
+  </a>
+
+  <a href='/essentials/events/url-changes/' style="text-decoration: none">
+    <Card title="URL Changes">
+      Whenever an URL changes, we record it for your developers
+    </Card>
+  </a>
+
+  <a href='/essentials/events/logs/' style="text-decoration: none">
+    <Card title="Logs">
+      Whenever a log is created either in the frontend or backend, Devqaly will record it
+    </Card>
+  </a>
+
+  <a href='/essentials/events/custom-events/' style="text-decoration: none">
+    <Card title="Custom Events">
+      Your developers can create any custom event. Whenever that event is fired, Devqaly will record it
+    </Card>
+  </a>
+</CardGrid>
