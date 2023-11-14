@@ -1,0 +1,41 @@
+---
+title: Events - Custom Events
+description: Understand which custom events we record and why
+---
+
+import { Image } from 'astro:assets';
+import customEventTabExample from '../../../../assets/images/custom-event-tabs-example.png';
+
+Devqaly empowers you to swiftly debug issues by tracking a multitude of events. However, recognizing that every
+application has unique requirements, Devqaly goes a step further, enabling you to generate custom events seamlessly
+integrated into recorded sessions. In the absence of an active recording session, these custom events intelligently
+discard, ensuring flexibility and efficiency in your tracking capabilities.
+
+:::tip[Did you know?]
+
+You can generate custom events simply by calling `createCustomEvent` from the SDK:
+
+```ts
+import { DevqalySDK } from '@devqaly/browser'
+
+const devqalySDK = new DevqalySDK({
+  projectKey: 'xxxxx',
+})
+
+const eventPayload = {
+  amountPaid: 10000,
+  transactionId: 12
+}
+
+devqalySDK.createCustomEvent('paid-bill', eventPayload)
+```
+
+:::
+
+<Image src={customEventTabExample} alt="custom event tab example"/>
+
+This is the information that is recorded when a custom event is generated:
+
+- **Source**: The origin of the event, originating from either the frontend or backend.
+- **Event Name**: Identifies the unique name assigned to the event.
+- **Event Payload**: Encompasses the JSON payload transmitted at the creation of the custom event.
