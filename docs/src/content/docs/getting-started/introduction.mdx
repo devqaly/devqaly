@@ -3,36 +3,39 @@ title: Introduction
 description: Understand how and why you would be using Devqaly
 ---
 
-# Introduction
+Devqaly, your go-to open-source and free session recording tool, is tailored to simplify development for your
+engineering team. Enhance your product creation experience by utilizing Devqaly, which not only allows screen
+recording during staging and local development but also meticulously captures crucial information specifically
+for developers, ensuring a seamless process for debugging issues.
 
-Devqaly is an open-source session replay, built for engineering teams to help them build rich product
-experiences without constantly reinventing the wheel.
 
-Allow users during your staging and local development to record their screens while Devqaly records important
-information to help you, as a developer to debug issues faster.
+<div class="codegena" style="position:relative;width:100%;height:0;padding-bottom:56.27198%;">
+  <iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:5px" width='1280' height='831' src="https://www.youtube.com/embed/jAtg5Y72Fvg?&theme=dark&autohide=2"frameborder="0"></iframe>
+</div>
 
 # Why
 
-As a developer, speaking to quality assurance engineers (QAE) is something we often do while developing applications.
-This communication can be hard when QAE are not technical people. Even then, we, as developers lack information that is
-vital to debug the issue at hand.
+As developers, frequent communication with Quality Assurance Engineers (QAE) is a common aspect of application development.
+This interaction can pose challenges, particularly when QAEs lack technical expertise.
+Moreover, developers often find themselves lacking essential information crucial for effective issue debugging.
 
-We at Devqaly understand that this is a problem that needs solving. There should be a better way to have developers and
-quality assurance engineers to collaborate together and ship products faster to clients.
+Recognizing this challenge, Devqaly aims to address the issue. We believe in fostering improved collaboration between
+developers and quality assurance engineers to expedite product delivery to clients.
 
 # How it works
 
-Devqaly sets up a button in your frontend application that allows your QAE to record their screen while reproducing a bug,
-or some functionality that doesn't quite work as defined in the requirements.
+Devqaly seamlessly integrates a button into your frontend application, empowering developers and
+Quality Assurance Engineers (QAE) to effortlessly record their screens while pinpointing bugs or
+addressing functionalities that deviate from the specified requirements.
 
-While the QAE is reproducing the bug, Devqaly will record important information that will enable the developer to easily
-debug the issues at hand.
+During the bug reproduction process, Devqaly captures vital information, providing developers with the
+insights needed for easy issue debugging.
 
-Optionally, you can install our SDK in your backend and Devqaly will allow you to discover resources that a single
-network request have used such as:
+For enhanced functionality, consider installing our SDK in your backend.
+This unlocks Devqaly's ability to reveal resources utilized by a single network request, including:
 
-- **database transactions**: see which database transactions were invoked on a specific request
-- **logs**: which logs have been written for a specific request
-- **exceptions**: know when your application have thrown an exception either from the frontend or backend (or any microservice)
+- **Database Transactions**: Identify specific database transactions invoked during a particular request.
+- **Logs**: Access information on logs generated for a specific request.
+- **Exceptions**: Detect instances where your application encountered exceptions, whether from the frontend, backend, or any microservice.
 
-See the <a href="/essentials/events/introduction/">full list of events</a> that we record.
+Explore the <a href="/essentials/events/introduction/">comprehensive list of events</a> that Devqaly meticulously records for your development needs.
