@@ -1,0 +1,23 @@
+---
+title: Events - Clicks
+description: Understand which clicks we record and why
+---
+
+import { Image } from 'astro:assets';
+import clickTabExample from '../../../../assets/images/clicks-tab-example.png';
+
+> In the context of user interactions with a computer or device interface, a click refers to the action of pressing
+and releasing a button on a pointing device, typically a mouse, often used to initiate an action or select an item.
+
+Every click that happens during the recording of a session is recorded by Devqaly's SDK. This helps developers understand
+the journey a user took and what was the cause for a certain bug.
+
+<Image src={clickTabExample} alt="click tab example"/>
+
+Here's the detailed information captured when a user clicks during a session:
+
+- **Source**: The originating point of the event, exclusively from your frontend.
+- **Position X**: Records the X-coordinate of the click on the user's screen.
+- **Position Y**: Documents the Y-coordinate of the click on the user's screen.
+- **Element Classes**: Registers the classes associated with the element that the user clicked on.
+- **Inner Text**: If the clicked element contains any inner text, it is recorded.

@@ -1,0 +1,35 @@
+---
+title: Events - Network Requests
+description: Understand which network requests we record and why
+---
+
+import { Image } from 'astro:assets';
+import networkRequestTabExample from '../../../../assets/images/network-requests-tab-example.png';
+
+Network requests serve the purpose of either fetching information from a server or posting information to it. In Devqaly,
+every time your application initiates an HTTP request using the
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API" target="_blank">fetch</a> function, we meticulously
+log the associated information.
+
+<Image src={networkRequestTabExample} alt="network request tab example"/>
+
+Here are the fields we currently trace upon successful completion of an HTTP request:
+
+- **Source**: Indicates the origin of the event, typically from the client's browser. However, it's worth noting that
+HTTP requests can also be generated from your backend to interact with another service within your infrastructure.
+- **URL**: Represents the Uniform Resource Locator to which the HTTP request was directed.
+- **Method**: Specifies the method employed in the HTTP request, such as GET, POST, DELETE, and various others.
+Refer to the <a href="https://www.rfc-editor.org/rfc/rfc9110#name-methods" target="_blank">RFC 9110</a> for a
+comprehensive list of methods.
+- **Response Code**: Signifies the code returned by the server. For a detailed breakdown of all response codes, please consult <a href="https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml" target="_blank">IANA's documentation</a>.
+- **Request Headers**: Encompasses the headers forwarded to the server.
+- **Request Body**: Records any body accompanying the request sent to the server.
+- **Response Headers**: Captures the headers returned by the server.
+- **Response Body**: Documents any body provided by the server in its response.
+
+:::tip[Response Headers]
+
+Recording of response headers is subject to the server's permission. To enable the frontend to access specific headers,
+the server must include the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Expose-Headers" target="_blank">Access-Control-Expose-Headers</a> header in its response.
+
+:::
