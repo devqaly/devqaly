@@ -18,20 +18,20 @@ This feature is only possible to use when your backend is connected with your fr
 
 <Image src={databaseTransactionExample} alt="database transaction tab example"/>
 
-Here are the fields that we are currently tracing whenever a database transaction happens:
+Below are the fields we currently monitor during a database transaction:
 
-- **Source**: The source where the event is coming from. Usually this will be from the single backend service you might have, but you can also
-generate database transaction from other backend servers that you might have
-- **Execution time (milliseconds)**: The time it took to run your database transaction
-- **SQL**: The query that was used to query the database
-- **Network Request**: If this database transaction happened due to an HTTP request to your backend, you will be able
-to see which HTTP request have started this database transaction
+- **Source**: Indicates the origin of the event, typically from your primary backend service.
+However, it's worth noting that database transactions can also be initiated from other backend servers in your infrastructure.
+- **Execution time (milliseconds)**: Represents the duration taken to execute the database transaction.
+- **SQL**: Displays the query employed to interact with the database.
+- **Network Request**: If the database transaction resulted from an HTTP request to your backend, you can identify
+the specific HTTP request that triggered this transaction.
 
 
 :::tip[Easily find N+1 problems]
 
-You are able to easily find N+1 problems in your application by inspecting how many database transactions have happened
-during an HTTP request
+Effortlessly pinpoint <a href="https://planetscale.com/blog/what-is-n-1-query-problem-and-how-to-solve-it">N+1 problems</a>
+in your application by simply examining the number of database transactions triggered during an HTTP request.
 
 <Image src={databaseNPlusOneProblem} alt="database n+1 problem example" style="margin-top: 10px"/>
 

@@ -6,11 +6,10 @@ description: Understand which custom events we record and why
 import { Image } from 'astro:assets';
 import customEventTabExample from '../../../../assets/images/custom-event-tabs-example.png';
 
-Devqaly allows you to track many events that will help you debug your issues faster, but there are several other
-events that would be important to track for each specific application.
-
-Devqaly allows you to generate custom events that can be included in sessions when they are being recorded. If a session
-is not being recorded, the event will be discarded.
+Devqaly empowers you to swiftly debug issues by tracking a multitude of events. However, recognizing that every
+application has unique requirements, Devqaly goes a step further, enabling you to generate custom events seamlessly
+integrated into recorded sessions. In the absence of an active recording session, these custom events intelligently
+discard, ensuring flexibility and efficiency in your tracking capabilities.
 
 :::tip[Did you know?]
 
@@ -37,6 +36,6 @@ devqalySDK.createCustomEvent('paid-bill', eventPayload)
 
 This is the information that is recorded when a custom event is generated:
 
-- **Source**: The source where the event is coming from. The source can be either from the frontend or backend
-- **Event Name**: The name of the event
-- **Event Payload**: A JSON payload that was sent when the custom event was created
+- **Source**: The origin of the event, originating from either the frontend or backend.
+- **Event Name**: Identifies the unique name assigned to the event.
+- **Event Payload**: Encompasses the JSON payload transmitted at the creation of the custom event.
