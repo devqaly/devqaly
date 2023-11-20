@@ -65,6 +65,14 @@ class ProjectSessionControllerTest extends TestCase
             ->assertJsonPath('data.windowHeight', $sessionPayload['windowHeight']);
 
         $this->assertDatabaseCount((new Session())->getTable(), 1);
+        $this->assertDatabaseHas((new Session())->getTable(), [
+            'environment' => $sessionPayload['environment'],
+            'os' => $sessionPayload['os'],
+            'platform_name' => $sessionPayload['platformName'],
+            'version' => $sessionPayload['version'],
+            'window_width' => $sessionPayload['windowWidth'],
+            'window_height' => $sessionPayload['windowHeight'],
+        ]);
     }
 
     public function test_session_returns_correct_maximum_session_length_for_company_with_enterprise(): void
@@ -238,12 +246,15 @@ class ProjectSessionControllerTest extends TestCase
             ...SessionFactory::WINDOW_HEIGHTS['16:10'],
         ]);
 
+        $environment = $this->faker->randomElement(['production', 'staging', 'local', 'development']);
+
         return [
             'os' => $this->faker->randomElement(SessionFactory::OPERATING_SYSTEMS),
             'platformName' => $this->faker->randomElement(SessionFactory::PLATFORM_NAMES),
             'version' => $this->faker->numberBetween(100, 200) . '.0.0',
             'windowWidth' => $windowDimensions[0],
-            'windowHeight' => $windowDimensions[1]
+            'windowHeight' => $windowDimensions[1],
+            'environment' => $environment
         ];
     }
 }
