@@ -27,6 +27,7 @@ class SessionService
             'window_height' => $data->get('windowHeight'),
             'project_id' => $project->id,
             'created_by_id' => $user?->id,
+            'environment' => $data->get('environment'),
         ]);
 
         if ($this->shouldDeletePastSessions($project)) {

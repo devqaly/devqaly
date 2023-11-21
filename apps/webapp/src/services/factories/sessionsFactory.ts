@@ -3,6 +3,7 @@ import { SessionVideoStatusEnum } from '@/services/api/resources/session/constan
 
 export const sessionsCodecFactory = (): SessionCodec => ({
   id: '',
+  environment: 'staging',
   endedVideoConversionAt: null,
   windowWidth: 0,
   windowHeight: 0,

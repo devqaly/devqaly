@@ -33,7 +33,8 @@ class CreateSessionRequest extends FormRequest
             'platformName' => 'required|string|max:255',
             'version' => 'required|string|max:255',
             'windowWidth' => 'required|integer|min:1|max:65535',
-            'windowHeight' => 'required|integer|min:1|max:65535'
+            'windowHeight' => 'required|integer|min:1|max:65535',
+            'environment' => 'string|max:50'
         ];
     }
 }
