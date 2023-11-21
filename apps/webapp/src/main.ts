@@ -43,6 +43,7 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import Sidebar from 'primevue/sidebar'
 import ConfirmDialog from 'primevue/confirmdialog'
+import Tag from 'primevue/tag'
 
 export const app = createApp(App)
 
@@ -88,5 +89,6 @@ app.component(TabView.name, TabView)
 app.component(TabPanel.name, TabPanel)
 app.component(Sidebar.name, Sidebar)
 app.component(ConfirmDialog.name, ConfirmDialog)
+app.component(Tag.name, Tag)
 
 app.mount('#app')
