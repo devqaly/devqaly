@@ -30,6 +30,7 @@ const devqalySDK = new DevqalySDK({
   // You can obtain the project key by visiting your project's list at
   // https://app.devqaly.com/projects
   projectKey: '<project-key>',
+  environment: 'staging',
 })
 
 devqalySDK.showRecordingButton()
@@ -61,6 +62,7 @@ const isStaging = process.env === 'staging'
 if (isStaging) {
   const devqalySDK = new DevqalySDK({
     projectKey: '<project-key>',
+    environment: 'staging',
   })
 
   devqalySDK.showRecordingButton()
@@ -143,5 +145,6 @@ const devqaly = new DevqalySDK({
   apiUrl: 'https://api-devqaly.my-domain.com',
   frontendUrl: 'https://devqaly.my-domain.com',
   projectKey: '<project-key>',
+  environment: 'staging',
 })
 ```
