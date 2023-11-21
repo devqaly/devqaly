@@ -59,6 +59,7 @@ class ProjectSessionControllerTest extends TestCase
             ]), $sessionPayload)
             ->assertCreated()
             ->assertJsonPath('data.os', $sessionPayload['os'])
+            ->assertJsonPath('data.environment', $sessionPayload['environment'])
             ->assertJsonPath('data.platformName', $sessionPayload['platformName'])
             ->assertJsonPath('data.version', $sessionPayload['version'])
             ->assertJsonPath('data.windowWidth', $sessionPayload['windowWidth'])

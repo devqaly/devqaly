@@ -59,9 +59,16 @@ class SessionFactory extends Factory
             ...self::WINDOW_HEIGHTS['16:10'],
         ]);
 
+        $environment = $this->faker->randomElement([
+            'production',
+            'local',
+            'staging'
+        ]);
+
         return [
             'created_by_id' => User::factory(),
             'project_id' => Project::factory(),
+            'environment' => $environment,
             'window_width' => $windowDimensions[0],
             'window_height' => $windowDimensions[1],
             'os' => $this->faker->randomElement(self::OPERATING_SYSTEMS),
