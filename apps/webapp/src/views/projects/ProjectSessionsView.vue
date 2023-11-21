@@ -38,7 +38,12 @@
         header="Environment"
       >
         <template #body="{ data }: { data: SessionCodec }">
-          <Tag severity="primary">{{ data.environment }}</Tag>
+          <Tag
+            severity="primary"
+            v-if="data.environment"
+            >{{ data.environment }}</Tag
+          >
+          <span v-else>---</span>
         </template>
       </Column>
       <Column

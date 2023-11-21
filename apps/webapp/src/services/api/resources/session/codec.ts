@@ -5,7 +5,7 @@ import type { ProjectCodec } from '@/services/api/resources/project/codec'
 
 export interface SessionCodec {
   id: ResourceID
-  environment: 'staging' | 'local' | string
+  environment: 'staging' | 'local' | string | null
   endedVideoConversionAt: DateTime | null
   os: string | null
   windowHeight: number

@@ -38,7 +38,7 @@
         class="font-medium"
         data-cy="project-session-view__environment"
         v-if="!fetchingSession"
-        v-text="sessionStore.activeSession.environment"
+        v-text="sessionStore.activeSession.environment ?? '---'"
       />
       <Skeleton
         height="17px"
