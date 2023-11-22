@@ -33,6 +33,21 @@
     </div>
 
     <div class="mt-3">
+      <div class="text-gray-500">Environment</div>
+      <div
+        class="font-medium"
+        data-cy="project-session-view__environment"
+        v-if="!fetchingSession"
+        v-text="sessionStore.activeSession.environment ?? '---'"
+      />
+      <Skeleton
+        height="17px"
+        width="60px"
+        v-if="fetchingSession"
+      />
+    </div>
+
+    <div class="mt-3">
       <div class="text-gray-500">Version</div>
       <div
         class="font-medium"

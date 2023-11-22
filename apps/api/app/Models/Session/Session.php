@@ -33,6 +33,7 @@ class Session extends Model
         'video_size_in_megabytes',
         'window_height',
         'window_width',
+        'environment'
     ];
 
     protected $casts = [

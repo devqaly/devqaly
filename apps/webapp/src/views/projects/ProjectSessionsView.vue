@@ -34,6 +34,19 @@
         header="Version"
       />
       <Column
+        field="environment"
+        header="Environment"
+      >
+        <template #body="{ data }: { data: SessionCodec }">
+          <Tag
+            severity="primary"
+            v-if="data.environment"
+            >{{ data.environment }}</Tag
+          >
+          <span v-else>---</span>
+        </template>
+      </Column>
+      <Column
         field="videoStatus"
         header="Video Conversion"
       >
