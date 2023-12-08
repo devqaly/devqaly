@@ -76,6 +76,10 @@ class SessionService
 
     private function isEnterpriseCustomer(Company $company): bool
     {
+        if (config('devqaly.isSelfHosting')) {
+            return false;
+        }
+
         return $company->subscribedToProduct(config('stripe.products.enterprise.id'));
     }
 
