@@ -135,7 +135,7 @@
                   <a
                     href="https://github.com/devqaly/devqaly/issues/new?assignees=&labels=type%3A+bug&projects=&template=bug_report.yml&title=%F0%9F%90%9B+Bug+Report%3A+"
                     target="_blank"
-                    class="inline-block w-full py-2 mb-0 font-bold text-center text-black uppercase transition-all ease-in bg-white border-0 border-white rounded-lg shadow-soft-md bg-150 leading-pro text-xs hover:shadow-soft-2xl hover:scale-[1.03]"
+                    class="inline-block w-full py-2 mb-0 font-bold text-center text-black uppercase transition-all ease-in bg-white border-0 border-white rounded-lg shadow-soft-md bg-150 leading-pro text-xs hover:shadow-soft-2xl"
                   >
                     Report a bug
                   </a>
@@ -143,7 +143,7 @@
                   <a
                     href="https://docs.devqaly.com"
                     target="_blank"
-                    class="inline-block w-full py-2 mb-0 font-bold text-center text-black uppercase transition-all ease-in bg-white border-0 border-white rounded-lg shadow-soft-md bg-150 leading-pro text-xs hover:shadow-soft-2xl hover:scale-[1.03] mt-2"
+                    class="inline-block w-full py-2 mb-0 font-bold text-center text-black uppercase transition-all ease-in bg-white border-0 border-white rounded-lg shadow-soft-md bg-150 leading-pro text-xs hover:shadow-soft-2xl mt-2"
                   >
                     Documentation
                   </a>
@@ -197,19 +197,8 @@
 import { computed, ref } from 'vue'
 import Menu from 'primevue/menu'
 import { useAppStore } from '@/stores/app'
-import { usePrimeVue } from 'primevue/config'
 import type { CompanyCodec } from '@/services/api/resources/company/codec'
 import { useRouter } from 'vue-router'
-
-// @see: https://github.com/primefaces/primevue/issues/2454
-const $primevue = usePrimeVue()
-
-// @see: https://github.com/primefaces/primevue/issues/2454
-defineExpose({
-  $primevue
-})
-
-const menu = ref<InstanceType<typeof Menu>>()
 
 const router = useRouter()
 
