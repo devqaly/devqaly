@@ -3,21 +3,31 @@
     <div class="min-h-screen flex relative lg:static surface-ground">
       <div
         id="app-sidebar-1"
-        class="bg-bluegray-800 h-screen hidden lg:block flex-shrink-0 absolute lg:static left-0 top-0 z-1 select-none"
+        class="bg-slate-50 md:bg-transparent h-screen hidden lg:block flex-shrink-0 absolute lg:static left-0 top-0 z-1 select-none"
         style="width: 280px"
       >
         <div class="flex flex-column h-full">
-          <div class="flex align-items-center bg-bluegray-900 flex-shrink-0 justify-content-center">
+          <div class="flex items-center shrink-0 content-center flex-col">
             <Image
-              class="my-2"
-              src="/logo.svg"
+              class="mt-4 max-w-14rem"
+              src="/logo--dark.svg"
               alt="Logo"
               height="45"
             />
+
+            <div
+              class="bg-blue-500 px-2 py-1 text-white border-round-xl font-bold text-xs mb-4 mt-2"
+            >
+              beta
+            </div>
           </div>
 
+          <hr
+            class="h-px mt-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent mx-4"
+          />
+
           <div
-            class="mx-3 p-3 mt-2 border-round-md flex align-items-center text-white bg-bluegray-900 cursor-pointer"
+            class="mx-3 p-3 mt-4 border-round-md flex align-items-center text-white cursor-pointer bg-gradient-to-tr from-blue-500 to-blue-300"
             @click="onToggleCompaniesMenu"
           >
             <div
@@ -60,52 +70,101 @@
               <!--              </li>-->
               <li>
                 <router-link
-                  active-class="bg-bluegray-900 text-bluegray-50"
+                  active-class="bg-white shadow-lg"
                   :to="{
                     name: 'listCompanyMembers',
                     params: { companyId: appStore.activeCompany!.id }
                   }"
-                  v-ripple
-                  class="flex align-items-center cursor-pointer p-3 mt-1 hover:bg-bluegray-900 border-round text-bluegray-100 hover:text-bluegray-50 transition-duration-150 transition-colors p-ripple no-underline"
+                  class="flex align-items-center cursor-pointer p-3 border-round text-slate-500 transition-all mt-2"
                 >
-                  <i class="pi pi-users mr-2"></i>
+                  <i class="pi pi-users mr-2 bg-white p-2.5 border-round text-slate-800"></i>
                   <span class="font-medium">Members</span>
                 </router-link>
               </li>
               <li>
                 <router-link
-                  active-class="bg-bluegray-900 text-bluegray-50"
+                  active-class="bg-white shadow-lg"
                   :to="{ name: 'listProjects' }"
-                  v-ripple
-                  class="flex align-items-center cursor-pointer p-3 mt-1 hover:bg-bluegray-900 border-round text-bluegray-100 hover:text-bluegray-50 transition-duration-150 transition-colors p-ripple no-underline"
+                  class="flex align-items-center cursor-pointer p-3 border-round text-slate-500 transition-all"
                 >
-                  <i class="pi pi-server mr-2"></i>
+                  <i class="pi pi-server mr-2 bg-white p-2.5 border-round text-slate-800"></i>
                   <span class="font-medium">Projects</span>
                 </router-link>
               </li>
               <li>
                 <router-link
-                  active-class="bg-bluegray-900 text-bluegray-50"
+                  active-class="bg-white shadow-lg"
                   :to="{ name: 'projectCreate' }"
-                  v-ripple
-                  class="flex align-items-center cursor-pointer p-3 mt-1 hover:bg-bluegray-900 border-round text-bluegray-100 hover:text-bluegray-50 transition-duration-150 transition-colors p-ripple no-underline"
+                  class="flex align-items-center cursor-pointer p-3 border-round text-slate-500 transition-all"
                 >
-                  <i class="pi pi-plus mr-2"></i>
+                  <i class="pi pi-plus mr-2 bg-white p-2.5 border-round text-slate-800"></i>
                   <span class="font-medium">Create Project</span>
                 </router-link>
               </li>
             </ul>
           </div>
+
+          <div class="mt-auto">
+            <div class="relative break-words rounded-2xl mx-3 block text-white overflow-hidden">
+              <div
+                class="absolute bg-center bg-cover w-full h-full rounded-2xl -z-10 brightness-75"
+                style="background-image: url('/images/backgrounds/topography.png')"
+              />
+
+              <div class="p-2">
+                <div class="bg-white p-1 w-fit rounded-lg flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    class="w-8 h-8 stroke-slate-500"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"
+                    />
+                  </svg>
+                </div>
+
+                <div class="mt-3">
+                  <div class="font-semibold text-2xl">Need Help?</div>
+                  <div class="font-semibold text-xs mb-4">We are here to help you</div>
+
+                  <a
+                    href="https://github.com/devqaly/devqaly/issues/new?assignees=&labels=type%3A+bug&projects=&template=bug_report.yml&title=%F0%9F%90%9B+Bug+Report%3A+"
+                    target="_blank"
+                    class="inline-block w-full py-2 mb-0 font-bold text-center text-black uppercase transition-all ease-in bg-white border-0 border-white rounded-lg shadow-soft-md bg-150 leading-pro text-xs hover:shadow-soft-2xl hover:scale-[1.03]"
+                  >
+                    Report a bug
+                  </a>
+
+                  <a
+                    href="https://docs.devqaly.com"
+                    target="_blank"
+                    class="inline-block w-full py-2 mb-0 font-bold text-center text-black uppercase transition-all ease-in bg-white border-0 border-white rounded-lg shadow-soft-md bg-150 leading-pro text-xs hover:shadow-soft-2xl hover:scale-[1.03] mt-2"
+                  >
+                    Documentation
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <router-link
+              :to="{ name: 'authLogout' }"
+              class="mx-4 bg-white flex my-2 justify-center border-round py-2 font-bold text-xs"
+            >
+              Logout
+            </router-link>
+          </div>
         </div>
       </div>
       <div class="min-h-screen flex flex-column relative flex-auto">
         <div
-          class="flex justify-content-between align-items-center px-5 surface-0 border-bottom-1 surface-border relative lg:static shadow-2"
+          class="flex justify-content-between align-items-center px-5 bg-transparent relative lg:static md:hidden"
           style="height: 60px"
         >
-          <div class="bg-blue-400 px-2 py-1 text-white border-round-xl font-bold text-xs">
-            We are currently in beta testing
-          </div>
           <div class="flex">
             <a
               v-ripple
