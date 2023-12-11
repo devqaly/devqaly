@@ -28,6 +28,7 @@ import { DevqalySDK } from '@devqaly/browser'
     <Message :closable="false">
       You can
       <a
+        class="underline"
         href="https://docs.devqaly.com/getting-started/quickstart/"
         target="_blank"
         >read the docs</a
