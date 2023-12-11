@@ -9,7 +9,7 @@
         <div class="flex flex-column h-full">
           <div class="flex items-center shrink-0 content-center flex-col">
             <Image
-              class="mt-4 max-w-14rem"
+              class="mt-4 max-w-10rem"
               src="/logo--dark.svg"
               alt="Logo"
               height="45"
