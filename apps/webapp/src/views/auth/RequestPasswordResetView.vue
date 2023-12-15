@@ -1,16 +1,16 @@
 <template>
-  <div class="flex flex-column h-screen">
-    <div class="flex-shrink-1 flex-grow-0 border-bottom-1 border-200 px-6 py-2">
+  <div class="flex flex-col h-screen">
+    <div class="shrink grow-0 border-b border-gray-300 px-6 py-2">
       <Image
         src="/logo--dark.svg"
         alt="Logo"
-        width="250"
+        width="120"
       />
     </div>
 
-    <div class="flex flex-grow-1 flex-shrink-0">
+    <div class="flex grow shrink-0">
       <div
-        class="surface-section w-full lg:w-6 p-6 md:p-8"
+        class="w-full lg:w-1/2 p-6 md:p-8"
         style="
           display: grid;
           align-content: center;
@@ -19,7 +19,7 @@
         "
       >
         <div class="mb-5">
-          <div class="text-900 text-3xl font-medium mb-3">Reset Password</div>
+          <div class="text-3xl font-medium mb-3">Reset Password</div>
 
           <div
             v-if="linkRequested"
@@ -59,11 +59,11 @@
               data-cy="request-password-reset__submit"
               :loading="isRequestingPasswordLink"
               label="Request Link"
-              class="w-full mt-4"
+              class="w-full !mt-4"
               type="submit"
             ></Button>
 
-            <div class="mx-auto block text-center mt-2 text-500">
+            <div class="mx-auto block text-center mt-2 text-slate-400">
               <div class="mt-4">
                 Already Have An Account?
                 <router-link
@@ -88,7 +88,7 @@
         </div>
       </div>
       <div
-        class="hidden lg:block w-6 bg-no-repeat bg-cover"
+        class="hidden lg:block w-1/2 bg-no-repeat bg-cover"
         style="
           background-image: url('https://blocks.primeng.org/assets/images/blocks/signin/signin.jpg');
         "
