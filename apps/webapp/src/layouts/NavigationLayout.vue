@@ -1,23 +1,21 @@
 <template>
   <div>
-    <div class="min-h-screen flex relative lg:static surface-ground">
+    <div class="min-h-screen flex relative lg:static bg-slate-100">
       <div
         id="app-sidebar-1"
-        class="bg-slate-50 md:bg-transparent h-screen hidden lg:block flex-shrink-0 absolute lg:static left-0 top-0 z-1 select-none"
+        class="bg-slate-50 md:bg-transparent h-screen hidden lg:block shrink-0 absolute lg:static left-0 top-0 z-[1] select-none shadow-2xl md:shadow-none"
         style="width: 280px"
       >
-        <div class="flex flex-column h-full">
+        <div class="flex flex-col h-full">
           <div class="flex items-center shrink-0 content-center flex-col">
             <Image
-              class="mt-4 max-w-10rem"
+              class="mt-4 max-w-[10rem]"
               src="/logo--dark.svg"
               alt="Logo"
               height="45"
             />
 
-            <div
-              class="bg-blue-500 px-2 py-1 text-white border-round-xl font-bold text-xs mb-4 mt-2"
-            >
+            <div class="bg-blue-500 px-2 py-1 text-white rounded-md-xl font-bold text-xs mb-4 mt-2">
               beta
             </div>
           </div>
@@ -27,11 +25,11 @@
           />
 
           <div
-            class="mx-3 p-3 mt-4 border-round-md flex align-items-center text-white cursor-pointer bg-gradient-to-tr from-blue-500 to-blue-300"
+            class="mx-3 p-3 mt-4 rounded-md flex items-center text-white cursor-pointer bg-gradient-to-tr from-blue-500 to-blue-300"
             @click="onToggleCompaniesMenu"
           >
             <div
-              class="flex flex-column flex-grow-1"
+              class="flex flex-col grow"
               aria-controls="companies-menu"
             >
               <div
@@ -52,17 +50,17 @@
               :popup="true"
             />
 
-            <div class="flex-grow-0"><i class="pi pi-chevron-down"></i></div>
+            <div class="grow-0"><i class="pi pi-chevron-down"></i></div>
           </div>
 
           <div class="overflow-y-auto">
-            <ul class="list-none px-3 pt-0">
+            <ul class="list-none px-3 py-5">
               <!--              <li>-->
               <!--                <router-link-->
               <!--                  active-class="bg-bluegray-900 text-bluegray-50"-->
               <!--                  :to="{ name: 'dashboard' }"-->
               <!--                  v-ripple-->
-              <!--                  class="flex align-items-center cursor-pointer p-3 mt-1 hover:bg-bluegray-900 border-round text-bluegray-100 hover:text-bluegray-50 transition-duration-150 transition-colors p-ripple no-underline"-->
+              <!--                  class="flex items-center cursor-pointer p-3 mt-1 hover:bg-bluegray-900 rounded-md text-bluegray-100 hover:text-bluegray-50 transition-duration-150 transition-colors p-ripple no-underline"-->
               <!--                >-->
               <!--                  <i class="pi pi-home mr-2"></i>-->
               <!--                  <span class="font-medium">Dashboard</span>-->
@@ -75,9 +73,9 @@
                     name: 'listCompanyMembers',
                     params: { companyId: appStore.activeCompany!.id }
                   }"
-                  class="flex align-items-center cursor-pointer p-3 border-round text-slate-500 transition-all mt-2"
+                  class="flex items-center cursor-pointer p-4 rounded-md text-slate-500 transition-all mt-2"
                 >
-                  <i class="pi pi-users mr-2 bg-white p-2.5 border-round text-slate-800"></i>
+                  <i class="pi pi-users mr-2 bg-white p-2.5 rounded-md text-slate-800"></i>
                   <span class="font-medium">Members</span>
                 </router-link>
               </li>
@@ -85,9 +83,9 @@
                 <router-link
                   active-class="bg-white shadow-lg"
                   :to="{ name: 'listProjects' }"
-                  class="flex align-items-center cursor-pointer p-3 border-round text-slate-500 transition-all"
+                  class="flex items-center cursor-pointer p-4 rounded-md text-slate-500 transition-all"
                 >
-                  <i class="pi pi-server mr-2 bg-white p-2.5 border-round text-slate-800"></i>
+                  <i class="pi pi-server mr-2 bg-white p-2.5 rounded-md text-slate-800"></i>
                   <span class="font-medium">Projects</span>
                 </router-link>
               </li>
@@ -95,9 +93,9 @@
                 <router-link
                   active-class="bg-white shadow-lg"
                   :to="{ name: 'projectCreate' }"
-                  class="flex align-items-center cursor-pointer p-3 border-round text-slate-500 transition-all"
+                  class="flex items-center cursor-pointer p-4 rounded-md text-slate-500 transition-all"
                 >
-                  <i class="pi pi-plus mr-2 bg-white p-2.5 border-round text-slate-800"></i>
+                  <i class="pi pi-plus mr-2 bg-white p-2.5 rounded-md text-slate-800"></i>
                   <span class="font-medium">Create Project</span>
                 </router-link>
               </li>
@@ -153,22 +151,22 @@
 
             <router-link
               :to="{ name: 'authLogout' }"
-              class="mx-4 bg-white flex my-2 justify-center border-round py-2 font-bold text-xs"
+              class="mx-4 bg-white flex my-2 justify-center rounded-md py-2 font-bold text-xs shadow-sm"
             >
               Logout
             </router-link>
           </div>
         </div>
       </div>
-      <div class="min-h-screen flex flex-column relative flex-auto">
+      <div class="min-h-screen flex flex-col relative flex-auto">
         <div
-          class="flex justify-content-between align-items-center px-5 bg-transparent relative lg:static md:hidden"
+          class="flex content-between items-center px-5 bg-transparent relative lg:static md:hidden"
           style="height: 60px"
         >
           <div class="flex">
             <a
               v-ripple
-              class="cursor-pointer block lg:hidden text-700 mr-3 mt-1 p-ripple"
+              class="cursor-pointer block lg:hidden text-slate-700 mr-3 mt-1 p-ripple"
               v-styleclass="{
                 selector: '#app-sidebar-1',
                 enterClass: 'hidden',
@@ -183,7 +181,7 @@
           </div>
         </div>
         <div
-          class="flex flex-column flex-auto"
+          class="flex flex-col flex-auto"
           style="height: 80vh; overflow-y: scroll"
         >
           <router-view />
