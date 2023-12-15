@@ -1,10 +1,10 @@
 <template>
   <div class="p-5">
     <div class="text-3xl font-medium text-900">Members</div>
-    <div class="font-medium text-500 mb-3">See the members that are part of this company</div>
+    <div class="font-medium text-slate-500 mb-4">See the members that are part of this company</div>
 
-    <div class="surface-card shadow-2 border-round-lg">
-      <div class="p-4 flex justify-content-between align-items-center">
+    <div class="bg-white shadow-2 rounded-lg">
+      <div class="p-5 flex justify-between items-center">
         <FiltersSection
           :filters="filters"
           @update:filters="onFilterUpdate"
