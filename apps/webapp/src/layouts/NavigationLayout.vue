@@ -15,7 +15,7 @@
               height="45"
             />
 
-            <div class="bg-blue-500 px-2 py-1 text-white rounded-md-xl font-bold text-xs mb-4 mt-2">
+            <div class="bg-blue-500 px-2 py-1 text-white rounded-full font-bold text-xs mb-4 mt-2">
               beta
             </div>
           </div>

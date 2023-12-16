@@ -1,9 +1,9 @@
 <template>
   <div class="p-5">
-    <div class="text-3xl font-medium text-900">Members</div>
+    <div class="text-3xl font-medium">Members</div>
     <div class="font-medium text-slate-500 mb-4">See the members that are part of this company</div>
 
-    <div class="bg-white shadow-2 rounded-lg">
+    <div class="bg-white shadow-md rounded-lg">
       <div class="p-5 flex justify-between items-center">
         <FiltersSection
           :filters="filters"
