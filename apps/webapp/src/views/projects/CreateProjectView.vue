@@ -1,7 +1,7 @@
 <template>
   <div class="p-5">
-    <div class="text-3xl font-medium text-900">Create Project</div>
-    <div class="font-medium text-500 mb-3">
+    <div class="text-3xl font-medium">Create Project</div>
+    <div class="font-medium text-slate-500 mb-4">
       A project allows you to group your sessions in a logical manner and collaborate with
       colleagues
     </div>
@@ -10,13 +10,8 @@
       :validation-schema="validationSchema"
       @submit="onSubmit"
     >
-      <div class="surface-card p-4 shadow-2 border-round">
-        <div class="flex w-full relative align-items-center justify-content-start mb-4 px-2">
-          <div class="border-top-1 surface-border top-50 left-0 absolute w-full"></div>
-          <div class="px-2 z-1 surface-0 flex align-items-center">
-            <span class="text-900 font-medium">General Information</span>
-          </div>
-        </div>
+      <div class="bg-white p-4 shadow-md rounded-lg">
+        <div class="font-medium mb-5">General Information</div>
 
         <Field
           name="title"
@@ -40,10 +35,10 @@
           >
         </Field>
 
-        <div class="flex justify-content-end">
+        <div class="flex justify-end">
           <Button
             data-cy="create-project-view__submit"
-            class="mt-4"
+            class="!mt-4"
             :loading="isCreatingProject"
             icon="pi pi-chevron-right"
             icon-pos="right"

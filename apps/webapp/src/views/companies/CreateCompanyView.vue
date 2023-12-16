@@ -11,7 +11,7 @@
       @submit="onSubmit"
     >
       <div class="bg-white shadow-md rounded-lg p-5">
-        <div class="text-900 font-medium mb-5">General Information</div>
+        <div class="font-medium mb-5">General Information</div>
 
         <Field
           name="name"

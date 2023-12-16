@@ -109,7 +109,7 @@
                 style="background-image: url('/images/backgrounds/topography.png')"
               />
 
-              <div class="p-2">
+              <div class="p-3">
                 <div class="bg-white p-1 w-fit rounded-lg flex items-center justify-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
