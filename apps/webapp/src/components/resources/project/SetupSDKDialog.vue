@@ -17,7 +17,7 @@
     <strong>main.js</strong>):
 
     <pre
-      class="bg-black-alpha-90 text-white p-4 border-round-md"
+      class="bg-slate-500 text-white p-5 rounded-md"
       style="tab-size: 6; white-space-collapse: preserve-breaks"
     >
         <!--   prettier-ignore -->

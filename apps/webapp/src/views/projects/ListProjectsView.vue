@@ -1,16 +1,18 @@
 <template>
   <div class="p-5">
-    <div class="text-3xl font-medium text-900">My Projects</div>
-    <div class="font-medium text-500 mb-3">The projects you are a member of will show up here</div>
+    <div class="text-3xl font-medium">My Projects</div>
+    <div class="font-medium text-slate-500 mb-4">
+      The projects you are a member of will show up here
+    </div>
 
     <SetupSDKDialog
       :project="activeProjectForIntegration"
       @close="onIntegrationDetailsModalCLose"
     />
 
-    <div class="surface-card shadow-2 border-round-lg">
+    <div class="bg-white shadow-lg rounded-lg">
       <ProjectFilters
-        class="p-4"
+        class="p-5"
         :title="filters.title ?? ''"
         @update:filters="onFilterUpdate"
       />

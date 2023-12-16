@@ -10,7 +10,7 @@
       :validation-schema="validationSchema"
       @submit="onSubmit"
     >
-      <div class="bg-white p-4 shadow-md rounded-lg">
+      <div class="bg-white p-5 shadow-md rounded-lg">
         <div class="font-medium mb-5">General Information</div>
 
         <Field
