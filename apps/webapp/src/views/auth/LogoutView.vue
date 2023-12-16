@@ -1,8 +1,8 @@
 <template>
-  <div class="h-screen flex justify-content-center align-items-center surface-ground">
-    <div class="surface-card p-4 shadow-2 border-round w-full lg:w-4">
+  <div class="h-screen flex justify-center items-center bg-slate-100">
+    <div class="bg-white p-4 shadow-md rounded-lg w-full lg:max-w-[450px]">
       <div class="text-center mb-4">Logging you out</div>
-      <ProgressSpinner class="block" />
+      <ProgressSpinner class="!block" />
     </div>
   </div>
 </template>
