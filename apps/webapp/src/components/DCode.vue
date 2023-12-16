@@ -1,9 +1,11 @@
 <template>
   <pre
-    class="bg-slate-500 text-white p-4 rounded-md"
+    class="text-white p-1 rounded-md"
     style="tab-size: 6; white-space-collapse: preserve-breaks"
   >
+    <code>
     <slot></slot>
+    </code>
   </pre>
 </template>
 
@@ -35,7 +37,7 @@ pre {
   position: relative;
   margin: 0.5em 0;
   box-shadow: -1px 0px 0px 0px #358ccb, 0px 0px 0px 1px #dfdfdf;
-  border-left: 10px solid #358ccb;
+  border-left: 2px solid var(--blue-500);
   background-color: #fdfdfd;
   background-image: linear-gradient(transparent 50%, rgba(69, 142, 209, 0.04) 50%);
   background-size: 3em 3em;
@@ -52,3 +54,4 @@ code[class*='language'] {
   overflow: auto;
 }
 </style>
+<script setup></script>
