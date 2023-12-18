@@ -68,7 +68,7 @@
       </div>
 
       <div
-        class="max-w-full max-h-5rem overflow-auto"
+        class="max-w-full max-h-[5rem] overflow-auto"
         data-cy="project-session-view__active-event--network-request-headers"
         v-else
       >
@@ -85,7 +85,7 @@
     <div class="text-gray-500 mt-2">Request Body</div>
     <DCopyble :content="props.event.event.requestBody ?? '<no-body>'">
       <div
-        class="font-medium max-w-full max-h-5rem overflow-auto"
+        class="font-medium max-w-full max-h-[5rem] overflow-auto"
         style="word-break: break-all"
         data-cy="project-session-view__active-event--network-request-body"
         v-text="props.event.event.requestBody ?? '<no-body>'"
@@ -102,7 +102,7 @@
       </div>
 
       <div
-        class="max-w-full max-h-5rem overflow-auto"
+        class="max-w-full max-h-[5rem] overflow-auto"
         data-cy="project-session-view__active-event--network-response-headers"
         v-else
       >
@@ -119,7 +119,7 @@
     <div class="text-gray-500 mt-2">Response Body</div>
     <DCopyble :content="props.event.event.responseBody ?? '<no-body>'">
       <div
-        class="font-medium max-w-full max-h-5rem overflow-auto"
+        class="font-medium max-w-full max-h-[5rem] overflow-auto"
         data-cy="project-session-view__active-event--network-response-body"
         style="word-break: break-all"
         v-text="props.event.event.responseBody ?? '<no-body>'"

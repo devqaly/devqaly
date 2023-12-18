@@ -1,6 +1,6 @@
 <template>
   <section
-    class="flex align-items-start flex-column border-round-md border-1 border-gray-300 surface-ground p-3 h-full"
+    class="flex items-start flex-col rounded-lg border border-gray-300 bg-slate-100 p-3 h-full"
   >
     <div>
       <div class="text-gray-500">OS</div>
@@ -86,7 +86,7 @@
         class="font-medium"
         v-if="!fetchingSession"
         data-cy="project-session-view__created-by"
-        v-text="sessionStore.activeSession.createdBy?.fullName"
+        v-text="sessionStore.activeSession.createdBy?.fullName ?? 'Unassigned'"
       />
       <Skeleton
         height="17px"

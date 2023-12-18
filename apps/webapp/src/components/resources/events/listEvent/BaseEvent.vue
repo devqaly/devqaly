@@ -1,11 +1,11 @@
 <template>
   <div
-    class="grid border-bottom-1 border-gray-300 max-w-full align-items-center px-2 py-1"
+    class="flex border-b border-gray-300 max-w-full items-center px-2 py-1 gap-2"
     style="margin: 0"
     :data-event-id="event.id"
   >
     <div
-      class="col-fixed cursor-pointer p-0"
+      class="shrink cursor-pointer p-0"
       style="width: fit-content"
       @click="onEventClick"
     >
@@ -13,14 +13,14 @@
     </div>
 
     <div
-      class="col"
+      class="grow basis-0"
       style="word-break: break-all"
     >
       <slot name="default" />
     </div>
 
     <div
-      class="col-fixed p-0 align-self-center"
+      class="shrink p-0"
       style="width: fit-content"
     >
       <Button

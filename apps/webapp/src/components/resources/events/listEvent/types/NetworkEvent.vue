@@ -8,7 +8,7 @@
   >
     <Badge
       :value="event.event.method"
-      :pt="{ root: { class: 'border-round-lg' } }"
+      :pt="{ root: { class: 'rounded-lg' } }"
     />
     {{ event.event.url }}
   </BaseEvent>

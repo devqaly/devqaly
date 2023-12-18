@@ -2,20 +2,20 @@
   <div class="pl-5 pr-5 pb-5 mt-4">
     <ActiveNetworkRequestResources />
 
-    <div class="grid">
-      <div class="col-12 md:col-2">
+    <div class="grid grid-cols-12 gap-5">
+      <div class="col-span-2">
         <SessionSummary
           class="mb-5"
           :fetching-session="isLoadingSession"
         />
       </div>
-      <div class="col-12 md:col-7">
+      <div class="col-span-7">
         <div v-if="shouldShowVideoColumn">
           <VideoSection @update:videoTime="onVideoUpdate" />
         </div>
 
         <div
-          class="flex flex-column align-items-center justify-content-center"
+          class="flex flex-col items-center justify-center"
           data-cy="project-session-view__video-being-converted-info"
           v-else
         >
@@ -30,7 +30,7 @@
           </div>
         </div>
       </div>
-      <div class="col-12 md:col-3">
+      <div class="col-span-3">
         <LivePreviewSection />
       </div>
     </div>

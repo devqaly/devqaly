@@ -108,7 +108,7 @@ export const EventsSection = defineComponent({
       return h(
         TabView,
         {
-          pt: { panelContainer: { class: 'p-0' } }
+          pt: { panelContainer: { class: '!p-0' } }
         },
         () =>
           tabs.map((tab) =>
@@ -117,14 +117,14 @@ export const EventsSection = defineComponent({
               {},
               {
                 default: () =>
-                  h('div', { class: 'grid' }, [
+                  h('div', { class: 'grid grid-cols-12 gap-5' }, [
                     h(
                       'div',
                       {
                         class: {
                           'max-h-30rem overflow-y-auto': true,
-                          'col-8': sessionStore.activeEventDetails !== null,
-                          'col-12': sessionStore.activeEventDetails === null
+                          'col-span-8': sessionStore.activeEventDetails !== null,
+                          'col-span-12': sessionStore.activeEventDetails === null
                         }
                       },
                       h(COMPONENTS[tab.type], {})
@@ -132,7 +132,7 @@ export const EventsSection = defineComponent({
                     sessionStore.activeEventDetails &&
                       h(
                         'div',
-                        { class: 'col-4 mt-2' },
+                        { class: 'col-span-4 mt-2' },
                         h(ActiveEventDetail, { event: sessionStore.activeEventDetails })
                       )
                   ]),
