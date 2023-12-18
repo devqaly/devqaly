@@ -32,7 +32,7 @@ class SessionControllerTest extends TestCase
             ->assertJsonPath('data.id', $session->id);
     }
 
-    public function test_non_company_member_cant_see_session(): void
+    public function test_non_company_member_cant_see_full_session(): void
     {
         $session = Session::factory()->create();
 
@@ -44,7 +44,24 @@ class SessionControllerTest extends TestCase
             ->getJson(route('sessions.show', [
                 'session' => $session
             ]))
-            ->assertForbidden();
+            ->assertOk()
+            ->assertJsonPath('data.id', $session->id)
+            ->assertJsonPath('data.project.id', $session->project->id)
+            ->assertJsonMissingPath('data.videoUrl');
+    }
+
+    public function test_guest_user_can_see_session(): void
+    {
+        $session = Session::factory()->create();
+
+        $this
+            ->getJson(route('sessions.show', [
+                'session' => $session
+            ]))
+            ->assertOk()
+            ->assertJsonPath('data.id', $session->id)
+            ->assertJsonPath('data.project.id', $session->project->id)
+            ->assertJsonMissingPath('data.videoUrl');
     }
 
     public function test_company_member_can_assign_session_to_him(): void

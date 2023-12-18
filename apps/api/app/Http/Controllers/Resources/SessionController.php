@@ -12,6 +12,7 @@ use App\Models\Session\Session;
 use App\services\Resources\SessionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use JetBrains\PhpStorm\NoReturn;
 
 class SessionController extends Controller
@@ -26,13 +27,27 @@ class SessionController extends Controller
 
     }
 
-    public function show(Session $session, Request $request): SessionResource
+    public function show(Session $session, Request $request): SessionResource|JsonResponse
     {
-        $this->authorize('view', $session);
+        $user = auth('sanctum')->user();
 
-        $session->load('createdBy');
+        if (!$user) {
+            return response()->json(['data' => [
+                ...$session->only('id'),
+                'project' => $session->project->only('id')
+            ]]);
+        }
 
-        return new SessionResource($session);
+        if ($user->can('view', $session)) {
+            $session->load('createdBy');
+
+            return new SessionResource($session);
+        }
+
+        return response()->json(['data' => [
+            ...$session->only('id'),
+            'project' => $session->project->only('id')
+        ]]);
     }
 
     public function update(Request $request, string $id)

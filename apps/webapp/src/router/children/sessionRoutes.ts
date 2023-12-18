@@ -6,7 +6,7 @@ export const sessionRoutes: RouteRecordRaw[] = [
     name: 'assignSessionToLoggedUser',
     component: () => import('@/views/sessions/AssignSessionCurrentlyLoggedUserView.vue'),
     meta: {
-      requiresAuth: true
+      requiresAuth: false
     }
   }
 ]
