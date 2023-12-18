@@ -1,9 +1,9 @@
 <template>
-  <section class="border-round-md border-1 surface-border">
-    <div class="p-3 border-bottom-1 surface-border surface-ground">Client Security</div>
-    <div class="p-2">
-      <div class="flex align-items-center justify-content-between">
-        <div class="col-6">
+  <section class="rounded-md border border-slate-200">
+    <div class="p-3 border-b bg-slate-100">Client Security</div>
+    <div class="p-3">
+      <div class="flex items-center justify-between">
+        <div class="w-1/2">
           <span class="font-medium">Security Token</span>
           <div class="text-gray-500 text-xs mt-1">
             The security token is used to identify your backend when sending events to Devqaly's
@@ -16,7 +16,7 @@
             </div>
           </div>
         </div>
-        <div class="col-6">
+        <div class="w-1/2">
           <div class="p-inputgroup flex-1">
             <ConfirmDialog
               class="max-w-29rem"
@@ -74,7 +74,7 @@ const toast = useToast()
 async function onRefreshSecurityTokenClick() {
   confirm.require({
     message:
-      'Revoking the current security token will not allow events created by your backend to be created anymore UNTIL you update the security token in your codebase. Are you sure?',
+      'Revoking the current security token will not allow events created by your backend to be created anymore until you update the security token in your codebase. Are you sure?',
     header: 'Destructive action',
     acceptLabel: 'Yes, revoke current security token',
     accept: refreshSecurityToken,

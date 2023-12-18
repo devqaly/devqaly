@@ -2,11 +2,11 @@
   <div>
     <div
       v-if="shouldShowSubscriptionWarning()"
-      class="surface-card border-round shadow-2 p-4 flex justify-content-between flex-column lg:flex-row align-items-center m-4 no-underline"
+      class="bg-white rounded-md shadow-md p-5 flex justify-between flex-col lg:flex-row items-center m-5 no-underline"
     >
       <div>
-        <div class="text-900 font-medium mb-3 text-xl">Free Subscription</div>
-        <p class="mt-0 mb-4 lg:mb-0 p-0 line-height-3">
+        <div class="font-semibold mb-3 text-xl">Free Subscription</div>
+        <p class="mt-0 mb-4 lg:mb-0 p-0">
           You currently have a free subscription for this company. You will be able to have active
           50 sessions for each project. On the 51st session, the first one will be archived.
         </p>
@@ -17,18 +17,17 @@
           label="Request Higher Limit"
           icon="pi pi-check"
           class="ml-0 lg:ml-5"
-        ></Button>
+        />
       </a>
     </div>
-    <div
-      class="surface-section overflow-x-auto border-bottom-1 surface-border m-4 border-round-lg shadow-2"
-    >
+    <div class="bg-white overflow-x-auto m-5 rounded-md shadow-md">
       <div class="mx-4 my-2">
-        <div class="flex justify-content-between align-items-center">
-          <div class="font-medium text-3xl mt-2 mb-1">
+        <div class="flex justify-between items-center">
+          <div class="font-medium text-3xl mt-3 mb-2">
             <Skeleton
               v-if="isFetchingActiveProject"
-              width="50px"
+              width="90px"
+              height="32px"
             />
 
             <span

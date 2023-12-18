@@ -17,17 +17,19 @@
     <strong>main.js</strong>):
 
     <pre
-      class="bg-black-alpha-90 text-white p-4 border-round-md"
+      class="bg-slate-500 text-white rounded-md"
       style="tab-size: 6; white-space-collapse: preserve-breaks"
     >
-        <!--   prettier-ignore -->
-        import { DevqalySDK } from '@devqaly/browser'
+      <code>
+    <!--   prettier-ignore -->
+    import { DevqalySDK } from '@devqaly/browser'
 
-        const devqaly = new DevqalySDK({
-              projectKey: '{{project ? project.projectKey : ''}}'
-        })
+    const devqaly = new DevqalySDK({
+          projectKey: '{{project ? project.projectKey : ''}}'
+    })
 
-        devqaly.showRecordingButton()
+    devqaly.showRecordingButton()
+      </code>
     </pre>
   </Dialog>
 </template>
