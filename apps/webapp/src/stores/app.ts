@@ -16,7 +16,6 @@ import type { GetLoggedUserCompaniesParameters } from '@/services/api/resources/
 import type { AxiosError } from 'axios'
 import { isAxiosError } from 'axios'
 import { StatusCodes } from 'http-status-codes'
-import { useRouter } from 'vue-router'
 
 interface AppStoreState {
   isAuthenticated: boolean
