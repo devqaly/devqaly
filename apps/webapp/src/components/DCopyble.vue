@@ -1,15 +1,15 @@
 <template>
   <div
-    class="p-2 border-round-sm text-white relative py-2"
+    class="p-2 rounded-md text-white !relative py-2"
     style="background-color: rgba(37, 42, 55) !important; min-height: 32px"
   >
     <Button
       style="top: 5px; right: 5px"
-      class="absolute"
+      class="!absolute right-0"
       severity="secondary"
       text
       icon="pi pi-copy"
-      icon-class="text-black-alpha-90"
+      icon-class="text-black"
       v-ripple
       rounded
       :pt="{

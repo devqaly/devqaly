@@ -1,7 +1,7 @@
 <template>
   <div class="p-4">
     <GeneralSettingsSection />
-    <ClientSecuritySection class="mt-4" />
+    <ClientSecuritySection class="mt-5" />
   </div>
 </template>
 

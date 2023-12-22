@@ -2,10 +2,10 @@
   <section
     data-cy="project-session-view__live-preview-section"
     ref="sectionContainer"
-    class="border-round-md border-1 border-gray-300 h-full flex flex-column"
+    class="rounded-lg border border-gray-300 h-full flex flex-col"
   >
     <div
-      class="surface-ground p-3 flex-shrink-1"
+      class="bg-slate-100 p-3 shrink"
       ref="titleContainer"
     >
       <div class="font-medium text-2xl">Live Preview</div>
@@ -17,7 +17,7 @@
     <ListEvents
       v-if="liveEventContainerHeight !== null"
       :style="{ height: `${liveEventContainerHeight}px` }"
-      class="flex-grow-1 overflow-y-auto"
+      class="grow overflow-y-auto"
       :session="sessionStore.activeSession"
       :events="sessionStore.liveEvents"
       :height="liveEventContainerHeight!"

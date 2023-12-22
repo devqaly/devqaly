@@ -6,11 +6,13 @@
   >
     <template v-if="sessionStore.activeNetworkRequest">
       <h2
+        class="font-semibold text-xl"
         v-text="sessionStore.activeNetworkRequest.event.url"
         style="word-break: break-all"
       />
 
       <h4
+        class="mt-2"
         data-cy="project-session-view__active-network-request-sidebar--db-transaction-title"
         :data-total-number-database-transactions="databaseTransactionsRequest.meta.total"
       >
@@ -45,6 +47,7 @@
       >
 
       <h4
+        class="mt-2"
         data-cy="project-session-view__active-network-request-sidebar--logs-title"
         :data-total-number-logs="logsRequest.meta.total"
       >

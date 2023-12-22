@@ -1,20 +1,20 @@
 <template>
-  <section class="border-round-md border-1 surface-border">
-    <div class="p-3 border-bottom-1 surface-border surface-ground">General Settings</div>
+  <section class="rounded-md border border-slate-200">
+    <div class="p-3 border-b bg-slate-100">General Settings</div>
 
-    <div class="p-2">
-      <div class="flex align-items-center justify-content-between">
-        <div class="col-6">
+    <div class="p-3">
+      <div class="flex items-center justify-between">
+        <div class="w-1/2">
           <span class="font-medium">Project Name</span>
           <div class="text-gray-500 text-xs mt-1">
             The current name of the project.
             <div class="font-bold">Currently it is not possible to change the name.</div>
           </div>
         </div>
-        <div class="col-6">
+        <div class="w-1/2">
           <InputText
             data-cy="project-settings-page__project-title"
-            class="surface-ground w-full"
+            class="!bg-slate-100 w-full"
             :value="projectStore.activeProject!.title"
             type="text"
             readonly
@@ -24,15 +24,15 @@
       </div>
     </div>
 
-    <div class="p-2 border-top-1 surface-border">
-      <div class="flex align-items-center justify-content-between">
-        <div class="col-6">
+    <div class="p-3 border-t border-slate-200">
+      <div class="flex items-center justify-between">
+        <div class="w-1/2">
           <span class="font-medium">Project Key</span>
           <div class="text-gray-500 text-xs mt-1">
             Use this key when implementing our Javascript SDK in your web application.
             <a
-              class="block"
-              href="https://docs.devqaly.com"
+              class="block underline"
+              href="https://docs.devqaly.com/getting-started/quick-start/"
               target="_blank"
               data-cy="project-settings-page__read-docs-link"
             >
@@ -40,7 +40,7 @@
             </a>
           </div>
         </div>
-        <div class="col-6">
+        <div class="w-1/2">
           <div class="p-inputgroup flex-1">
             <InputText
               data-cy="project-settings-page__project-key"

@@ -1,10 +1,10 @@
 <template>
   <div class="video-container">
-    <div class="video-container border-round-lg overflow-hidden">
+    <div class="video-container rounded-lg overflow-hidden">
       <video
         data-cy="project-session-view__video"
         ref="videoNode"
-        class="w-full border-round-md"
+        class="w-full rounded-lg"
         controls
         preload="auto"
         :src="sessionStore.activeSession.videoUrl as string"

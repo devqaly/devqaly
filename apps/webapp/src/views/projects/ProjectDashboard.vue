@@ -11,18 +11,21 @@
     <strong>main.js</strong>):
 
     <pre
-      class="bg-black-alpha-90 text-white p-4 border-round-md"
+      class="text-white p-4 rounded-md"
       style="tab-size: 6; white-space-collapse: preserve-breaks"
     >
-import { DevqalySDK } from '@devqaly/browser'
+      <code class='block whitespace-pre overflow-x-scroll'>
+    import { DevqalySDK } from '@devqaly/browser'
 
-        const devqaly = new DevqalySDK({
-              projectKey: '{{
-        projectStore.activeProject ? projectStore.activeProject.projectKey : ''
+    const devqaly = new DevqalySDK({
+      projectKey: '{{
+      projectStore.activeProject ? projectStore.activeProject.projectKey : ''
       }}'
-        })
+    })
 
-        devqaly.showRecordingButton()
+    devqaly.showRecordingButton()
+</code>
+
     </pre>
 
     <Message :closable="false">

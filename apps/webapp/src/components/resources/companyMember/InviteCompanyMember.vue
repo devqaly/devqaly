@@ -46,12 +46,12 @@
           ref="emailsContainer"
         >
           <div
-            class="my-1 p-2 surface-ground border-round-md"
+            class="my-1 p-2 bg-slate-50 rounded-md"
             v-for="email in emails"
             :key="email"
           >
-            <div class="flex justify-content-between align-items-center">
-              <div class="flex gap-2 align-items-center">
+            <div class="flex justify-between items-center">
+              <div class="flex gap-2 items-center">
                 <span class="pi pi-user"></span>
 
                 <div v-text="email" />
@@ -72,7 +72,7 @@
           </div>
         </div>
 
-        <div class="mt-4 flex justify-content-between gap-4">
+        <div class="mt-4 flex justify-between gap-4">
           <Button
             data-cy="invite-company-member__close-dialog"
             @click="closeDialog"

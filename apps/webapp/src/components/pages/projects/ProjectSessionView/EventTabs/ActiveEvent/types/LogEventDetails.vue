@@ -77,7 +77,7 @@
         <div v-if="networkEvent.event.requestHeaders === null">No Headers</div>
 
         <div
-          class="max-w-full max-h-5rem overflow-auto"
+          class="max-w-full max-h-[5rem] overflow-auto"
           v-else
         >
           <div
@@ -93,7 +93,7 @@
       <div class="text-gray-500 mt-2">Request Body</div>
       <DCopyble :content="networkEvent.event.requestBody ?? '<no-body>'">
         <div
-          class="font-medium max-w-full max-h-5rem overflow-auto"
+          class="font-medium max-w-full max-h-[5rem] overflow-auto"
           style="word-break: break-all"
           v-text="networkEvent.event.requestBody ?? '<no-body>'"
         />
@@ -104,7 +104,7 @@
         <div v-if="networkEvent.event.responseHeaders === null">No Headers</div>
 
         <div
-          class="max-w-full max-h-5rem overflow-auto"
+          class="max-w-full max-h-[5rem] overflow-auto"
           v-else
         >
           <div
@@ -119,7 +119,7 @@
       <div class="text-gray-500 mt-2">Response Body</div>
       <DCopyble :content="networkEvent.event.responseBody ?? '<no-body>'">
         <div
-          class="font-medium max-w-full max-h-5rem overflow-auto"
+          class="font-medium max-w-full max-h-[5rem] overflow-auto"
           style="overflow-wrap: anywhere"
           v-text="networkEvent.event.responseBody ?? '<no-body>'"
         />
