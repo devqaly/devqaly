@@ -1,0 +1,332 @@
+---
+title: Deploy Devqaly from source
+description: Get started on how you can deploy devqaly to your own infrastructure from source
+---
+
+import BetaPhaseWarningCreateAccount from '../../../components/BetaPhaseWarningCreateAccount.mdx'
+
+Deploying Devqaly involves pulling the monorepo (Backend, API, and Frontend) to your own machine and simply installing its dependencies.
+
+Ensure that the machine running Devqaly meets the minimum specifications of `2 vCPUs`, `8 GB of RAM`, and `50 GB of storage`, as failure to meet these requirements will prevent the startup of Devqaly backend services.
+
+These specifications are suitable for low to moderate volumes, but for high traffic expectations, scaling up is recommended from this baseline.
+
+<BetaPhaseWarningCreateAccount/>
+
+## Prerequisites
+
+Devqaly has a few components to it:
+
+- <a href="https://vuejs.org/" target="_blank">VueJS app</a>: This application is responsive to display the web UI that you see when seeing a session or managing your company.
+- <a href="https://laravel.com/" target="_blank">Laravel app</a>: This application is responsive to handling sessions that were recorded and managing access to sessions data.
+- <a href="https://postgresql.org/" target="_blank">Postgresql database</a>: This is responsible to hold the data for your sessions and other management aspects of Devqaly.
+
+Each application has its own requirement of software to be installed before being able to run it.
+
+### VueJS app
+
+The VueJS application has the following software requirements:
+
+- <a href="https://nodejs.org/en/blog/release/v18.16.0" target="_blank">NodeJS v18.16.x</a>
+- <a href="https://docs.npmjs.com/cli/v9/commands/npm-install" target="_blank">NPM v9.5.x</a> (although any version from 7.x to 10.x will do since we do not use any custom commands from newer versions)
+
+### Laravel app
+
+The backend application has the following software requirements - most of these are copied from <a href="https://laravel.com/docs/10.x/deployment#introduction">Laravel deployment guide</a>:
+
+- PHP >= 8.1
+- <a href="https://getcomposer.org/" target="_blank">Composer</a>
+- Ctype PHP Extension
+- cURL PHP Extension
+- DOM PHP Extension
+- Fileinfo PHP Extension
+- Filter PHP Extension
+- Hash PHP Extension
+- Mbstring PHP Extension
+- OpenSSL PHP Extension
+- PCRE PHP Extension
+- PDO PHP Extension
+- Session PHP Extension
+- Tokenizer PHP Extension
+- XML PHP Extension
+- <a href="https://ffmpeg.org/" target="_blank">ffmpeg</a>
+
+### Postgres database
+
+To use Devqaly, ensure you have a database to store its data. We have extensively tested Devqaly with PostgreSQL and can assure seamless compatibility.
+Alternatively, if you prefer, you may opt for MySQL, but remember to update the `.env` variable `DB_CONNECTION` to `mysql`.
+
+In your postgres (or mysql) instance, you should have a database named `laravel`:
+
+```sql
+CREATE DATABASE laravel;
+```
+
+## Clone repository
+
+It's noteworthy that within our repository, there are two branches designated as protected:
+
+- **master:** This branch houses the most recent version of Devqaly. All published versions are derived from the `master` branch.
+- **next:** This branch contains code intended for upcoming releases. All beta or alpha versions are released from the `next` branch.
+
+You can clone our repository by running the command:
+
+```bash
+git clone git@github.com:devqaly/devqaly.git
+```
+
+This will clone the repository into a folder named `devqaly`.
+
+## Backend
+
+### Install backend packages
+
+Under `apps/api` you will need to run the following command:
+
+```bash
+composer install --optimize-autoloader --no-dev
+```
+
+This command will install all backend dependencies for the Laravel application.
+
+### Update your `.env` file
+
+To initiate Devqaly on your self-hosted instance, it is necessary to duplicate `.env.example` located within `apps/api` and rename it as `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Several environment variables need attention and should be adjusted to suit your specific case:
+
+- `APP_URL`: This should point to the URL where your Devqaly's api will live (e.g. https://devqaly-api.my-company.com).
+- `DB_HOST`: Points to where your database is hosted. If it's local, you can set `https://localhost`.
+- `DB_PORT`: Points to the port where your database is hosted. Default should be fine for postgres databases.
+- `DB_DATABASE`: The database name. Default should be fine.
+- `DB_USERNAME`: The database username for the user accessing your database.
+- `DB_PASSWORD`: The database password for the user accessing your database.
+- `MAIL_MAILER`: The driver for the mailer. The default is SMTP, but we support <a href="https://aws.amazon.com/ses/" target="_blank">ses</a>, <a href="https://www.mailgun.com/" target="_blank">mailgun</a> and <a href="https://postmarkapp.com/" target="_blank">postmark</a>.
+- `MAIL_HOST`: The URL for the host of your mailing service.
+- `MAIL_PORT`: The port for the host of your mailing service.
+- `MAIL_USERNAME`: The username for the host of your mailing service.
+- `MAIL_PASSWORD`: The password for the host of your mailing service.
+- `MAIL_ENCRYPTION`: The encryption for the host of your mailing service. Set to `null` if encryption is not necessary.
+- `MAIL_FROM_ADDRESS`: The `from` attribute when sending emails.
+- `FRONTEND_BASE_URL`: This should point to the URL where your Devqaly's frontend will live (e.g. https://devqaly.my-company.com).
+- `DEVQALY_IS_SELF_HOSTING`: This should be set to `true`.
+
+### Migrate database
+
+Once you've installed the required packages for the backend and configured your database credentials in the `.env`
+file, you can execute the database migrations under `apps/api` using:
+
+```bash
+php artisan migrate:fresh
+```
+
+This will create the tables under your `DB_DATABASE`.
+
+### Run workers in backend
+
+To handle asynchronous tasks, certain tasks are enqueued to be processed later. To facilitate this, it's necessary to run workers using Supervisor.
+
+Initially, you will need to install Supervisor.
+
+```bash
+sudo apt-get install supervisor
+```
+
+Supervisor configuration files are commonly stored in the `/etc/supervisor/conf.d` directory. Within this directory,
+you can generate multiple configuration files to guide Supervisor on how your processes should be supervised.
+For instance, let's generate a `laravel-worker.conf` file responsible for initiating and monitoring `queue:work` processes:
+
+```text
+[program:laravel-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php <root>/devqaly/apps/api/artisan queue:work sqs --sleep=3 --tries=3 --max-time=3600
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=user
+numprocs=8
+redirect_stderr=true
+stdout_logfile=/home/user/devqaly-api.com/worker.log
+stopwaitsecs=3600
+```
+
+After creating the configuration file, you can update the Supervisor configuration and initiate the processes by executing the following commands:
+
+```bash
+sudo supervisorctl reread
+
+sudo supervisorctl update
+
+sudo supervisorctl start "laravel-worker:*"
+```
+
+## Frontend
+
+### Setup `.env` in your frontend
+
+To configure environment variables in your frontend, navigate to `apps/webapp` and set up the necessary variables using:
+
+```bash
+cp .env.example .env
+```
+
+Presently, you only need to update two variables:
+
+- `VITE_BASE_API_URL`: This should point to the URL where your api will be hosted (e.g. https://devqaly-api.my-company.com).
+- `VITE_DEVQALY_IS_SELF_HOSTING`: This should be set to `true`.
+
+### Install frontend dependencies
+
+Once you've configured your backend, it's time to set up your frontend application located in `apps/webapp`:
+
+```bash
+npm install
+```
+
+### Build frontend application
+
+After installing the frontend dependencies, you can proceed to build your application located in `apps/webapp`:
+
+```bash
+npm run build
+```
+
+## Nginx
+
+### Setup backend
+
+When deploying your application on a server with Nginx, consider using the provided configuration file as a foundation
+for setting up your web server. It is probable that customization will be necessary based on your specific server configuration.
+
+Ensure that your web server, following the configuration provided below, directs all requests to your application's
+`public/index.php` file. It is crucial to avoid moving the `index.php` file to your project's root, as serving the
+application from the project root could expose sensitive configuration files to the public Internet:
+
+```
+server {
+    listen 80;
+    listen [::]:80;
+    server_name devqaly-api.my-company.com;
+    root /var/www/html/devqaly-api.my-company.com/apps/api/public;
+
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
+
+    index index.php;
+
+    charset utf-8;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    error_page 404 /index.php;
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
+```
+
+### Setup frontend
+
+When deploying your application on a server with Nginx, consider using the provided configuration file as a foundation
+for setting up your web server. It is probable that customization will be necessary based on your specific server configuration.
+
+```
+user  nginx;
+worker_processes  1;
+error_log  /var/log/nginx/error.log warn;
+pid        /var/run/nginx.pid;
+
+events {
+  worker_connections  1024;
+}
+
+http {
+  include       /etc/nginx/mime.types;
+  default_type  application/octet-stream;
+  log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                    '$status $body_bytes_sent "$http_referer" '
+                    '"$http_user_agent" "$http_x_forwarded_for"';
+  access_log  /var/log/nginx/access.log  main;
+  sendfile        on;
+  keepalive_timeout  65;
+
+  server {
+    listen       80;
+    server_name  devqaly.my-company.com;
+
+    location / {
+      root   /var/www/html/devqaly-api.my-company.com/apps/webapp/dist;
+      index  index.html;
+      try_files $uri $uri/ /index.html;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+
+    location = /50x.html {
+      root   /usr/share/nginx/html;
+    }
+  }
+}
+```
+
+### Setup SSL/TLS
+
+Devqaly, dealing with sensitive user data, necessitates the use of HTTPS for proper functioning. It is mandatory,
+as without HTTPS, the tracker won't initiate recording. Similarly, for the dashboard, HTTPS is essential; without it,
+you won't be able to replay user sessions.
+
+To keep this tutorial concise, you can refer to the instructions on <a href="https://letsencrypt.org/getting-started/">Let's Encrypt's website</a> for guidance on the setup process.
+
+:::tip[Be mindful]
+
+You will need to setup SSL/TLS for both frontend and backend applications.
+
+:::
+
+## Testing
+
+To verify that everything is functioning correctly, you can test your API endpoint by visiting `https://devqaly-api.my-company.com/api/test`.
+You should receive a `200 OK` status.
+
+For the frontend, attempt to access the application directly by navigating to `https://devqaly.my-company.com`.
+
+## Caching your backend files
+
+Once you've confirmed that everything is set up correctly, you can enhance the performance of your API by caching backend files.
+Navigate to `apps/api` to initiate the caching process:
+
+```bash
+php artisan config:cache
+  && php artisan event:cache
+  && php artisan route:cache
+  && php artisan view:cache
+```
+
+## Install SDK
+
+Now that you've successfully established your self-hosted version of Devqaly, proceed to follow the instructions on how
+to install Devqaly in your web application:
+
+- <a href="https://docs.devqaly.com/getting-started/quick-start/">Get started in your frontend</a>
+- <a href="https://docs.devqaly.com/connect-your-backend/connect-backend/">Get started in your backend</a>
+
+## Have a question?
+
+You can reach out to us in [Discord server](https://discord.gg/acjcRx5u), and we will do our best to help you.
