@@ -18,6 +18,13 @@ export default defineConfig({
           ]
         },
         {
+          label: 'Deployment',
+          items: [
+            { label: 'Introduction', link: '/deployment/introduction' },
+            { label: 'Deploy from source', link: '/deployment/deploy-from-source' },
+          ]
+        },
+        {
           label: 'Essentials',
           items: [
             { label: 'Events', items: [
