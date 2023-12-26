@@ -10,7 +10,7 @@ colleagues. But, Devqaly allows you to collect information on the backend as wel
 2. Which **logs** have been created because of a specific HTTP request
 3. Whenever your backend crashes, Devqaly will create an event notifying that a problem happened in the session
 
-# How to add Devqaly to your backend
+## How to add Devqaly to your backend
 
 We have developed a few SDKs that allow you to easily integrate Devqaly into your backend. Currently we support the 
 following frameworks/languages:

@@ -3,14 +3,14 @@ title: Connect Your Backend - PHP
 description: Check out how you can connect your backend to fully utilize the power of Devqaly
 ---
 
-# Installing
+## Installing
 You can connect your PHP backend to your frontend by simply installing the `devqaly-php` with composer:
 
 ```bash
 composer require devqaly/devqaly-php
 ```
 
-# How to use
+## How to use
 
 Before anything, you will need to start the client:
 
@@ -61,7 +61,7 @@ $devqaly = new Devqaly\DevqalyClient(
 $devqaly = new Devqaly\DevqalyClient('https://api-devqaly.my-domain.com', 'authentication-service');
 ```
 
-## When a session is being recorded
+### When a session is being recorded
 
 Whenever a session have started being recorded in the frontend, for each request leaving your frontend application, Devqaly's 
 browser SDK will attach three important headers to the HTTP request:
@@ -78,7 +78,7 @@ $sessionSecretToken = $_SERVER['HTTP_X_DEVQALY_SESSION_SECRET_TOKEN'];
 $requestId = $_SERVER['HTTP_X_DEVQALY_REQUEST_ID'];
 ```
 
-## Creating events in the session
+### Creating events in the session
 
 Now that we have all the necessary information to create an event in a session, we can create events
 
