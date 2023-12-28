@@ -4,6 +4,7 @@ import { authRoutes } from '@/router/children/authRoutes'
 import { TOKEN_KEY } from '@/stores/app'
 import { projectRoutes } from '@/router/children/projectRoutes'
 import { companyRoutes } from '@/router/children/companyRoutes'
+import { onboardingRoutes } from '@/router/children/onboardingRoutes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,6 +30,11 @@ const router = createRouter({
       path: '/',
       component: () => import('@/layouts/NavigationLayout.vue'),
       children: companyRoutes
+    },
+    {
+      path: '/',
+      component: () => import('@/layouts/OnboardingLayout.vue'),
+      children: onboardingRoutes
     },
     {
       path: '/',
