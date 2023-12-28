@@ -3,7 +3,7 @@
     <div class="px-5 py-2 border-b border-slate-100 flex justify-between items-center">
       <div class="text-xl">
         👋 Hello there Bruno Francisco. Lets setup your
-        <span class="underline font-semibold">Bruno's Project</span>
+        <span class="underline font-semibold">{{ projectStore.onboardingProject!.title }}</span>
       </div>
 
       <a
@@ -33,7 +33,7 @@
         Initiate the script
       </div>
 
-      <InitiateDevqalyScript />
+      <InitiateDevqalyScript :project-id="projectStore.onboardingProject!.projectKey" />
 
       <div class="flex justify-end">
         <RouterLink :to="{ name: 'onboardCreateSession', params: route.params }">
@@ -53,6 +53,9 @@
 import { useRoute } from 'vue-router'
 import InstallDevqaly from '@/components/InstallDevqaly.vue'
 import InitiateDevqalyScript from '@/components/InitiateDevqalyScript.vue'
+import { useProjectsStore } from '@/stores/projects'
 
 const route = useRoute()
+
+const projectStore = useProjectsStore()
 </script>
