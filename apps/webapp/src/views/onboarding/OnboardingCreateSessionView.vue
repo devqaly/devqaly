@@ -16,6 +16,23 @@
       >
         Your session will show up here when we receive it
       </div>
+
+      <div class="flex justify-end">
+        <RouterLink :to="{ name: 'onboardInviteTeamMembers', params: route.params }">
+          <Button
+            class="!mt-4"
+            label="Invite Team Members"
+            icon="pi pi-chevron-right"
+            icon-pos="right"
+          />
+        </RouterLink>
+      </div>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+</script>

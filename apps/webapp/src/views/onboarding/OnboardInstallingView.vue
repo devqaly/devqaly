@@ -114,9 +114,12 @@
 
       <div class="flex justify-end">
         <RouterLink :to="{ name: 'onboardCreateSession', params: route.params }">
-          <Button class="!font-semibold !mt-4">
-            Create First Session <i class="pi pi-chevron-right ml-2" />
-          </Button>
+          <Button
+            class="!mt-4"
+            label="Create First Session"
+            icon="pi pi-chevron-right"
+            icon-pos="right"
+          />
         </RouterLink>
       </div>
     </div>
