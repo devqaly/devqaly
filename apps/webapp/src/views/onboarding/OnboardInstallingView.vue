@@ -20,28 +20,7 @@
         Install Devqaly's SDK:
       </div>
 
-      <div class="flex gap-4 mt-2">
-        <div
-          :class="{
-            'font-semibold border-b border-transparent cursor-pointer px-2': true,
-            '!border-b-blue-500': registryPicker === 'npm'
-          }"
-          @click="onChooseRegistryPicker('npm')"
-        >
-          NPM
-        </div>
-        <div
-          :class="{
-            'font-semibold border-b border-transparent cursor-pointer px-2': true,
-            '!border-b-blue-500': registryPicker === 'yarn'
-          }"
-          @click="onChooseRegistryPicker('yarn')"
-        >
-          Yarn
-        </div>
-      </div>
-
-      <DCode>{{ installCode }}</DCode>
+      <InstallDevqaly />
 
       <div class="mb-4 flex items-center gap-2 align-middle font-semibold mt-8">
         <span
@@ -51,66 +30,7 @@
         Initiate the script
       </div>
 
-      <div class="flex gap-4 mt-2">
-        <div
-          :class="{
-            'font-semibold border-b border-transparent cursor-pointer px-2': true,
-            '!border-b-blue-500': renderStrategy === 'spa'
-          }"
-          @click="onSelectRenderStrategy('spa')"
-        >
-          Single Page Application (SPA)
-        </div>
-        <div
-          :class="{
-            'font-semibold border-b border-transparent cursor-pointer px-2': true,
-            '!border-b-blue-500': renderStrategy === 'ssr'
-          }"
-          @click="onSelectRenderStrategy('ssr')"
-        >
-          Server Side Rendered (SSR)
-        </div>
-      </div>
-
-      <template v-if="renderStrategy === 'spa'">
-        <pre
-          class="bg-slate-500 text-white rounded-md"
-          style="tab-size: 6; white-space-collapse: preserve-breaks"
-        >
-      <code>
-    <!--   prettier-ignore -->
-    import { DevqalySDK } from '@devqaly/browser'
-
-    const devqaly = new DevqalySDK({
-          projectKey: '...'
-    })
-
-    devqaly.showRecordingButton()
-      </code>
-    </pre>
-      </template>
-
-      <template v-if="renderStrategy === 'ssr'">
-        <pre
-          class="bg-slate-500 text-white rounded-md"
-          style="tab-size: 6; white-space-collapse: preserve-breaks"
-        >
-      <code>
-    <!--   prettier-ignore -->
-    import { DevqalySDK } from '@devqaly/browser'
-
-    const devqaly = new DevqalySDK({
-          projectKey: '...'
-    })
-
-    function App() {
-      useEffect(() => {
-        devqaly.showRecordingButton()
-      }, [])
-    }
-      </code>
-    </pre>
-      </template>
+      <InitiateDevqalyScript />
 
       <div class="flex justify-end">
         <RouterLink :to="{ name: 'onboardCreateSession', params: route.params }">
@@ -127,29 +47,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import DCode from '@/components/DCode.vue'
 import { useRoute } from 'vue-router'
-
-type Register = 'npm' | 'yarn'
-
-type RenderStrategy = 'ssr' | 'spa'
+import InstallDevqaly from '@/components/InstallDevqaly.vue'
+import InitiateDevqalyScript from '@/components/InitiateDevqalyScript.vue'
 
 const route = useRoute()
-
-const registryPicker = ref<Register>('npm')
-
-const installCode = computed(() =>
-  registryPicker.value === 'npm' ? 'npm install @devqaly/browser' : 'yarn add @devqaly/browser'
-)
-
-const renderStrategy = ref<RenderStrategy>('spa')
-
-function onChooseRegistryPicker(register: Register) {
-  registryPicker.value = register
-}
-
-function onSelectRenderStrategy(strategy: RenderStrategy) {
-  renderStrategy.value = strategy
-}
 </script>
