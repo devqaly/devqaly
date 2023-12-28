@@ -113,9 +113,11 @@
       </template>
 
       <div class="flex justify-end">
-        <Button class="!font-semibold !mt-4">
-          Create First Session <i class="pi pi-chevron-right ml-2" />
-        </Button>
+        <RouterLink :to="{ name: 'onboardCreateSession', params: route.params }">
+          <Button class="!font-semibold !mt-4">
+            Create First Session <i class="pi pi-chevron-right ml-2" />
+          </Button>
+        </RouterLink>
       </div>
     </div>
   </div>
@@ -124,10 +126,13 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import DCode from '@/components/DCode.vue'
+import { useRoute } from 'vue-router'
 
 type Register = 'npm' | 'yarn'
 
 type RenderStrategy = 'ssr' | 'spa'
+
+const route = useRoute()
 
 const registryPicker = ref<Register>('npm')
 
