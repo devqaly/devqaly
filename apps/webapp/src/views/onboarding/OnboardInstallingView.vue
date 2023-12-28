@@ -6,9 +6,12 @@
         <span class="underline font-semibold">Bruno's Project</span>
       </div>
 
-      <div>
+      <a
+        target="_blank"
+        href="https://docs.devqaly.com/getting-started/introduction"
+      >
         <Button link> See Docs </Button>
-      </div>
+      </a>
     </div>
 
     <div class="mt-2 px-5 pt-2 pb-4">

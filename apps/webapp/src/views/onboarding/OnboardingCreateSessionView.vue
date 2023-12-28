@@ -3,9 +3,12 @@
     <div class="px-5 py-2 border-b border-slate-100 flex justify-between items-center">
       <div class="text-xl">🎥 Lets create your first recording</div>
 
-      <div>
+      <a
+        target="_blank"
+        href="https://docs.devqaly.com/getting-started/introduction"
+      >
         <Button link> See Docs </Button>
-      </div>
+      </a>
     </div>
 
     <div class="mt-2 px-5 pt-2 pb-4">
