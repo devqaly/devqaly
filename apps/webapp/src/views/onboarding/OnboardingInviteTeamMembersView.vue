@@ -87,7 +87,7 @@
       <div class="flex justify-end">
         <Button
           class="!mt-4"
-          label="Create First Session"
+          label="Complete Setup"
           icon="pi pi-chevron-right"
           icon-pos="right"
           @click="onFinishOnboarding"
