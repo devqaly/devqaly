@@ -15,7 +15,7 @@
     >
       <RouterLink
         active-class="!border-b-blue-500"
-        :to="{ name: 'onboardInstalling', params: { companyId: '123', projectId: '123' } }"
+        :to="{ name: 'onboardInstalling', params: route.params }"
         class="border-b border-transparent px-5 py-4 border-r-2 border-r-slate-50 cursor-pointer"
       >
         1. Installing Devqaly
@@ -23,7 +23,7 @@
 
       <RouterLink
         active-class="!border-b-blue-500"
-        :to="{ name: 'onboardCreateSession', params: { companyId: '123', projectId: '123' } }"
+        :to="{ name: 'onboardCreateSession', params: route.params }"
         class="border-b border-transparent px-5 py-4 border-r-2 border-r-slate-50 cursor-pointer"
       >
         2. Create First Session
@@ -31,7 +31,7 @@
 
       <RouterLink
         active-class="!border-b-blue-500"
-        :to="{ name: 'onboardInviteTeamMembers', params: { companyId: '123', projectId: '123' } }"
+        :to="{ name: 'onboardInviteTeamMembers', params: route.params }"
         class="border-b border-transparent px-5 py-4 border-r-2 border-r-slate-50 cursor-pointer"
       >
         3. Invite Team Members
