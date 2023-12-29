@@ -18,7 +18,11 @@
         />
       </div>
       <div class="col-span-3">
-        <LivePreviewSection />
+        <LivePreviewSection
+          :events="sessionStore.liveEvents"
+          :session="sessionStore.activeSession"
+          @update:activeEventDetails="onUpdateActiveEventDetails"
+        />
       </div>
     </div>
 
@@ -42,8 +46,9 @@ import { sessionsCodecFactory } from '@/services/factories/sessionsFactory'
 import { emptyPagination } from '@/services/api'
 import throttle from 'lodash.throttle'
 import { EventsSection } from '@/components/pages/projects/ProjectSessionView/EventTabs/EventsSection'
-import LivePreviewSection from '@/components/pages/projects/ProjectSessionView/LivePreviewSection.vue'
+import LivePreviewSection from '@/components/resources/session/LivePreviewSection.vue'
 import ActiveNetworkRequestResources from '@/components/pages/projects/ProjectSessionView/ActiveNetworkRequestResources.vue'
+import type { EventCodec } from '@/services/api/resources/session/events/codec'
 
 const sessionStore = useSessionsStore()
 
@@ -70,11 +75,15 @@ onBeforeUnmount(() => {
 })
 
 const onVideoUpdate: (duration: number) => void = throttle(async function (duration: number) {
-  sessionStore.getActiveSessionEventsForPartition(duration)
+  await sessionStore.getActiveSessionEventsForPartition(duration)
 }, 500)
 
 function onVideoTimeUpdate(e: HTMLVideoElement) {
   sessionStore.currentVideoDuration = e.currentTime
+}
+
+function onUpdateActiveEventDetails(event: EventCodec) {
+  sessionStore.activeEventDetails = event
 }
 
 watch(() => sessionStore.currentVideoDuration, onVideoUpdate)
