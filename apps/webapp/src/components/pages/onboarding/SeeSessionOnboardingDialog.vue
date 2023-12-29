@@ -15,7 +15,12 @@
         <SessionSummary :session="session" />
       </div>
 
-      <div class="col-span-7"></div>
+      <div class="col-span-7">
+        <VideoSection
+          :session="session"
+          @update:videoTime="onVideoTimeUpdate"
+        />
+      </div>
 
       <div class="col-span-3"></div>
     </div>
@@ -27,6 +32,7 @@ import { PropType, ref } from 'vue'
 import Dialog from 'primevue/dialog'
 import type { SessionCodec } from '@/services/api/resources/session/codec'
 import SessionSummary from '@/components/resources/session/SessionSummary.vue'
+import VideoSection from '@/components/resources/session/VideoSection.vue'
 
 const dialog = ref<InstanceType<typeof Dialog> | null>()
 
@@ -45,5 +51,9 @@ const emit = defineEmits(['hide'])
 
 function onHide(value: boolean) {
   emit('hide', value)
+}
+
+function onVideoTimeUpdate(e: HTMLVideoElement) {
+  console.log(e)
 }
 </script>

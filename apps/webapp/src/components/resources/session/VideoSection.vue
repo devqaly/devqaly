@@ -1,5 +1,8 @@
 <template>
-  <div class="video-container">
+  <div
+    v-if="shouldShowVideoColumn"
+    class="video-container"
+  >
     <div class="video-container rounded-lg overflow-hidden">
       <video
         data-cy="project-session-view__video"
@@ -13,17 +16,33 @@
       />
     </div>
   </div>
+
+  <div
+    v-else
+    class="flex flex-col items-center justify-center"
+    data-cy="project-session-view__video-being-converted-info"
+  >
+    <Image
+      src="/images/illustrations/record-screen.png"
+      alt="Image"
+      image-class="w-full"
+    />
+
+    <div class="text-2xl font-semibold">We are currently processing your session</div>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { onUnmounted, PropType, ref } from 'vue'
+import { onUnmounted, PropType, ref, computed } from 'vue'
 import type { EventCodec } from '@/services/api/resources/session/events/codec'
 import { eventBus, EventBusEvents } from '@/services/mitt'
 import { differenceInSeconds } from 'date-fns'
 import type { SessionCodec } from '@/services/api/resources/session/codec'
+import { isVideoConverted } from '@/services/resources/SessionsService'
 
 const props = defineProps({
-  session: { type: Object as PropType<SessionCodec>, required: true }
+  session: { type: Object as PropType<SessionCodec>, required: true },
+  isLoadingSession: { type: Boolean }
 })
 
 const emit = defineEmits<{
@@ -31,6 +50,10 @@ const emit = defineEmits<{
 }>()
 
 const videoNode = ref<HTMLVideoElement | null>(null)
+
+const shouldShowVideoColumn = computed(
+  () => !props.isLoadingSession && props.session && isVideoConverted(props.session.videoStatus)
+)
 
 eventBus.on(EventBusEvents.REQUEST_CLICKED, onEventClicked)
 
@@ -47,9 +70,6 @@ function onEventClicked(event: EventCodec) {
 }
 
 function onTimeUpdate(e: Event) {
-  // const target = e.target as HTMLVideoElement
-  //
-  // sessionStore.currentVideoDuration = target.currentTime
   emit('update:videoTime', e.target as HTMLVideoElement)
 }
 

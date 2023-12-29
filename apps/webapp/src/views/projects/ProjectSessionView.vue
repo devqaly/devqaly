@@ -11,28 +11,11 @@
         />
       </div>
       <div class="col-span-7">
-        <div v-if="shouldShowVideoColumn">
-          <VideoSection
-            :session="sessionStore.activeSession"
-            @update:videoTime="onVideoTimeUpdate"
-          />
-        </div>
-
-        <div
-          class="flex flex-col items-center justify-center"
-          data-cy="project-session-view__video-being-converted-info"
-          v-else
-        >
-          <Image
-            src="/images/illustrations/record-screen.png"
-            alt="Image"
-            image-class="w-full"
-          />
-
-          <div class="text-2xl font-semibold">
-            We are currently processing your session, please be patient.
-          </div>
-        </div>
+        <VideoSection
+          :session="sessionStore.activeSession"
+          :is-loading-session="isLoadingSession"
+          @update:videoTime="onVideoTimeUpdate"
+        />
       </div>
       <div class="col-span-3">
         <LivePreviewSection />
@@ -67,10 +50,6 @@ const sessionStore = useSessionsStore()
 const isLoadingSession = ref(true)
 
 const route = useRoute()
-
-const shouldShowVideoColumn = computed(
-  () => !isLoadingSession.value && isVideoConverted(sessionStore.activeSession.videoStatus)
-)
 
 onBeforeMount(async () => {
   isLoadingSession.value = true
