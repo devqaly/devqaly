@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, PropType, ref, watch } from 'vue'
+import { onMounted, onUnmounted, PropType, ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
 import type { SessionCodec } from '@/services/api/resources/session/codec'
 import SessionSummary from '@/components/resources/session/SessionSummary.vue'
@@ -42,6 +42,8 @@ import { isVideoConverted } from '@/services/resources/SessionsService'
 import throttle from 'lodash.throttle'
 import LivePreviewSection from '@/components/resources/session/LivePreviewSection.vue'
 import { EventCodec } from '@/services/api/resources/session/events/codec'
+import { sessionsCodecFactory } from '@/services/factories/sessionsFactory'
+import { emptyPagination } from '@/services/api'
 
 const dialog = ref<InstanceType<typeof Dialog> | null>()
 
@@ -72,24 +74,23 @@ function onVideoTimeUpdate(e: HTMLVideoElement) {
   sessionStore.currentVideoDuration = e.currentTime
 }
 
-function createVideoPartitions() {
-  sessionStore.createVideoPartitionsForActiveSession()
-}
-
 function onUpdateActiveEventDetails(event: EventCodec) {
   sessionStore.activeEventDetails = event
 }
 
-async function fetchEvents() {
+watch(() => sessionStore.currentVideoDuration, onVideoUpdate)
+
+onMounted(async () => {
+  sessionStore.createVideoPartitionsForActiveSession()
+
   if (isVideoConverted(sessionStore.activeSession.videoStatus)) {
     await sessionStore.getActiveSessionEventsForPartition(0)
   }
-}
+})
 
-watch(() => sessionStore.currentVideoDuration, onVideoUpdate)
-
-onMounted(() => {
-  createVideoPartitions()
-  fetchEvents()
+onUnmounted(() => {
+  sessionStore.currentVideoDuration = 0
+  sessionStore.videoPartitions = {}
+  sessionStore.activeSessionEventsRequest = emptyPagination()
 })
 </script>

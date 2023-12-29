@@ -12,8 +12,8 @@
     </div>
 
     <SeeSessionOnboardingDialog
-      v-if="session"
-      :session="session"
+      v-if="isVideoConverted(sessionStore.activeSession.videoStatus)"
+      :session="sessionStore.activeSession"
       :visible="isDialogOpen"
       @hide="(value: boolean) => isDialogOpen = value"
     />
@@ -44,13 +44,15 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import SeeSessionOnboardingDialog from '@/components/pages/onboarding/SeeSessionOnboardingDialog.vue'
 import { emptyPagination, OrderBy, PaginatableRecord } from '@/services/api'
 import type { SessionCodec } from '@/services/api/resources/session/codec'
 import { useToast } from 'primevue/usetoast'
 import { getProjectSessions } from '@/services/api/resources/project/actions'
 import { useSessionsStore } from '@/stores/sessions'
+import { sessionsCodecFactory } from '@/services/factories/sessionsFactory'
+import { isVideoConverted } from '@/services/resources/SessionsService'
 
 const route = useRoute()
 
@@ -62,8 +64,6 @@ const sessionsResponse = ref(emptyPagination<SessionCodec>())
 
 const toast = useToast()
 
-const session = computed<SessionCodec | null>(() => sessionsResponse.value.data[0] ?? null)
-
 let fetchSessionsClear: ReturnType<typeof setInterval>
 
 async function fetchSessions() {
@@ -74,7 +74,10 @@ async function fetchSessions() {
 
     sessionsResponse.value = response.data as PaginatableRecord<SessionCodec>
 
-    if (response.data.meta.total > 0) {
+    if (
+      response.data.meta.total > 0 &&
+      isVideoConverted(sessionsResponse.value.data[0].videoStatus)
+    ) {
       clearInterval(fetchSessionsClear)
 
       sessionStore.activeSession = sessionsResponse.value.data[0]
@@ -91,12 +94,16 @@ async function fetchSessions() {
 }
 
 function onShowSessionClick() {
-  if (session.value === null) return
+  if (!isVideoConverted(sessionStore.activeSession.videoStatus)) return
 
   isDialogOpen.value = true
 }
 
 onMounted(() => {
   fetchSessionsClear = setInterval(fetchSessions, 2000)
+})
+
+onUnmounted(() => {
+  sessionStore.activeSession = sessionsCodecFactory()
 })
 </script>
