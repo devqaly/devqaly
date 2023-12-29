@@ -12,7 +12,10 @@
       </div>
       <div class="col-span-7">
         <div v-if="shouldShowVideoColumn">
-          <VideoSection @update:videoTime="onVideoUpdate" />
+          <VideoSection
+            :session="sessionStore.activeSession"
+            @update:videoTime="onVideoTimeUpdate"
+          />
         </div>
 
         <div
@@ -50,7 +53,7 @@ import { useSessionsStore } from '@/stores/sessions'
 import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import SessionSummary from '@/components/resources/session/SessionSummary.vue'
-import VideoSection from '@/components/pages/projects/ProjectSessionView/VideoSection.vue'
+import VideoSection from '@/components/resources/session/VideoSection.vue'
 import { isVideoConverted } from '@/services/resources/SessionsService'
 import { sessionsCodecFactory } from '@/services/factories/sessionsFactory'
 import { emptyPagination } from '@/services/api'
@@ -90,6 +93,10 @@ onBeforeUnmount(() => {
 const onVideoUpdate: (duration: number) => void = throttle(async function (duration: number) {
   sessionStore.getActiveSessionEventsForPartition(duration)
 }, 500)
+
+function onVideoTimeUpdate(e: HTMLVideoElement) {
+  sessionStore.currentVideoDuration = e.currentTime
+}
 
 watch(() => sessionStore.currentVideoDuration, onVideoUpdate)
 </script>

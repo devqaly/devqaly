@@ -7,32 +7,38 @@
         class="w-full rounded-lg"
         controls
         preload="auto"
-        :src="sessionStore.activeSession.videoUrl as string"
+        :src="session.videoUrl as string"
         width="100%"
         @timeupdate="onTimeUpdate"
-      ></video>
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useSessionsStore } from '@/stores/sessions'
-import { onUnmounted, ref } from 'vue'
+import { onUnmounted, PropType, ref } from 'vue'
 import type { EventCodec } from '@/services/api/resources/session/events/codec'
 import { eventBus, EventBusEvents } from '@/services/mitt'
 import { differenceInSeconds } from 'date-fns'
+import type { SessionCodec } from '@/services/api/resources/session/codec'
 
-const sessionStore = useSessionsStore()
+const props = defineProps({
+  session: { type: Object as PropType<SessionCodec>, required: true }
+})
+
+const emit = defineEmits<{
+  'update:videoTime': [event: HTMLVideoElement]
+}>()
 
 const videoNode = ref<HTMLVideoElement | null>(null)
 
 eventBus.on(EventBusEvents.REQUEST_CLICKED, onEventClicked)
 
 function onEventClicked(event: EventCodec) {
-  if (videoNode.value === null) return
+  if (videoNode.value === null || !props.session) return
 
   const eventHappenedAt = new Date(event.clientUtcEventCreatedAt)
-  const videoStartedAt = new Date(sessionStore.activeSession.createdAt)
+  const videoStartedAt = new Date(props.session.createdAt)
 
   ;(videoNode.value as HTMLVideoElement).currentTime =
     differenceInSeconds(eventHappenedAt, videoStartedAt, {
@@ -41,9 +47,10 @@ function onEventClicked(event: EventCodec) {
 }
 
 function onTimeUpdate(e: Event) {
-  const target = e.target as HTMLVideoElement
-
-  sessionStore.currentVideoDuration = target.currentTime
+  // const target = e.target as HTMLVideoElement
+  //
+  // sessionStore.currentVideoDuration = target.currentTime
+  emit('update:videoTime', e.target as HTMLVideoElement)
 }
 
 onUnmounted(() => {
