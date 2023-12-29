@@ -11,7 +11,9 @@
     @update:visible="onHide"
   >
     <div class="grid grid-cols-12 gap-5">
-      <div class="col-span-2"></div>
+      <div class="col-span-2">
+        <SessionSummary :session="session" />
+      </div>
 
       <div class="col-span-7"></div>
 
@@ -24,6 +26,7 @@
 import { PropType, ref } from 'vue'
 import Dialog from 'primevue/dialog'
 import type { SessionCodec } from '@/services/api/resources/session/codec'
+import SessionSummary from '@/components/resources/session/SessionSummary.vue'
 
 const dialog = ref<InstanceType<typeof Dialog> | null>()
 

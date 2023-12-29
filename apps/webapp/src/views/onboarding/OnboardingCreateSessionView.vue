@@ -12,6 +12,8 @@
     </div>
 
     <SeeSessionOnboardingDialog
+      v-if="session"
+      :session="session"
       :visible="isDialogOpen"
       @hide="(value: boolean) => isDialogOpen = value"
     />
@@ -21,7 +23,7 @@
 
       <div
         class="bg-slate-100 w-full aspect-video flex justify-center items-center rounded-lg mt-2 text-xl"
-        @click="isDialogOpen = true"
+        @click="onShowSessionClick"
       >
         Your session will show up here when we receive it
       </div>
@@ -42,7 +44,7 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import SeeSessionOnboardingDialog from '@/components/pages/onboarding/SeeSessionOnboardingDialog.vue'
 import { emptyPagination, OrderBy, PaginatableRecord } from '@/services/api'
 import type { SessionCodec } from '@/services/api/resources/session/codec'
@@ -56,6 +58,8 @@ const isDialogOpen = ref(false)
 const sessionsResponse = ref(emptyPagination<SessionCodec>())
 
 const toast = useToast()
+
+const session = computed<SessionCodec | null>(() => sessionsResponse.value.data[0] ?? null)
 
 let fetchSessionsClear: ReturnType<typeof setInterval>
 
@@ -79,6 +83,12 @@ async function fetchSessions() {
       group: 'bottom-center'
     })
   }
+}
+
+function onShowSessionClick() {
+  if (session.value === null) return
+
+  isDialogOpen.value = true
 }
 
 onMounted(() => {
