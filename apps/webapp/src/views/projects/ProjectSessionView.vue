@@ -6,6 +6,7 @@
       <div class="col-span-2">
         <SessionSummary
           class="mb-5"
+          :session="sessionStore.activeSession"
           :fetching-session="isLoadingSession"
         />
       </div>
@@ -48,7 +49,7 @@
 import { useSessionsStore } from '@/stores/sessions'
 import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import SessionSummary from '@/components/pages/projects/ProjectSessionView/SessionSummary.vue'
+import SessionSummary from '@/components/resources/session/SessionSummary.vue'
 import VideoSection from '@/components/pages/projects/ProjectSessionView/VideoSection.vue'
 import { isVideoConverted } from '@/services/resources/SessionsService'
 import { sessionsCodecFactory } from '@/services/factories/sessionsFactory'
