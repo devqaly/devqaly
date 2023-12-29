@@ -50,10 +50,13 @@ import { emptyPagination, OrderBy, PaginatableRecord } from '@/services/api'
 import type { SessionCodec } from '@/services/api/resources/session/codec'
 import { useToast } from 'primevue/usetoast'
 import { getProjectSessions } from '@/services/api/resources/project/actions'
+import { useSessionsStore } from '@/stores/sessions'
 
 const route = useRoute()
 
 const isDialogOpen = ref(false)
+
+const sessionStore = useSessionsStore()
 
 const sessionsResponse = ref(emptyPagination<SessionCodec>())
 
@@ -73,6 +76,8 @@ async function fetchSessions() {
 
     if (response.data.meta.total > 0) {
       clearInterval(fetchSessionsClear)
+
+      sessionStore.activeSession = sessionsResponse.value.data[0]
     }
   } catch (e) {
     toast.add({

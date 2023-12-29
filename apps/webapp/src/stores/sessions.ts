@@ -134,8 +134,10 @@ export const useSessionsStore = defineStore('sessionsStore', {
       const { data } = await getSession(sessionId)
 
       this.activeSession = data.data
+    },
 
-      if (isVideoConverted(data.data.videoStatus)) {
+    createVideoPartitionsForActiveSession() {
+      if (isVideoConverted(this.activeSession.videoStatus)) {
         this.videoPartitions = createPartitionsForVideo(
           this.activeSession.videoDurationInSeconds!,
           this.partitionSize

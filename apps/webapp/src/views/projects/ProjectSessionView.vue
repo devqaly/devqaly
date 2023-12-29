@@ -61,6 +61,8 @@ onBeforeMount(async () => {
 
   await sessionStore.getActiveSession(route.params.sessionId as string)
 
+  sessionStore.createVideoPartitionsForActiveSession()
+
   if (isVideoConverted(sessionStore.activeSession.videoStatus)) {
     await sessionStore.getActiveSessionEventsForPartition(0)
   }
