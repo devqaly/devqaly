@@ -120,6 +120,11 @@ class RegisterTokenControllerTest extends TestCase
         $this->assertEquals($response['company']['id'], $company->id);
         $this->assertEquals($response['project']['id'], $project->id);
         $this->assertTrue($response['registerToken']['hasOnboarding']);
+
+        $this->assertDatabaseHas((new CompanyMember())->getTable(), [
+            'member_id' => $user->id,
+            'company_id' => $company->id
+        ]);
     }
 
     /**
@@ -166,6 +171,11 @@ class RegisterTokenControllerTest extends TestCase
         $this->assertEquals($response['company']['id'], $company->id);
         $this->assertEquals($response['project']['id'], $project->id);
         $this->assertTrue($response['registerToken']['hasOnboarding']);
+
+        $this->assertDatabaseHas((new CompanyMember())->getTable(), [
+            'member_id' => $user->id,
+            'company_id' => $company->id
+        ]);
     }
 
     /**

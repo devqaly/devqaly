@@ -79,6 +79,15 @@ class RegisterTokenService
 
         if ($registerToken->has_onboarding) {
             $companyProject = $this->createCompanyAndProjectForFirstTimeUsers($user);
+
+            $company = $companyProject['company'];
+
+            CompanyMember::create([
+                'company_id' => $company->id,
+                'member_id' => $user->id,
+                'register_token_id' => $registerToken->id,
+                'invited_by_id' => $user->id,
+            ]);
         }
 
         return collect([
