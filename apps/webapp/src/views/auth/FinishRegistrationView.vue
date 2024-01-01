@@ -213,6 +213,21 @@ const onSubmit = getSubmitFn(validationSchema, async (values) => {
 
     if (route.query.redirectTo) {
       await router.push(route.query.redirectTo as string)
+    } else if (data.data.registerToken.hasOnboarding) {
+      if (!data.data.company && !data.data.project) {
+        console.error(
+          '`data.company.id` and `data.project.id` should be present in the response. Skipping onboarding.'
+        )
+
+        await router.push({ name: 'listProjects' })
+
+        return
+      }
+
+      await router.push({
+        name: 'onboardInstalling',
+        params: { projectId: data.data.project.id, companyId: data.data.company.id }
+      })
     } else {
       await router.push({ name: 'listProjects' })
     }
