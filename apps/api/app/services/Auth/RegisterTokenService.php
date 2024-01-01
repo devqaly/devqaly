@@ -14,7 +14,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RegisterTokenService
 {
-    public function createToken(Collection $data, bool $sendEmail = true): RegisterToken
+    public function createToken(
+        Collection $data,
+        bool $sendEmail = true,
+        bool $hasOnboarding = false
+    ): RegisterToken
     {
         $email = $data->get('email');
 
@@ -25,6 +29,7 @@ class RegisterTokenService
         $registerToken = RegisterToken::create([
             'token' => $this->generateToken(),
             'email' => $email,
+            'has_onboarding' => $hasOnboarding
         ]);
 
         if ($sendEmail) {

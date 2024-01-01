@@ -21,15 +21,21 @@ class SignupEmail extends Mailable implements ShouldQueue
 
     public function build()
     {
+        $finishRegistrationUrl = sprintf(
+            '%s/%s/%s',
+            config('frontend.FRONTEND_BASE_URL'),
+            'auth/finishRegistration',
+            $this->registerToken->token,
+        );
+
+        if ($this->registerToken->has_onboarding) {
+            $finishRegistrationUrl .= '?hasOnboarding=true';
+        }
+
         return $this
             ->subject(sprintf('Finish your registration at %s', config('app.name')))
             ->markdown('emails.auth.signup', [
-                'finishRegistrationUrl' => sprintf(
-                    '%s/%s/%s',
-                    config('frontend.FRONTEND_BASE_URL'),
-                    'auth/finishRegistration',
-                    $this->registerToken->token,
-                ),
+                'finishRegistrationUrl' => $finishRegistrationUrl,
             ]);
     }
 }

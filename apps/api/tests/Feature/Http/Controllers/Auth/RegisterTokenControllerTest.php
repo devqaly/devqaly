@@ -42,7 +42,8 @@ class RegisterTokenControllerTest extends TestCase
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
         $this->assertDatabaseHas((new RegisterToken())->getTable(), [
-            'email' => $email
+            'email' => $email,
+            'has_onboarding' => true
         ]);
     }
 
