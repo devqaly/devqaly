@@ -26,26 +26,25 @@ class RegisterTokenControllerTest extends TestCase
      * @return void
      * @group resources
      */
-    // @TODO: uncomment this when we allow users to sign in manually in the app
-//    public function test_user_is_able_to_create_register_token()
-//    {
-//        Mail::fake();
-//
-//        $email = $this->faker->email;
-//
-//        Mail::assertNothingQueued();
-//
-//        $response = $this->postJson(route('registerTokens.store'), [
-//            'email' => $email
-//        ]);
-//
-//        Mail::assertQueued(SignupEmail::class);
-//
-//        $response->assertStatus(Response::HTTP_NO_CONTENT);
-//        $this->assertDatabaseHas((new RegisterToken())->getTable(), [
-//            'email' => $email
-//        ]);
-//    }
+    public function test_user_is_able_to_create_register_token()
+    {
+        Mail::fake();
+
+        $email = $this->faker->email;
+
+        Mail::assertNothingQueued();
+
+        $response = $this->postJson(route('registerTokens.store'), [
+            'email' => $email
+        ]);
+
+        Mail::assertQueued(SignupEmail::class);
+
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
+        $this->assertDatabaseHas((new RegisterToken())->getTable(), [
+            'email' => $email
+        ]);
+    }
 
     /**
      * Test user is not able to create two register token with the same email.
@@ -55,26 +54,25 @@ class RegisterTokenControllerTest extends TestCase
      * @return void
      * @group resources
      */
-    // @TODO: uncomment this when we allow users to sign in manually in the app
-//    public function test_user_is_not_able_to_create_two_register_token_with_same_email()
-//    {
-//        Mail::fake();
-//
-//        $email = $this->faker->email;
-//
-//        RegisterToken::factory()->unrevoked()->create(['email' => $email]);
-//
-//        Mail::assertNothingQueued();
-//
-//        $response = $this->postJson(route('registerTokens.store'), [
-//            'email' => $email
-//        ]);
-//
-//        Mail::assertNotQueued(SignupEmail::class);
-//
-//        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
-//        $this->assertDatabaseCount((new RegisterToken())->getTable(), 1);
-//    }
+    public function test_user_is_not_able_to_create_two_register_token_with_same_email()
+    {
+        Mail::fake();
+
+        $email = $this->faker->email;
+
+        RegisterToken::factory()->unrevoked()->create(['email' => $email]);
+
+        Mail::assertNothingQueued();
+
+        $response = $this->postJson(route('registerTokens.store'), [
+            'email' => $email
+        ]);
+
+        Mail::assertNotQueued(SignupEmail::class);
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertDatabaseCount((new RegisterToken())->getTable(), 1);
+    }
 
     /**
      * Test user is able to send re-send email when registering on the first step
