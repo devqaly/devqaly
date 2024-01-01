@@ -48,6 +48,9 @@ class RegisterTokenController extends Controller
                 'user' => [
                     'email' => $data->get('user')->email,
                 ],
+                'registerToken' => [
+                    'hasOnboarding' => $registerToken->has_onboarding,
+                ]
             ]
         ];
 
