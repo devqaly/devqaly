@@ -9,15 +9,14 @@ export const authRoutes: RouteRecordRaw[] = [
       guestOnly: true
     }
   },
-  // @TODO: add this when we allow users to sign up
-  // {
-  //   path: '/auth/register',
-  //   name: 'authRegister',
-  //   component: () => import('@/views/auth/RegisterView.vue'),
-  //   meta: {
-  //     guestOnly: true
-  //   }
-  // },
+  {
+    path: '/auth/register',
+    name: 'authRegister',
+    component: () => import('@/views/auth/RegisterView.vue'),
+    meta: {
+      guestOnly: true
+    }
+  },
   {
     path: '/auth/login',
     name: 'authLogin',

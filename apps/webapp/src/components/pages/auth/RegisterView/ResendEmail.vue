@@ -1,15 +1,15 @@
 <template>
-  <div class="text-left">
+  <div class="text-left flex flex-col">
     Instructions have been sent to your email
 
     <Button
       :loading="isResendingEmail"
       label="Resend Email"
-      class="mt-2 block"
+      class="!mt-2 block"
       type="submit"
       :disabled="isButtonDisabled"
       @click="onResendEmailClick"
-    ></Button>
+    />
   </div>
 </template>
 
