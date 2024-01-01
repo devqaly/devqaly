@@ -153,7 +153,7 @@ function onShowSessionClick(session: SessionCodec) {
 }
 
 onMounted(() => {
-  fetchSessionsClear = setInterval(fetchSessions, 2000)
+  fetchSessionsClear = setInterval(fetchSessions, 10000)
 })
 
 onUnmounted(() => {
