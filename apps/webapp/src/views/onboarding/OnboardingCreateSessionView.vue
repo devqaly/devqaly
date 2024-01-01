@@ -65,7 +65,7 @@
         <div
           v-for="session in sessionsResponse.data"
           :key="`session-card-${session.id}`"
-          class="flex justify-between items-center gap-2 bg-white p-4 shadow rounded cursor-pointer"
+          class="flex justify-between items-center gap-2 bg-white p-4 shadow rounded cursor-pointer border border-transparent hover:border-blue-400 transition-all"
           @click="() => onShowSessionClick(session)"
         >
           <div class="text-xl font-semibold">{{ session.platformName }} session</div>
