@@ -34,7 +34,8 @@ class RegisterTokenFactory extends Factory
             'email' => $this->faker->email,
             'token' => $this->registerTokenService->generateToken(),
             'used_at' => null,
-            'revoked' => 0,
+            'revoked' => false,
+            'has_onboarding' => false
         ];
     }
 
@@ -67,6 +68,14 @@ class RegisterTokenFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'revoked' => 0,
+            ];
+        });
+    }
+
+    public function hasOnboarding() {
+        return $this->state(function (array $attributes) {
+            return [
+                'has_onboarding' => true,
             ];
         });
     }

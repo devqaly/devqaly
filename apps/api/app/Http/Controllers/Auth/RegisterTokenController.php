@@ -43,13 +43,20 @@ class RegisterTokenController extends Controller
     {
         $data = $registerTokenService->completeRegistration(collect($request->validated()), $registerToken);
 
-        return response()->json([
+        $response = [
             'data' => [
                 'user' => [
                     'email' => $data->get('user')->email,
-                ]
+                ],
             ]
-        ]);
+        ];
+
+        if ($data->get('project') && $data->get('company')) {
+            $response['data']['company']['id'] = $data->get('company')->id;
+            $response['data']['project']['id'] = $data->get('project')->id;
+        }
+
+        return response()->json($response);
     }
 
     public function destroy(RegisterToken $registerToken)

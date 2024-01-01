@@ -7,10 +7,11 @@ use App\Mail\Auth\SignupEmail;
 use App\Models\Auth\RegisterToken;
 use App\Models\Company\Company;
 use App\Models\Company\CompanyMember;
+use App\Models\Project\Project;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use Laravel\Sanctum\Sanctum;
 use Symfony\Component\HttpFoundation\Response;
@@ -73,6 +74,96 @@ class RegisterTokenControllerTest extends TestCase
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertDatabaseCount((new RegisterToken())->getTable(), 1);
+    }
+
+    /**
+     * Currently, the onboarding process requires the user to have a Project and a Company.
+     * Whenever we create a RegisterToken, if the user is registering for the first time
+     * (meaning he is not being invited to be a member of a company) he will go through
+     * the onboarding process. For that, we need to create the Company and Project.
+     *
+     * @return void
+     * @group resources
+     */
+    public function test_register_token_that_has_onboarding_creates_company_and_project_on_self_hosted_version() {
+
+        $email = $this->faker->email;
+        $firstName = $this->faker->firstName;
+        $lastName = $this->faker->lastName;
+        $timezone = $this->faker->timezone;
+        $password = 'password123';
+
+        $token = RegisterToken::factory()
+            ->hasOnboarding()
+            ->unrevoked()
+            ->create(['email' => $email]);
+
+        Config::set('devqaly.isSelfHosting', true);
+
+        $response = $this
+            ->putJson(route('registerTokens.update', ['registerToken' => $token]), [
+                'firstName' => $firstName,
+                'lastName' => $lastName,
+                'timezone' => $timezone,
+                'password' => $password,
+                'currentPosition' => 'qa'
+            ])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('data.user.email', $email);
+
+        $user = User::query()->where('email', $email)->firstOrFail();
+        $company = Company::query()->where('created_by_id', $user->id)->firstOrFail();
+        $project = Project::query()->where('company_id', $company->id)->where('created_by_id', $user->id)->firstOrFail();
+
+        $response = json_decode($response->getContent(), true)['data'];
+
+        $this->assertEquals($response['company']['id'], $company->id);
+        $this->assertEquals($response['project']['id'], $project->id);
+    }
+
+    /**
+     * Currently, the onboarding process requires the user to have a Project and a Company.
+     * Whenever we create a RegisterToken, if the user is registering for the first time
+     * (meaning he is not being invited to be a member of a company) he will go through
+     * the onboarding process. For that, we need to create the Company and Project.
+     *
+     * @return void
+     * @group resources
+     */
+    public function test_register_token_that_has_onboarding_creates_company_and_project_on_cloud_version() {
+
+        $email = $this->faker->email;
+        $firstName = $this->faker->firstName;
+        $lastName = $this->faker->lastName;
+        $timezone = $this->faker->timezone;
+        $password = 'password123';
+
+        $token = RegisterToken::factory()
+            ->hasOnboarding()
+            ->unrevoked()
+            ->create(['email' => $email]);
+
+        Config::set('devqaly.isSelfHosting', false);
+
+        $response = $this
+            ->putJson(route('registerTokens.update', ['registerToken' => $token]), [
+                'firstName' => $firstName,
+                'lastName' => $lastName,
+                'timezone' => $timezone,
+                'password' => $password,
+                'currentPosition' => 'qa'
+            ])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('data.user.email', $email);
+
+        $user = User::query()->where('email', $email)->firstOrFail();
+        $company = Company::query()->where('created_by_id', $user->id)->firstOrFail();
+        $project = Project::query()->where('company_id', $company->id)->where('created_by_id', $user->id)->firstOrFail();
+
+        $response = json_decode($response->getContent(), true)['data'];
+
+        $this->assertEquals($response['company']['id'], $company->id);
+        $this->assertEquals($response['project']['id'], $project->id);
     }
 
     /**
