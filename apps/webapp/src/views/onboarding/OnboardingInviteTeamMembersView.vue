@@ -93,6 +93,7 @@
           label="Complete Setup"
           icon="pi pi-chevron-right"
           icon-pos="right"
+          :loading="isInvitingUsers"
           @click="onFinishOnboarding"
         />
       </div>
@@ -103,6 +104,9 @@
 <script setup lang="ts">
 import { useSelectEmail } from '@/composables/useSelectEmail'
 import { useRoute, useRouter } from 'vue-router'
+import { ref } from 'vue'
+import { addMembersToCompany } from '@/services/api/resources/company/companyMember/actions'
+import { useToast } from 'primevue/usetoast'
 
 const { emails, email, errorMessage, onSubmit, onRemoveEmail } = useSelectEmail()
 
@@ -110,10 +114,32 @@ const router = useRouter()
 
 const route = useRoute()
 
-function onFinishOnboarding() {
-  router.push({
-    name: 'projectDashboard',
-    params: { projectId: route.params.projectId }
-  })
+const isInvitingUsers = ref(false)
+
+const toast = useToast()
+
+async function onFinishOnboarding() {
+  try {
+    isInvitingUsers.value = true
+
+    await addMembersToCompany(route.params.companyId as string, { emails: emails.value })
+
+    await router.push({
+      name: 'projectDashboard',
+      params: { projectId: route.params.projectId }
+    })
+  } catch (e) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'There was an error inviting members',
+      life: 3000,
+      group: 'bottom-center'
+    })
+
+    console.error(e)
+  } finally {
+    isInvitingUsers.value = false
+  }
 }
 </script>
