@@ -28,6 +28,14 @@
         />
       </div>
     </div>
+
+    <EventsSection
+      :key="sessionStore.activeSession.id"
+      :tabs="tabs"
+      :active-event-details="sessionStore.activeEventDetails"
+      class="mt-2"
+      v-if="isVideoConverted(sessionStore.activeSession.videoStatus)"
+    />
   </Dialog>
 </template>
 
@@ -42,12 +50,15 @@ import { isVideoConverted } from '@/services/resources/SessionsService'
 import throttle from 'lodash.throttle'
 import LivePreviewSection from '@/components/resources/session/LivePreviewSection.vue'
 import { EventCodec } from '@/services/api/resources/session/events/codec'
-import { sessionsCodecFactory } from '@/services/factories/sessionsFactory'
 import { emptyPagination } from '@/services/api'
+import { EventsSection } from '@/components/resources/events/EventTabs/EventsSection'
+import { useEventTabs } from '@/composables/useEventTabs'
 
 const dialog = ref<InstanceType<typeof Dialog> | null>()
 
 const sessionStore = useSessionsStore()
+
+const { tabs } = useEventTabs()
 
 defineProps({
   visible: {
