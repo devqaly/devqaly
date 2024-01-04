@@ -3,10 +3,15 @@
     <div class="px-5 py-2 border-b border-slate-100 flex justify-between items-center">
       <div class="text-xl">
         👋 Hello there Bruno Francisco. Lets setup your
-        <span class="underline font-semibold">{{ projectStore.onboardingProject!.title }}</span>
+        <span
+          class="underline font-semibold"
+          data-cy="onboarding-installing-page__project-name"
+          >{{ projectStore.onboardingProject!.title }}</span
+        >
       </div>
 
       <a
+        data-cy="onboarding-installing-page__see-docs"
         target="_blank"
         href="https://docs.devqaly.com/getting-started/introduction"
       >
@@ -36,7 +41,10 @@
       <InitiateDevqalyScript :project-id="projectStore.onboardingProject!.projectKey" />
 
       <div class="flex justify-end">
-        <RouterLink :to="{ name: 'onboardCreateSession', params: route.params }">
+        <RouterLink
+          :to="{ name: 'onboardCreateSession', params: route.params }"
+          data-cy="onboarding-installing-page__next-step"
+        >
           <Button
             class="!mt-4"
             label="Create First Session"
