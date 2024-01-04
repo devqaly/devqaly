@@ -81,7 +81,10 @@
       </div>
 
       <div class="flex justify-end">
-        <RouterLink :to="{ name: 'onboardInviteTeamMembers', params: route.params }">
+        <RouterLink
+          data-cy="onboarding-session-page__next-step"
+          :to="{ name: 'onboardInviteTeamMembers', params: route.params }"
+        >
           <Button
             class="!mt-4"
             label="Invite Team Members"

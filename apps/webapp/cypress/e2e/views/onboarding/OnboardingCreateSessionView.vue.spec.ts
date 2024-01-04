@@ -111,4 +111,12 @@ describe('OnboardingCreateSessionView.vue.spec.ts', () => {
 
     cy.dataCy('onboarding-session-page__see-docs').should('have.attr', 'target').and('eq', '_blank')
   })
+
+  it('should display correct link to next step', () => {
+    cy.visit(`/onboarding/company/${companyId}/project/${project.id}/createSession`)
+
+    cy.dataCy('onboarding-session-page__next-step')
+      .should('have.attr', 'href')
+      .and('contain', `onboarding/company/${companyId}/project/${project.id}/inviteTeamMembers`)
+  })
 })
