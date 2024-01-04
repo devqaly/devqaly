@@ -1,5 +1,6 @@
 <template>
   <Dialog
+    data-cy="onboarding-session-page__see-session-dialog"
     ref="dialog"
     :style="{ maxWidth: '90%', minWidth: '500px' }"
     :visible="visible"

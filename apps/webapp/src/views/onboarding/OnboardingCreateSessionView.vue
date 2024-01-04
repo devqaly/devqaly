@@ -4,6 +4,7 @@
       <div class="text-xl">🎥 Lets create your first recording</div>
 
       <a
+        data-cy="onboarding-session-page__see-docs"
         target="_blank"
         href="https://docs.devqaly.com/getting-started/introduction"
       >
@@ -34,11 +35,13 @@
       </div>
 
       <div
+        data-cy="onboarding-session-page__helper-record-session"
         class="border border-slate-200 rounded-lg aspect-video flex flex-col overflow-hidden relative"
         v-if="!hasFirstSessionRecorded"
       >
-        <div class="bg-blue-400 text-center text-white font-semibold font-mono shadow">
-          You'll be able to see the button on the right bottom corner to record a session
+        <div class="bg-blue-400 text-center text-white font-semibold font-mono shadow px-5 py-2">
+          You'll be able to see the button on the right bottom corner of your app to record a
+          session
         </div>
         <div
           class="absolute bottom-5 right-5 bg-slate-100 border-red-400 border px-5 py-2 rounded-full animate-pulse font-mono font-semibold cursor-pointer"
@@ -64,6 +67,8 @@
       <div class="flex flex-col gap-5 max-h-[20rem] overflow-y-auto">
         <div
           v-for="session in sessionsResponse.data"
+          data-cy="onboarding-session-page__session-row"
+          :data-session-id="session.id"
           :key="`session-card-${session.id}`"
           class="flex justify-between items-center gap-2 bg-white p-4 shadow rounded cursor-pointer border border-transparent hover:border-blue-400 transition-all"
           @click="() => onShowSessionClick(session)"
