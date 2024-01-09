@@ -22,7 +22,7 @@ declare global {
        * cy.dataCy('greeting')
        */
       // @ts-ignore
-      dataCy(value: string): Chainable<JQuery<HTMLElement>>
+      dataCy(value: string, attributes?: Record<string, string>): Chainable<JQuery<HTMLElement>>
 
       /**
        * Checks the value in window's clipboard is the same as the one passed via parameter
@@ -34,8 +34,16 @@ declare global {
   }
 }
 
-Cypress.Commands.add('dataCy', (value) => {
-  return cy.get(`[data-cy=${value}]`)
+Cypress.Commands.add('dataCy', (value, attributes) => {
+  let selector = `[data-cy=${value}]`
+
+  if (attributes) {
+    selector += Object.keys(attributes).reduce((selectorString, attribute) => {
+      return `${selectorString}[${attribute}="${attributes[attribute]}"]`
+    }, '')
+  }
+
+  return cy.get(selector)
 })
 
 Cypress.Commands.add('assertValueCopiedToClipboard', (value) => {
