@@ -166,5 +166,6 @@ onMounted(() => {
 
 onUnmounted(() => {
   sessionStore.activeSession = sessionsCodecFactory()
+  clearInterval(fetchSessionsClear)
 })
 </script>
