@@ -11,7 +11,7 @@ class RegisterToken extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $fillable = ['token', 'used_at', 'email', 'revoked'];
+    protected $fillable = ['token', 'used_at', 'email', 'revoked', 'has_onboarding'];
 
     public function scopeByEmail(Builder $builder, string $email) {
         return $builder->where('email', $email);

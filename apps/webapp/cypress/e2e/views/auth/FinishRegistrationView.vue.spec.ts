@@ -17,6 +17,7 @@ function fillForm({
 describe('LoginView.vue.spec.ts', () => {
   let validRegisterToken: any
   let expiredRegisterToken: any
+  let hasOnboardingRegisterToken: any
 
   const registeredEmail = 'fake-email@devqaly.com'
 
@@ -34,6 +35,12 @@ describe('LoginView.vue.spec.ts', () => {
       model: 'App\\Models\\Auth\\RegisterToken',
       state: ['unrevoked', 'expired']
     }).then((token) => (expiredRegisterToken = token))
+
+    cy.create({
+      model: 'App\\Models\\Auth\\RegisterToken',
+      attributes: { email: 'has-onboarding@company.com' },
+      state: ['unrevoked', 'hasOnboarding']
+    }).then((token) => (hasOnboardingRegisterToken = token))
   })
 
   it('should allow user to finish registration with valid token', () => {
@@ -117,6 +124,31 @@ describe('LoginView.vue.spec.ts', () => {
       )
 
       cy.url().should('contain', 'auth/finishRegistration')
+    })
+  })
+
+  it('should redirect user to onboarding when response has `data.registerToken.hasOnboarding` set to true', () => {
+    cy.intercept('PUT', '**/registerTokens/**').as('finishRegistrationRequest')
+
+    const firstName = 'Bruno'
+    const lastName = 'Francisco'
+    const password = 'password123'
+
+    cy.visit(`/auth/finishRegistration/${hasOnboardingRegisterToken.token}`)
+
+    fillForm({ firstName, lastName, password })
+
+    cy.dataCy('finish-registration__submit').click()
+
+    cy.wait('@finishRegistrationRequest').then(({ response }) => {
+      expect(response?.body.data.registerToken.hasOnboarding).to.be.eq(true)
+
+      expect(response?.statusCode).to.be.eq(200)
+
+      const companyId = response?.body.data.company.id
+      const projectId = response?.body.data.project.id
+
+      cy.url().should('contain', `onboarding/company/${companyId}/project/${projectId}/installing`)
     })
   })
 })

@@ -1,57 +1,72 @@
 <template>
-  <pre
-    class="text-white p-1 rounded-md"
-    style="tab-size: 6; white-space-collapse: preserve-breaks"
-  >
-    <code>
-    <slot></slot>
-    </code>
-  </pre>
+  <div class="relative">
+    <div
+      class="top-[10px] right-[10px] absolute text-blue-400 p-2 rounded-md hover:bg-blue-200 hover:text-blue-500 transition-all cursor-pointer"
+      v-text="copyButtonText"
+      @click="onCopyClick"
+    />
+
+    <pre
+      v-highlightjs
+      class="rounded-md"
+    ><code :class='language' ref='codeContent'><slot></slot></code></pre>
+  </div>
 </template>
 
-<style>
-code,
-pre {
-  color: black;
-  background: none;
-  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-  text-align: left;
-  white-space: pre;
-  word-spacing: normal;
-  word-break: normal;
-  word-wrap: normal;
-  line-height: 1.5;
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useToast } from 'primevue/usetoast'
 
-  -moz-tab-size: 4;
-  -o-tab-size: 4;
-  tab-size: 4;
+const codeContent = ref<HTMLElement | null>(null)
 
-  -webkit-hyphens: none;
-  -moz-hyphens: none;
-  -ms-hyphens: none;
-  hyphens: none;
+const copyButtonText = ref<'Copy' | 'Copied'>('Copy')
+
+defineProps({
+  language: {
+    type: String,
+    default: 'javascript'
+  }
+})
+
+const toast = useToast()
+
+function onCopyClick() {
+  if (codeContent.value === null) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error Copying',
+      detail: 'Your browser do not support navigator.clipboard',
+      life: 3000,
+      group: 'bottom-center'
+    })
+
+    return
+  }
+
+  navigator.clipboard
+    .writeText(codeContent.value!.innerText)
+    .then(() => {
+      copyButtonText.value = 'Copied'
+
+      setTimeout(() => {
+        copyButtonText.value = 'Copy'
+      }, 3000)
+    })
+    .catch(() => {
+      toast.add({
+        severity: 'error',
+        summary: 'Error Copying',
+        detail: 'There was an error copying the content',
+        life: 3000
+      })
+    })
 }
+</script>
 
-/* Code blocks */
-pre {
-  position: relative;
-  margin: 0.5em 0;
-  box-shadow: -1px 0px 0px 0px #358ccb, 0px 0px 0px 1px #dfdfdf;
-  border-left: 2px solid var(--blue-500);
-  background-color: #fdfdfd;
-  background-image: linear-gradient(transparent 50%, rgba(69, 142, 209, 0.04) 50%);
-  background-size: 3em 3em;
-  background-origin: content-box;
-  overflow: visible;
-  padding: 0;
-}
-
-code[class*='language'] {
-  max-height: inherit;
-  height: 100%;
-  padding: 0 1em;
-  display: block;
-  overflow: auto;
+<style scoped>
+code.hljs {
+  background: #f1f5f9;
+  padding: 16px;
+  border-radius: 8px;
 }
 </style>
-<script setup></script>

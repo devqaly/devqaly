@@ -65,7 +65,7 @@
 
             <div class="mx-auto block text-center mt-2 text-slate-400">
               <div class="mt-4">
-                Already Have An Account?
+                Already have an account?
                 <router-link
                   :to="{ name: 'authLogin' }"
                   class="font-medium no-underline text-blue-500 text-right cursor-pointer"
@@ -74,15 +74,15 @@
                 </router-link>
               </div>
 
-              <!--              <div class="mt-2">-->
-              <!--                Don't have an account?-->
-              <!--                <router-link-->
-              <!--                  :to="{ name: 'authRegister' }"-->
-              <!--                  class="font-medium no-underline text-blue-500 text-right cursor-pointer"-->
-              <!--                >-->
-              <!--                  Create Today!-->
-              <!--                </router-link>-->
-              <!--              </div>-->
+              <div>
+                Don't have an account?
+                <router-link
+                  :to="{ name: 'authRegister' }"
+                  class="font-medium no-underline text-blue-500 text-right cursor-pointer"
+                >
+                  Create Today!
+                </router-link>
+              </div>
             </div>
           </Form>
         </div>

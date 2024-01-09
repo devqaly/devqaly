@@ -6,6 +6,8 @@ use App\Mail\Auth\SignupEmail;
 use App\Models\Auth\RegisterToken;
 use App\Models\Company\CompanyMember;
 use App\Models\User;
+use App\services\Resources\CompanyService;
+use App\services\Resources\ProjectService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
@@ -14,7 +16,20 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RegisterTokenService
 {
-    public function createToken(Collection $data, bool $sendEmail = true): RegisterToken
+    private CompanyService $companyService;
+    private ProjectService $projectService;
+
+    public function __construct(CompanyService $companyService, ProjectService $projectService)
+    {
+        $this->companyService = $companyService;
+        $this->projectService = $projectService;
+    }
+
+    public function createToken(
+        Collection $data,
+        bool $sendEmail = true,
+        bool $hasOnboarding = false
+    ): RegisterToken
     {
         $email = $data->get('email');
 
@@ -25,6 +40,7 @@ class RegisterTokenService
         $registerToken = RegisterToken::create([
             'token' => $this->generateToken(),
             'email' => $email,
+            'has_onboarding' => $hasOnboarding
         ]);
 
         if ($sendEmail) {
@@ -55,8 +71,28 @@ class RegisterTokenService
                 'member_id' => $user->id
             ]);
 
+        // If the user registered first, the user won't have a company or a project.
+        // First time users that doesn't have a Company and a Project will have the field
+        // `has_onboarding` set to `true`. Since the onboarding process requires
+        // User to have a Company and a Project, we will create those for him.
+        $companyProject = ['company' => null, 'project' => null];
+
+        if ($registerToken->has_onboarding) {
+            $companyProject = $this->createCompanyAndProjectForFirstTimeUsers($user);
+
+            $company = $companyProject['company'];
+
+            CompanyMember::create([
+                'company_id' => $company->id,
+                'member_id' => $user->id,
+                'register_token_id' => $registerToken->id,
+                'invited_by_id' => $user->id,
+            ]);
+        }
+
         return collect([
-            'user' => $user
+            ...$companyProject,
+            'user' => $user,
         ]);
     }
 
@@ -89,5 +125,21 @@ class RegisterTokenService
 
             abort(Response::HTTP_FORBIDDEN, 'Current token have expired. We have sent a new token to the email associated with this token');
         }
+    }
+
+    private function createCompanyAndProjectForFirstTimeUsers(User $user): array
+    {
+        $company = $this->companyService->createCompany(
+            data: collect(['name' => sprintf("%s's Company", $user->first_name)]),
+            createdBy: $user
+        );
+
+        $project = $this->projectService->createProject(
+            data: collect(['title' => sprintf("%s's Project", $user->first_name)]),
+            creator: $user,
+            company: $company,
+        );
+
+        return ['company' => $company, 'project' => $project];
     }
 }

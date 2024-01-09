@@ -3,40 +3,37 @@
     data-cy="setup-sdk-dialog"
     v-model:visible="visible"
     modal
-    header="How to setup your SDK"
+    header="Integration Details"
     :draggable="false"
     :style="{ maxWidth: '90%', minWidth: '500px' }"
   >
-    In order to setup our SDK you will need to first install it with
+    <div class="mb-4 flex items-center gap-2 align-middle font-semibold">
+      <span
+        class="bg-black p-2 rounded-full text-white w-[24px] h-[24px] text-center inline-block leading-[10px]"
+        >1</span
+      >
+      Install Devqaly's SDK:
+    </div>
 
-    <DCode>npm install @devqaly/browser</DCode>
-    Or, if you use yarn
-    <DCode>yarn add @devqaly/browser</DCode>
+    <InstallDevqaly />
 
-    Then you will have to initiate the SDK (usually in your <strong>main.ts</strong> OR
-    <strong>main.js</strong>):
+    <div class="mb-4 flex items-center gap-2 align-middle font-semibold mt-8">
+      <span
+        class="bg-black p-2 rounded-full text-white w-[24px] h-[24px] text-center inline-block leading-[10px]"
+        >2</span
+      >
+      Initiate the script
+    </div>
 
-    <pre
-      class="bg-slate-500 text-white rounded-md"
-      style="tab-size: 6; white-space-collapse: preserve-breaks"
-    >
-      <code>
-    <!--   prettier-ignore -->
-    import { DevqalySDK } from '@devqaly/browser'
-
-    const devqaly = new DevqalySDK({
-          projectKey: '{{project ? project.projectKey : ''}}'
-    })
-
-    devqaly.showRecordingButton()
-      </code>
-    </pre>
+    <InitiateDevqalyScript :project-id="project ? project.projectKey : ''" />
   </Dialog>
 </template>
+
 <script setup lang="ts">
-import DCode from '@/components/DCode.vue'
 import type { ProjectCodec } from '@/services/api/resources/project/codec'
 import { computed } from 'vue'
+import InstallDevqaly from '@/components/InstallDevqaly.vue'
+import InitiateDevqalyScript from '@/components/InitiateDevqalyScript.vue'
 
 const props = defineProps<{
   project: ProjectCodec | null

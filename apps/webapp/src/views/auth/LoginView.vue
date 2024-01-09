@@ -80,17 +80,17 @@
           />
 
           <div class="mx-auto block text-center mt-2 text-slate-400">
-            <!--            <div class="mt-4">-->
-            <!--              Don't have an account?-->
-            <!--              <router-link-->
-            <!--                :to="{ name: 'authRegister' }"-->
-            <!--                class="font-medium no-underline text-blue-500 text-right cursor-pointer"-->
-            <!--              >-->
-            <!--                Create Today!-->
-            <!--              </router-link>-->
-            <!--            </div>-->
-
             <div class="mt-4">
+              Don't have an account?
+              <router-link
+                :to="{ name: 'authRegister' }"
+                class="font-medium no-underline text-blue-500 text-right cursor-pointer"
+              >
+                Create Today!
+              </router-link>
+            </div>
+
+            <div class="mt2">
               Forgot your password?
               <router-link
                 data-cy="login-view__reset-password"

@@ -36,9 +36,9 @@
 </template>
 
 <script setup lang="ts">
-import BaseEventDetails from '@/components/pages/projects/ProjectSessionView/EventTabs/ActiveEvent/BaseEventDetails.vue'
+import BaseEventDetails from '@/components/resources/events/EventTabs/ActiveEvent/BaseEventDetails.vue'
 import type { CustomEvent, UrlChanged } from '@/services/api/resources/session/events/codec'
-import type { Props } from '@/components/pages/projects/ProjectSessionView/EventTabs/ActiveEvent/common'
+import type { Props } from '@/components/resources/events/EventTabs/ActiveEvent/common'
 import DCopyble from '@/components/DCopyble.vue'
 
 const props = defineProps<Props<CustomEvent>>()
