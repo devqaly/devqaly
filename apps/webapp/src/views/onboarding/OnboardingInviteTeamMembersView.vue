@@ -4,6 +4,7 @@
       <div class="text-xl">🧑‍🤝‍🧑 Lets invite your team mates</div>
 
       <a
+        data-cy="onboarding-invite-page__see-docs"
         target="_blank"
         href="https://docs.devqaly.com/getting-started/introduction"
       >
@@ -25,6 +26,7 @@
       >
         <div class="flex gap-1">
           <InputText
+            data-cy="onboarding-invite-page__add-team-member-email"
             v-model="email"
             id="title"
             type="text"
@@ -35,6 +37,7 @@
           />
 
           <Button
+            data-cy="onboarding-invite-page__invite-member"
             class="shrink"
             label="Invite Member"
             outlined
@@ -49,6 +52,8 @@
         >
           <div
             class="my-1 p-2 bg-slate-50 rounded-md"
+            data-cy="onboarding-invite-page__pre-invited-member"
+            :data-email="email"
             v-for="email in emails"
             :key="email"
           >
@@ -60,6 +65,8 @@
               </div>
 
               <Button
+                data-cy="onboarding-invite-page__remove-pre-invited-member"
+                :data-email="email"
                 text
                 rounded
                 severity="secondary"
@@ -76,6 +83,7 @@
       </form>
 
       <div
+        data-cy="onboarding-invite-page__no-members-invited-helper"
         class="bg-slate-100 rounded-md p-5 flex items-center gap-2"
         v-if="emails.length < 1"
       >
@@ -89,6 +97,7 @@
 
       <div class="flex justify-end">
         <Button
+          data-cy="onboarding-invite-page__invite-members-btn"
           class="!mt-4"
           label="Complete Setup"
           icon="pi pi-chevron-right"
