@@ -95,10 +95,20 @@
         </div>
       </div>
 
-      <div class="flex justify-end">
+      <div class="flex justify-between !mt-4">
+        <RouterLink
+          :to="{ name: 'projectDashboard', params: { projectId: route.params.projectId } }"
+          data-cy="onboarding-invite-page__skip-step"
+        >
+          <Button
+            class="!text-slate-400"
+            label="Skip"
+            link
+          />
+        </RouterLink>
+
         <Button
           data-cy="onboarding-invite-page__invite-members-btn"
-          class="!mt-4"
           label="Complete Setup"
           icon="pi pi-chevron-right"
           icon-pos="right"

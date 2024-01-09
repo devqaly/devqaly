@@ -31,6 +31,14 @@ describe('OnboardingInviteTeamMembersView.vue.spec.ts', () => {
     cy.dataCy('onboarding-invite-page__see-docs').should('have.attr', 'target').and('eq', '_blank')
   })
 
+  it('should allow to skip step', () => {
+    cy.visit(`/onboarding/company/${companyId}/project/${project.id}/inviteTeamMembers`)
+
+    cy.dataCy('onboarding-invite-page__skip-step').click()
+
+    cy.url().should('contain', `projects/${project.id}/dashboard`)
+  })
+
   context('pre invite members', () => {
     it('should allow to add an email', () => {
       cy.visit(`/onboarding/company/${companyId}/project/${project.id}/inviteTeamMembers`)

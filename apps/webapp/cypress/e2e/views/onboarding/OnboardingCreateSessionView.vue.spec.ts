@@ -119,4 +119,12 @@ describe('OnboardingCreateSessionView.vue.spec.ts', () => {
       .should('have.attr', 'href')
       .and('contain', `onboarding/company/${companyId}/project/${project.id}/inviteTeamMembers`)
   })
+
+  it('should allow to skip step', () => {
+    cy.visit(`/onboarding/company/${companyId}/project/${project.id}/createSession`)
+
+    cy.dataCy('onboarding-session-page__skip-step').click()
+
+    cy.url().should('contain', `company/${companyId}/project/${project.id}/inviteTeamMembers`)
+  })
 })

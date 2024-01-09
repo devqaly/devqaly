@@ -40,13 +40,23 @@
 
       <InitiateDevqalyScript :project-id="projectStore.onboardingProject!.projectKey" />
 
-      <div class="flex justify-end">
+      <div class="flex justify-between !mt-4">
+        <RouterLink
+          :to="{ name: 'onboardCreateSession', params: route.params }"
+          data-cy="onboarding-installing-page__skip-step"
+        >
+          <Button
+            class="!text-slate-400"
+            label="Skip"
+            link
+          />
+        </RouterLink>
+
         <RouterLink
           :to="{ name: 'onboardCreateSession', params: route.params }"
           data-cy="onboarding-installing-page__next-step"
         >
           <Button
-            class="!mt-4"
             label="Create First Session"
             icon="pi pi-chevron-right"
             icon-pos="right"

@@ -52,4 +52,12 @@ describe('OnboardInstallingView.vue.spec.ts', () => {
       .should('have.attr', 'href')
       .and('contain', `/onboarding/company/${companyId}/project/${project.id}/createSession`)
   })
+
+  it('should allow to skip step', () => {
+    cy.visit(`/onboarding/company/${companyId}/project/${project.id}/installing`)
+
+    cy.dataCy('onboarding-installing-page__skip-step').click()
+
+    cy.url().should('contain', `company/${companyId}/project/${project.id}/createSession`)
+  })
 })

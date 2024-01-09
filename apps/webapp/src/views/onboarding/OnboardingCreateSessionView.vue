@@ -80,13 +80,23 @@
         </div>
       </div>
 
-      <div class="flex justify-end">
+      <div class="flex justify-between !mt-4">
+        <RouterLink
+          data-cy="onboarding-session-page__skip-step"
+          :to="{ name: 'onboardInviteTeamMembers', params: route.params }"
+        >
+          <Button
+            link
+            class="!text-slate-400"
+            label="Skip"
+          />
+        </RouterLink>
+
         <RouterLink
           data-cy="onboarding-session-page__next-step"
           :to="{ name: 'onboardInviteTeamMembers', params: route.params }"
         >
           <Button
-            class="!mt-4"
             label="Invite Team Members"
             icon="pi pi-chevron-right"
             icon-pos="right"
