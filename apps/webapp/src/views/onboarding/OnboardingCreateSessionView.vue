@@ -23,11 +23,11 @@
       <div class="mb-4">
         Now that you have installed
         <a
-          href="https://docs.devqaly.com"
+          href="https://docs.devqaly.com/getting-started/quick-start/"
           class="underline"
           target="_blank"
         >
-          Devqaly's SDK </a
+          Devqaly's SDK</a
         >, you can create your first session. After you finish your first recording, you will be
         able to see it here.
 
@@ -49,16 +49,18 @@
           Start Recording
         </div>
 
-        <div class="p-2 flex-col flex gap-5 mt-2">
-          <div
-            class="flex gap-5"
-            v-for="row in rows"
-            :key="`row-${row}`"
-          >
-            <div
-              v-for="column in columns"
-              :key="`column-${column}`"
-              class="bg-slate-200 rounded-lg aspect-square w-2/12"
+        <div class="flex gap-2 h-full p-2">
+          <Skeleton
+            height="100%"
+            animation="none"
+            width="20%"
+          />
+
+          <div class="grow">
+            <Skeleton
+              animation="none"
+              height="70px"
+              width="100%"
             />
           </div>
         </div>
