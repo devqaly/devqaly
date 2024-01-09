@@ -41,7 +41,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, PropType, ref, watch } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
+import type { PropType } from 'vue'
 import Dialog from 'primevue/dialog'
 import type { SessionCodec } from '@/services/api/resources/session/codec'
 import SessionSummary from '@/components/resources/session/SessionSummary.vue'
@@ -50,7 +51,7 @@ import { useSessionsStore } from '@/stores/sessions'
 import { isVideoConverted } from '@/services/resources/SessionsService'
 import throttle from 'lodash.throttle'
 import LivePreviewSection from '@/components/resources/session/LivePreviewSection.vue'
-import { EventCodec } from '@/services/api/resources/session/events/codec'
+import type { EventCodec } from '@/services/api/resources/session/events/codec'
 import { emptyPagination } from '@/services/api'
 import { EventsSection } from '@/components/resources/events/EventTabs/EventsSection'
 import { useEventTabs } from '@/composables/useEventTabs'

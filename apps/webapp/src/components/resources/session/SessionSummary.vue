@@ -126,7 +126,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, PropType } from 'vue'
+import { computed } from 'vue'
+import type { PropType } from 'vue'
 import { getVideoStatusText } from '@/services/resources/SessionsService'
 import { formatToDateTime } from '@/services/date'
 import type { SessionCodec } from '@/services/api/resources/session/codec'

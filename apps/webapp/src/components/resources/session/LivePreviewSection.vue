@@ -28,7 +28,8 @@
 
 <script lang="ts" setup>
 import { ListEvents } from '@/components/resources/events/listEvent/ListEvents'
-import { onMounted, PropType, ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import type { PropType } from 'vue'
 import type { EventCodec } from '@/services/api/resources/session/events/codec'
 import type { SessionCodec } from '@/services/api/resources/session/codec'
 

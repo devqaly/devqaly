@@ -69,7 +69,8 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { isError, WrappedResponse } from '@/services/api/axios'
+import { isError } from '@/services/api/axios'
+import type { WrappedResponse } from '@/services/api/axios'
 import { HttpStatusCode } from 'axios'
 import { useProjectsStore } from '@/stores/projects'
 import { onBeforeMount, ref } from 'vue'

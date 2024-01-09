@@ -113,18 +113,14 @@
 import { useRoute } from 'vue-router'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import SeeSessionOnboardingDialog from '@/components/pages/onboarding/SeeSessionOnboardingDialog.vue'
-import { emptyPagination, OrderBy, PaginatableRecord } from '@/services/api'
+import { emptyPagination, OrderBy } from '@/services/api'
+import type { PaginatableRecord } from '@/services/api'
 import type { SessionCodec } from '@/services/api/resources/session/codec'
 import { useToast } from 'primevue/usetoast'
 import { getProjectSessions } from '@/services/api/resources/project/actions'
 import { useSessionsStore } from '@/stores/sessions'
 import { sessionsCodecFactory } from '@/services/factories/sessionsFactory'
 import { isVideoConverted } from '@/services/resources/SessionsService'
-import { range } from '@/services/number'
-
-const columns = range(1, 6)
-
-const rows = range(1, 4)
 
 const route = useRoute()
 

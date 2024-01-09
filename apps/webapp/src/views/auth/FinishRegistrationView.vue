@@ -226,7 +226,7 @@ const onSubmit = getSubmitFn(validationSchema, async (values) => {
 
       await router.push({
         name: 'onboardInstalling',
-        params: { projectId: data.data.project.id, companyId: data.data.company.id }
+        params: { projectId: data.data.project?.id, companyId: data.data.company?.id }
       })
     } else {
       await router.push({ name: 'listProjects' })

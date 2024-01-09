@@ -33,7 +33,8 @@
 </template>
 
 <script lang="ts" setup>
-import { onUnmounted, PropType, ref, computed } from 'vue'
+import { onUnmounted, ref, computed } from 'vue'
+import type { PropType } from 'vue'
 import type { EventCodec } from '@/services/api/resources/session/events/codec'
 import { eventBus, EventBusEvents } from '@/services/mitt'
 import { differenceInSeconds } from 'date-fns'
