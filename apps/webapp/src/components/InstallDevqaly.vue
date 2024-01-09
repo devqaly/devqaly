@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-cy="install-devqaly">
     <div class="flex gap-4 mt-2">
       <div
         :class="{

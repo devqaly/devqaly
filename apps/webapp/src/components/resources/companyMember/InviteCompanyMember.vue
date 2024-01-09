@@ -74,6 +74,7 @@
 
         <div class="mt-4 flex justify-between gap-4">
           <Button
+            data-cy="invite-company-member__close-dialog"
             @click="closeDialog"
             label="Cancel"
             text
@@ -81,6 +82,7 @@
           />
 
           <Button
+            data-cy="invite-company-member__invite-button"
             label="Invite Members"
             type="button"
             :disabled="emails.length < 1"

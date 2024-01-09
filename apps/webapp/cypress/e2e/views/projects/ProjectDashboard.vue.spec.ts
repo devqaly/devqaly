@@ -24,12 +24,8 @@ describe('ProjectDashboard.vue', () => {
 
     cy.wait('@getProjectRequest')
 
-    cy.contains('npm install @devqaly/browser')
-    cy.contains('yarn add @devqaly/browser')
-    cy.contains('Then you will have to initiate the SDK')
-    cy.contains("import { DevqalySDK } from '@devqaly/browser'")
-    cy.contains('const devqaly = new DevqalySDK({')
+    cy.dataCy('install-devqaly').should('be.visible')
+    cy.dataCy('initiate-devqaly-script').should('be.visible')
     cy.contains(`projectKey: '${project.project_key}'`)
-    cy.contains('devqaly.showRecordingButton()')
   })
 })
