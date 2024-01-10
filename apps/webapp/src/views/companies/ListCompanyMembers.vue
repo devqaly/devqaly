@@ -39,7 +39,7 @@
 
             <div
               v-if="data.member === null && data.registerToken"
-              class="flex align-items-center gap-2"
+              class="flex items-center gap-2"
             >
               {{ data.registerToken.email }}
               <i

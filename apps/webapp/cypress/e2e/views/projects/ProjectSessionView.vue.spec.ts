@@ -196,7 +196,7 @@ describe('ProjectSessionView.vue', () => {
       })
     })
 
-    it.only('should show new events when user skips the video to X seconds', () => {
+    it('should show new events when user skips the video to X seconds', () => {
       cy.intercept('GET', `**/sessions/${sessionWithConvertedVideo.id}/video`, {
         fixture: 'test-video.webm,null'
       }).as('videoRequest')
@@ -217,6 +217,7 @@ describe('ProjectSessionView.vue', () => {
 
       cy.get('video').should('have.prop', 'duration', 32.48)
 
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(2000)
 
       cy.dataCy('project-session-view__video').then(($video) => {

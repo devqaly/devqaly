@@ -22,7 +22,10 @@ class RegisterTokenController extends Controller
 
     public function store(StoreRegisterTokenRequest $request, RegisterTokenService $registerTokenService): JsonResponse
     {
-        $registerTokenService->createToken(collect($request->validated()));
+        $registerTokenService->createToken(
+            data: collect($request->validated()),
+            hasOnboarding: true
+        );
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
@@ -40,13 +43,23 @@ class RegisterTokenController extends Controller
     {
         $data = $registerTokenService->completeRegistration(collect($request->validated()), $registerToken);
 
-        return response()->json([
+        $response = [
             'data' => [
                 'user' => [
                     'email' => $data->get('user')->email,
+                ],
+                'registerToken' => [
+                    'hasOnboarding' => $registerToken->has_onboarding,
                 ]
             ]
-        ]);
+        ];
+
+        if ($data->get('project') && $data->get('company')) {
+            $response['data']['company']['id'] = $data->get('company')->id;
+            $response['data']['project']['id'] = $data->get('project')->id;
+        }
+
+        return response()->json($response);
     }
 
     public function destroy(RegisterToken $registerToken)
@@ -64,7 +77,10 @@ class RegisterTokenController extends Controller
 
         if ($registerToken) {
             $registerToken->update(['revoked' => 1]);
-            $registerTokenService->createToken(collect(['email' => $email]));
+            $registerTokenService->createToken(
+                data: collect(['email' => $email]),
+                hasOnboarding: $registerToken->has_onboarding
+            );
         }
 
         return response()->json(null, Response::HTTP_NO_CONTENT);

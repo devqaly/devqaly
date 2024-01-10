@@ -2,6 +2,7 @@ import 'primevue/resources/themes/lara-light-blue/theme.css'
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
 import './global.css'
+import 'highlight.js/styles/atelier-cave-light.css'
 
 import PrimeVue from 'primevue/config'
 
@@ -10,6 +11,9 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+
+// @ts-ignore
+import VueHighlightJS from 'vue3-highlightjs'
 
 import VueApexCharts from 'vue3-apexcharts'
 import InputText from 'primevue/inputtext'
@@ -58,6 +62,7 @@ app.use(PrimeVue, { ripple: true })
 app.use(ToastService)
 app.use(VueApexCharts)
 app.use(ConfirmationService)
+app.use(VueHighlightJS)
 
 app.directive('styleclass', StyleClass)
 app.directive('tooltip', Tooltip)

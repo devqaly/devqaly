@@ -4,6 +4,7 @@ import { authRoutes } from '@/router/children/authRoutes'
 import { TOKEN_KEY } from '@/stores/app'
 import { projectRoutes } from '@/router/children/projectRoutes'
 import { companyRoutes } from '@/router/children/companyRoutes'
+import { onboardingRoutes } from '@/router/children/onboardingRoutes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +33,11 @@ const router = createRouter({
     },
     {
       path: '/',
+      component: () => import('@/layouts/OnboardingLayout.vue'),
+      children: onboardingRoutes
+    },
+    {
+      path: '/',
       component: () => import('@/layouts/NavigationLayout.vue'),
       children: [
         {
@@ -44,7 +50,7 @@ const router = createRouter({
         }
       ]
     },
-    { path: '/:pathMatch(.*)*', component: () => import('@/views/NotFound.vue') }
+    { path: '/:pathMatch(.*)*', name: 'notFound', component: () => import('@/views/NotFound.vue') }
   ]
 })
 

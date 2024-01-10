@@ -18,8 +18,8 @@
       v-if="liveEventContainerHeight !== null"
       :style="{ height: `${liveEventContainerHeight}px` }"
       class="grow overflow-y-auto"
-      :session="sessionStore.activeSession"
-      :events="sessionStore.liveEvents"
+      :session="session"
+      :events="events"
       :height="liveEventContainerHeight!"
       @see:details="onSeeDetails"
     />
@@ -28,11 +28,19 @@
 
 <script lang="ts" setup>
 import { ListEvents } from '@/components/resources/events/listEvent/ListEvents'
-import { useSessionsStore } from '@/stores/sessions'
 import { onMounted, ref } from 'vue'
+import type { PropType } from 'vue'
 import type { EventCodec } from '@/services/api/resources/session/events/codec'
+import type { SessionCodec } from '@/services/api/resources/session/codec'
 
-const sessionStore = useSessionsStore()
+defineProps({
+  events: { type: Array as PropType<Array<EventCodec>>, required: true },
+  session: { type: Object as PropType<SessionCodec>, required: true }
+})
+
+const emit = defineEmits<{
+  'update:activeEventDetails': [event: EventCodec]
+}>()
 
 const sectionContainer = ref<HTMLElement | null>(null)
 
@@ -48,6 +56,6 @@ onMounted(() => {
 })
 
 function onSeeDetails(event: EventCodec) {
-  sessionStore.activeEventDetails = event
+  emit('update:activeEventDetails', event)
 }
 </script>

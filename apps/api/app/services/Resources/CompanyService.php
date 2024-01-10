@@ -14,13 +14,6 @@ use Laravel\Cashier\Exceptions\IncompletePayment;
 
 class CompanyService
 {
-    private RegisterTokenService $registerTokenService;
-
-    public function __construct(RegisterTokenService $registerTokenService)
-    {
-        $this->registerTokenService = $registerTokenService;
-    }
-
     public function createCompany(Collection $data, User $createdBy, array $customerOptionsMetadata = []): Company
     {
         DB::beginTransaction();
@@ -85,6 +78,8 @@ class CompanyService
             ->whereNull('used_at')
             ->get();
 
+        $registerTokenService = app()->make(RegisterTokenService::class);
+
         /** @var string $email */
         foreach ($unregisteredUsersEmails as $email) {
             /** @var RegisterToken|null $oldRegisterToken */
@@ -94,7 +89,7 @@ class CompanyService
             // YES: The user is being invited for the first time.
             //      THEN: Create a register token and send the sign-up email
             if ($oldRegisterToken === null) {
-                $newRegisterToken = $this->registerTokenService->createToken(collect(['email' => $email]), false);
+                $newRegisterToken = $registerTokenService->createToken(collect(['email' => $email]), false);
 
                 CompanyMember::create([
                     'company_id' => $company->id,
@@ -103,7 +98,7 @@ class CompanyService
                     'invited_by_id' => $invitedBy->id,
                 ]);
 
-                $this->registerTokenService->sendEmail($email, $newRegisterToken);
+                $registerTokenService->sendEmail($email, $newRegisterToken);
 
                 continue;
             }
@@ -122,7 +117,7 @@ class CompanyService
             $oldRegisterToken->save();
 
             if ($isTokenAssignedToCompany) {
-                $this->registerTokenService->sendEmail($email, $oldRegisterToken);
+                $registerTokenService->sendEmail($email, $oldRegisterToken);
 
                 continue;
             }

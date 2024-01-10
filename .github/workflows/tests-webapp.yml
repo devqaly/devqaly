@@ -77,6 +77,11 @@ jobs:
         run: |
           npm install
 
+      - name: Build project
+        working-directory: apps/webapp
+        run: |
+          npm run build
+
       - name: Copy .env.ci to .env
         working-directory: apps/webapp
         run: |

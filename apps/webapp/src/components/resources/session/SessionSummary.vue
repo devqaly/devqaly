@@ -6,9 +6,9 @@
       <div class="text-gray-500">OS</div>
       <div
         class="font-medium"
-        v-if="!fetchingSession"
+        v-if="!fetchingSession && session"
         data-cy="project-session-view__os"
-        v-text="sessionStore.activeSession.os"
+        v-text="session.os"
       />
       <Skeleton
         width="60px"
@@ -22,8 +22,8 @@
       <div
         class="font-medium"
         data-cy="project-session-view__platform"
-        v-if="!fetchingSession"
-        v-text="sessionStore.activeSession.platformName"
+        v-if="!fetchingSession && session"
+        v-text="session.platformName"
       />
       <Skeleton
         height="17px"
@@ -38,7 +38,7 @@
         class="font-medium"
         data-cy="project-session-view__environment"
         v-if="!fetchingSession"
-        v-text="sessionStore.activeSession.environment ?? '---'"
+        v-text="session ? session.environment ?? '---' : '---'"
       />
       <Skeleton
         height="17px"
@@ -52,8 +52,8 @@
       <div
         class="font-medium"
         data-cy="project-session-view__version"
-        v-if="!fetchingSession"
-        v-text="sessionStore.activeSession.version"
+        v-if="!fetchingSession && session"
+        v-text="session.version"
       />
       <Skeleton
         height="17px"
@@ -67,10 +67,8 @@
       <div
         class="font-medium"
         data-cy="project-session-view__screen-size"
-        v-if="!fetchingSession"
-        v-text="
-          `${sessionStore.activeSession.windowWidth}x${sessionStore.activeSession.windowHeight}`
-        "
+        v-if="!fetchingSession && session"
+        v-text="`${session.windowWidth}x${session.windowHeight}`"
       />
 
       <Skeleton
@@ -86,7 +84,7 @@
         class="font-medium"
         v-if="!fetchingSession"
         data-cy="project-session-view__created-by"
-        v-text="sessionStore.activeSession.createdBy?.fullName ?? 'Unassigned'"
+        v-text="session ? session.createdBy?.fullName ?? 'Unassigned' : 'Unassigned'"
       />
       <Skeleton
         height="17px"
@@ -115,8 +113,8 @@
       <div
         class="font-medium"
         data-cy="project-session-view__created-at"
-        v-if="!fetchingSession"
-        v-text="formatToDateTime(sessionStore.activeSession.createdAt)"
+        v-if="!fetchingSession && session"
+        v-text="formatToDateTime(session.createdAt)"
       />
       <Skeleton
         height="17px"
@@ -128,18 +126,18 @@
 </template>
 
 <script lang="ts" setup>
-import { useSessionsStore } from '@/stores/sessions'
 import { computed } from 'vue'
+import type { PropType } from 'vue'
 import { getVideoStatusText } from '@/services/resources/SessionsService'
 import { formatToDateTime } from '@/services/date'
+import type { SessionCodec } from '@/services/api/resources/session/codec'
 
-const sessionStore = useSessionsStore()
-
-defineProps({
-  fetchingSession: { type: Boolean }
+const props = defineProps({
+  fetchingSession: { type: Boolean },
+  session: { type: Object as PropType<SessionCodec | null>, required: true }
 })
 
 const videoStatusConversion = computed(() =>
-  getVideoStatusText(sessionStore.activeSession.videoStatus)
+  props.session ? getVideoStatusText(props.session.videoStatus) : '...'
 )
 </script>

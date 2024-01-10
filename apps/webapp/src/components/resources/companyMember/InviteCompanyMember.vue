@@ -42,7 +42,7 @@
         </div>
 
         <div
-          class="overflow-y-auto max-h-10rem mt-2"
+          class="overflow-y-auto max-h-52 mt-2"
           ref="emailsContainer"
         >
           <div
@@ -79,7 +79,7 @@
             label="Cancel"
             text
             severity="secondary"
-          ></Button>
+          />
 
           <Button
             data-cy="invite-company-member__invite-button"
@@ -88,7 +88,7 @@
             :disabled="emails.length < 1"
             :loading="isInvitingMembers"
             @click="onInviteMembersClick"
-          ></Button>
+          />
         </div>
       </form>
     </Dialog>

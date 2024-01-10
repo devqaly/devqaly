@@ -19,6 +19,7 @@ import { creatableProjectFactory } from '@/services/factories/projectsFactory'
 import type { GetProjectsParameters } from '@/services/api/resources/project/codec'
 
 interface ProjectStoreState {
+  onboardingProject: ProjectCodec | null
   activeProject: ProjectCodec | null
   activeProjectSessionsRequest: PaginatableRecord<SessionCodec>
   projectBeingCreated: CreatableProject
@@ -27,6 +28,7 @@ interface ProjectStoreState {
 
 export const useProjectsStore = defineStore('projectsStore', {
   state: (): ProjectStoreState => ({
+    onboardingProject: null,
     activeProject: null,
     activeProjectSessionsRequest: emptyPagination(),
     projectBeingCreated: creatableProjectFactory(),
@@ -64,6 +66,11 @@ export const useProjectsStore = defineStore('projectsStore', {
       const { data } = await getProjects(companyId, params)
 
       this.projectsRequest = data
+    },
+    async fetchActiveOnboardingProject(projectId: string) {
+      const response = await getProject(projectId)
+
+      this.onboardingProject = response.data.data
     }
   }
 })

@@ -10,4 +10,9 @@ export type UpdateRegisterTokenBody = {
   currentPosition: string
 }
 
-export type UpdateRegisterTokenResponseBody = { user: { email: string } }
+export type UpdateRegisterTokenResponseBody = {
+  user: { email: string }
+  company?: { id: string | null }
+  project?: { id: string | null }
+  registerToken: { hasOnboarding: boolean }
+}
