@@ -141,7 +141,9 @@ async function onFinishOnboarding() {
   try {
     isInvitingUsers.value = true
 
-    await addMembersToCompany(route.params.companyId as string, { emails: emails.value })
+    if (emails.value.length > 0) {
+      await addMembersToCompany(route.params.companyId as string, { emails: emails.value })
+    }
 
     await router.push({
       name: 'projectDashboard',
