@@ -2,6 +2,7 @@
   <div data-cy="initiate-devqaly-script">
     <div class="flex gap-4 mt-2">
       <div
+        data-vitest="initiate-devqaly-script__render-strategy--spa"
         :class="{
           'font-semibold border-b border-transparent cursor-pointer px-2': true,
           '!border-b-blue-500': renderStrategy === 'spa'
@@ -11,6 +12,7 @@
         Single Page Application (SPA)
       </div>
       <div
+        data-vitest="initiate-devqaly-script__render-strategy--ssr"
         :class="{
           'font-semibold border-b border-transparent cursor-pointer px-2': true,
           '!border-b-blue-500': renderStrategy === 'ssr'
