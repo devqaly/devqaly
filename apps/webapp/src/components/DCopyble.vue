@@ -5,12 +5,12 @@
   >
     <Button
       style="top: 5px; right: 5px"
+      data-vitest="d-copyble__copy"
       class="!absolute right-0"
       severity="secondary"
       text
       icon="pi pi-copy"
       icon-class="text-black"
-      v-ripple
       rounded
       :pt="{
         root: {
