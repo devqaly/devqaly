@@ -7,6 +7,16 @@ import ToastService from 'primevue/toastservice'
 import DCopyble from '../DCopyble.vue'
 import Button from 'primevue/button'
 import Ripple from 'primevue/ripple'
+import mock from 'jest-mock'
+
+const copyFn = mock.fn(() => new Promise<void>((resolve) => resolve()))
+
+Object.defineProperty(navigator, 'clipboard', {
+  writable: true,
+  value: {
+    writeText: copyFn
+  }
+})
 
 describe('DCopyble.vue', () => {
   it('should render code correctly', () => {
@@ -27,7 +37,7 @@ describe('DCopyble.vue', () => {
     expect(wrapper.text()).toContain(content)
   })
 
-  it('should allow to copy content', () => {
+  it('should allow to copy content', async () => {
     const content = 'This is a test string'
 
     const wrapper = mount<(typeof DCopyble)['props']>(DCopyble, {
@@ -43,7 +53,7 @@ describe('DCopyble.vue', () => {
     })
 
     expect(wrapper.find('[data-vitest=d-copyble__copy]').exists()).toBeTruthy()
-    // @TODO: should mock navigator.clipboard.writeText() function and assert it is called
-    // wrapper.find('[data-vitest=d-copyble__copy]').trigger('click')
+    await wrapper.find('[data-vitest=d-copyble__copy]').trigger('click')
+    expect(copyFn).to.toHaveBeenCalledOnce()
   })
 })

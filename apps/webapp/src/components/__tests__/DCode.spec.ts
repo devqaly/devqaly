@@ -7,6 +7,16 @@ import ConfirmationService from 'primevue/confirmationservice'
 import ToastService from 'primevue/toastservice'
 // @ts-ignore
 import VueHighlightJS from 'vue3-highlightjs'
+import mock from 'jest-mock'
+
+const copyFn = mock.fn(() => new Promise<void>((resolve) => resolve()))
+
+Object.defineProperty(navigator, 'clipboard', {
+  writable: true,
+  value: {
+    writeText: copyFn
+  }
+})
 
 describe('DCode.vue', () => {
   it('should render code correctly', () => {
@@ -25,7 +35,7 @@ describe('DCode.vue', () => {
     expect(wrapper.text()).toContain(code)
   })
 
-  it('should allow to copy code', () => {
+  it('should allow to copy code', async () => {
     const code = '<div> this is a code </div>'
 
     const wrapper = mount<(typeof DCode)['props']>(DCode, {
@@ -39,8 +49,8 @@ describe('DCode.vue', () => {
     })
 
     expect(wrapper.find('[data-vitest=d-code__copy]').text()).toContain('Copy')
-    // @TODO: should mock navigator.clipboard.writeText() function and assert it is called
-    // wrapper.find('[data-vitest=d-code__copy]').trigger('click')
-    // expect(wrapper.find('[data-vitest=d-code__copy]').text()).toContain('Copied')
+    await wrapper.find('[data-vitest=d-code__copy]').trigger('click')
+    expect(wrapper.find('[data-vitest=d-code__copy]').text()).toContain('Copied')
+    expect(copyFn).to.toHaveBeenCalledOnce()
   })
 })
