@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import DCode from '@/components/DCode.vue'
+import DCode from './DCode.vue'
 import { h } from 'vue'
 import PrimeVue from 'primevue/config'
 import ConfirmationService from 'primevue/confirmationservice'

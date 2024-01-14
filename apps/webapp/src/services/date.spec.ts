@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatToDate, formatToDateTime } from '../date'
+import { formatToDate, formatToDateTime } from './date'
 
 describe('date.ts', () => {
   it('should return correct format when calling `formatToDateTime`', () => {

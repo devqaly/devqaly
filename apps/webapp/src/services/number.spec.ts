@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { randomInteger, range } from '../number'
+import { randomInteger, range } from './number'
 
 describe('number.ts', () => {
   it('should return correct range', () => {

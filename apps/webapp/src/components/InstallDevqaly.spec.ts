@@ -5,7 +5,7 @@ import ConfirmationService from 'primevue/confirmationservice'
 import ToastService from 'primevue/toastservice'
 // @ts-ignore
 import VueHighlightJS from 'vue3-highlightjs'
-import InstallDevqaly from '../InstallDevqaly.vue'
+import InstallDevqaly from './InstallDevqaly.vue'
 
 describe('InstallDevqaly.vue', () => {
   it('should show which package manager is selected', async () => {

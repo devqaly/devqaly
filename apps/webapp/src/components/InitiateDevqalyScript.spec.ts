@@ -5,7 +5,7 @@ import ConfirmationService from 'primevue/confirmationservice'
 import ToastService from 'primevue/toastservice'
 // @ts-ignore
 import VueHighlightJS from 'vue3-highlightjs'
-import InitiateDevqalyScript from '../InitiateDevqalyScript.vue'
+import InitiateDevqalyScript from './InitiateDevqalyScript.vue'
 
 describe('InitiateDevqalyScript.vue', () => {
   it('should show which render strategy is selected', async () => {
