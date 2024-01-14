@@ -1,11 +1,10 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { emptyLinks, emptyMeta } from './api'
 import type { Meta } from './api'
 import { randomInteger } from './number'
 import { copyToClipboard, getPaginationPropsForMeta, hasNextPage } from './ui'
-import mock from 'jest-mock'
 
-const copyFn = mock.fn(() => new Promise<void>((resolve) => resolve()))
+const copyFn = vi.fn(() => new Promise<void>((resolve) => resolve()))
 
 Object.defineProperty(navigator, 'clipboard', {
   writable: true,

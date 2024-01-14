@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { h } from 'vue'
 import PrimeVue from 'primevue/config'
@@ -7,9 +7,8 @@ import ToastService from 'primevue/toastservice'
 import DCopyble from './DCopyble.vue'
 import Button from 'primevue/button'
 import Ripple from 'primevue/ripple'
-import mock from 'jest-mock'
 
-const copyFn = mock.fn(() => new Promise<void>((resolve) => resolve()))
+const copyFn = vi.fn(() => new Promise<void>((resolve) => resolve()))
 
 Object.defineProperty(navigator, 'clipboard', {
   writable: true,
