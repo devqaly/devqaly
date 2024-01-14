@@ -14,6 +14,9 @@ jobs:
   run-unit-tests:
     name: 'Run webapp unit tests'
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'apps/webapp'
 
     strategy:
       matrix:
@@ -21,23 +24,23 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        with:
-          working-directory: apps/webapp
+
+      - name: 'Ls'
+        run: ls -la
+      - name: 'pwd'
+        run: pwd
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          working-directory: apps/webapp
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       #- run: npm run build --if-present
 
       - name: Install dependencies
-        working-directory: apps/webapp
         run: npm ci
 
       - name: Execute Unit tests
-        working-directory: apps/webapp
         run: npm run test:unit
 
   run-e2e-tests:
