@@ -26,7 +26,7 @@ import {
   isVideoConverted
 } from '@/services/resources/SessionsService'
 
-interface SessionStoreState {
+export interface SessionStoreState {
   activeSession: SessionCodec
   activeSessionEventsRequest: PaginatableRecord<EventCodec>
   videoPartitions: Record<number, { hasFetchedEvents: boolean }>
