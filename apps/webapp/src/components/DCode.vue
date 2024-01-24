@@ -1,6 +1,7 @@
 <template>
   <div class="relative">
     <div
+      data-vitest="d-code__copy"
       class="top-[10px] right-[10px] absolute text-blue-400 p-2 rounded-md hover:bg-blue-200 hover:text-blue-500 transition-all cursor-pointer"
       v-text="copyButtonText"
       @click="onCopyClick"

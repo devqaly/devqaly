@@ -2,6 +2,7 @@
   <div data-cy="install-devqaly">
     <div class="flex gap-4 mt-2">
       <div
+        data-vitest="install-devqaly__pick-registry--npm"
         :class="{
           'font-semibold border-b border-transparent cursor-pointer px-2': true,
           '!border-b-blue-500': registryPicker === 'npm'
@@ -11,6 +12,7 @@
         NPM
       </div>
       <div
+        data-vitest="install-devqaly__pick-registry--yarn"
         :class="{
           'font-semibold border-b border-transparent cursor-pointer px-2': true,
           '!border-b-blue-500': registryPicker === 'yarn'
@@ -22,6 +24,7 @@
     </div>
 
     <DCode
+      data-vitest="install-devqaly__install-instructions"
       class="mt-4"
       :key="`register-${registryPicker}`"
       >{{ installCode }}</DCode
