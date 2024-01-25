@@ -41,14 +41,14 @@ export interface PaginatableRecord<T> {
   meta: Meta
 }
 
-const emptyLinks = (): Links => ({
+export const emptyLinks = (): Links => ({
   first: '',
   last: '',
   next: null,
   prev: null
 })
 
-const emptyMeta = (): Meta => ({
+export const emptyMeta = (): Meta => ({
   currentPage: 1,
   lastPage: 1,
   perPage: 10,
