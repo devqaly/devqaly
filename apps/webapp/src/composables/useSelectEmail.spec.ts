@@ -57,7 +57,11 @@ describe('useSelectEmail', () => {
 
     wrapper.vm.emails = emails
 
-    const emailToBeRemoved = emails[randomInteger(0, emails.length)]
+    const emailToBeRemoved = emails[randomInteger(1, emails.length) - 1]
+
+    console.log('----')
+    console.log(emailToBeRemoved)
+    console.log('----')
 
     await wrapper.vm.onRemoveEmail(emailToBeRemoved)
 
