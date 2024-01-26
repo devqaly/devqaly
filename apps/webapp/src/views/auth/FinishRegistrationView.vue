@@ -157,6 +157,7 @@ import type { WrappedResponse } from '@/services/api/axios'
 import { useToast } from 'primevue/usetoast'
 import { HttpStatusCode } from 'axios'
 import { useAppStore } from '@/stores/app'
+import type { CompanyCodec } from '@/services/api/resources/company/codec'
 
 const isCreatingUser = ref(false)
 
@@ -211,6 +212,10 @@ const onSubmit = getSubmitFn(validationSchema, async (values) => {
       tokenName: createTokenName()
     })
 
+    const activeCompany: CompanyCodec = appStore.loggedUserCompanies.data[0] as CompanyCodec
+
+    appStore.activeCompany = activeCompany
+
     if (route.query.redirectTo) {
       await router.push(route.query.redirectTo as string)
     } else if (data.data.registerToken.hasOnboarding) {
@@ -219,7 +224,10 @@ const onSubmit = getSubmitFn(validationSchema, async (values) => {
           '`data.company.id` and `data.project.id` should be present in the response. Skipping onboarding.'
         )
 
-        await router.push({ name: 'listProjects' })
+        await router.push({
+          name: 'listProjects',
+          params: { companyId: appStore.loggedUserCompanies.data[0]!.id }
+        })
 
         return
       }
@@ -229,7 +237,10 @@ const onSubmit = getSubmitFn(validationSchema, async (values) => {
         params: { projectId: data.data.project?.id, companyId: data.data.company?.id }
       })
     } else {
-      await router.push({ name: 'listProjects' })
+      await router.push({
+        name: 'listProjects',
+        params: { companyId: activeCompany.id }
+      })
     }
   } catch (e) {
     if (isError(e as WrappedResponse, HttpStatusCode.NotFound)) {
