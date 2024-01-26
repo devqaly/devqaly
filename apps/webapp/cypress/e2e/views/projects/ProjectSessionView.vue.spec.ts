@@ -93,7 +93,7 @@ describe('ProjectSessionView.vue', () => {
   it('should display correct information for session with converted video', () => {
     cy.intercept('GET', `**/api/sessions/${sessionWithConvertedVideo.id}`).as('fetchSession')
 
-    cy.visit(`projects/${project.id}/sessions/${sessionWithConvertedVideo.id}`)
+    cy.visit(`company/${companyId}/projects/${project.id}/sessions/${sessionWithConvertedVideo.id}`)
 
     cy.wait('@fetchSession')
 
@@ -138,7 +138,9 @@ describe('ProjectSessionView.vue', () => {
       'fetchSession'
     )
 
-    cy.visit(`projects/${project.id}/sessions/${sessionWithInQueueForConvertingVideo.id}`)
+    cy.visit(
+      `company/${companyId}/projects/${project.id}/sessions/${sessionWithInQueueForConvertingVideo.id}`
+    )
 
     cy.wait('@fetchSession')
 
@@ -156,7 +158,9 @@ describe('ProjectSessionView.vue', () => {
 
       const VIDEO_PARTITION_SIZES = 10
 
-      cy.visit(`projects/${project.id}/sessions/${sessionWithConvertedVideo.id}`)
+      cy.visit(
+        `company/${companyId}/projects/${project.id}/sessions/${sessionWithConvertedVideo.id}`
+      )
 
       cy.wait('@fetchSession')
 
@@ -201,7 +205,9 @@ describe('ProjectSessionView.vue', () => {
         fixture: 'test-video.webm,null'
       }).as('videoRequest')
 
-      cy.visit(`projects/${project.id}/sessions/${sessionWithConvertedVideo.id}`)
+      cy.visit(
+        `company/${companyId}/projects/${project.id}/sessions/${sessionWithConvertedVideo.id}`
+      )
 
       cy.dataCy('project-session-view__video')
         .should('have.prop', 'paused', true)
@@ -232,7 +238,9 @@ describe('ProjectSessionView.vue', () => {
         'fetchSessionEvents'
       )
 
-      cy.visit(`projects/${project.id}/sessions/${sessionWithConvertedVideo.id}`)
+      cy.visit(
+        `company/${companyId}/projects/${project.id}/sessions/${sessionWithConvertedVideo.id}`
+      )
 
       cy.wait(['@fetchSession', '@fetchSessionEvents'])
 
@@ -483,7 +491,9 @@ describe('ProjectSessionView.vue', () => {
         'fetchSessionEvents'
       )
 
-      cy.visit(`projects/${project.id}/sessions/${sessionWithConvertedVideo.id}`)
+      cy.visit(
+        `company/${companyId}/projects/${project.id}/sessions/${sessionWithConvertedVideo.id}`
+      )
 
       cy.wait('@fetchSession')
 
@@ -597,7 +607,9 @@ describe('ProjectSessionView.vue', () => {
             `api/events/networkRequest/byRequestId/${requestEvent.eventable.request_id}/logs**`
           ).as('fetchLogs')
 
-          cy.visit(`projects/${project.id}/sessions/${sessionWithConvertedVideo.id}`)
+          cy.visit(
+            `company/${companyId}/projects/${project.id}/sessions/${sessionWithConvertedVideo.id}`
+          )
 
           cy.wait(['@fetchSession', '@fetchSessionEvents'])
 
