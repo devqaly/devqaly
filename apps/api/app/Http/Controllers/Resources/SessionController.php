@@ -42,7 +42,7 @@ class SessionController extends Controller
         }
 
         if ($user->can('view', $session)) {
-            $session->load('createdBy');
+            $session->load(['createdBy', 'project.company']);
 
             return new SessionResource($session);
         }

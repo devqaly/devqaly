@@ -15,6 +15,7 @@ class ProjectResource extends JsonResource
             'projectKey' => $this->project_key,
             'securityToken' => $this->security_token,
             'createdAt' => $this->created_at,
+            'company' => new CompanyResource($this->whenLoaded('company'))
         ];
     }
 }
