@@ -98,7 +98,7 @@ async function assignSessionToLoggedUser() {
     await router.push({
       name: 'projectSession',
       params: {
-        projectId: response.data.data.project.id,
+        projectId: response.data.data.project!.id,
         sessionId: route.params.sessionId as string,
         companyId: session.value.project.company.id
       }
