@@ -22,9 +22,9 @@ describe('CreateCompanyView.vue', () => {
       expect(response?.statusCode).to.be.eq(201)
       expect(response?.body.data).to.haveOwnProperty('id')
       expect(response?.body.data.name).to.be.eq(companyName)
-    })
 
-    cy.url().should('contain', 'projects')
+      cy.url().should('contain', `company/${response?.body.data.id}/projects`)
+    })
 
     cy.dataCy('navigation-layout__active-company').should('have.text', companyName)
   })
