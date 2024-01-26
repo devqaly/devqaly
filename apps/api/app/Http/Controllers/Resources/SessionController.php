@@ -46,10 +46,7 @@ class SessionController extends Controller
 
         return response()->json(['data' => [
             ...$session->only('id'),
-            'project' => [
-                ...$session->project->only('id'),
-                'company' => $session->project->company()->select('id')->first()->only('id'),
-            ],
+            'project' => $session->project->only('id'),
         ]]);
     }
 
