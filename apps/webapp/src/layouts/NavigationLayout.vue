@@ -82,7 +82,7 @@
               <li>
                 <router-link
                   active-class="bg-white shadow-lg"
-                  :to="{ name: 'listProjects' }"
+                  :to="{ name: 'listProjects', params: { companyId: appStore.activeCompany!.id } }"
                   class="flex items-center cursor-pointer p-4 rounded-md text-slate-500 transition-all"
                 >
                   <i class="pi pi-server mr-2 bg-white p-2.5 rounded-md text-slate-800"></i>
@@ -92,7 +92,7 @@
               <li>
                 <router-link
                   active-class="bg-white shadow-lg"
-                  :to="{ name: 'projectCreate' }"
+                  :to="{ name: 'projectCreate', params: { companyId: appStore.activeCompany!.id } }"
                   class="flex items-center cursor-pointer p-4 rounded-md text-slate-500 transition-all"
                 >
                   <i class="pi pi-plus mr-2 bg-white p-2.5 rounded-md text-slate-800"></i>
@@ -225,6 +225,6 @@ function onToggleCompaniesMenu(event: Event) {
 function setActiveCompany(company: CompanyCodec) {
   appStore.activeCompany = company
 
-  router.push({ name: 'listProjects' })
+  router.push({ name: 'listProjects', params: { companyId: company.id } })
 }
 </script>

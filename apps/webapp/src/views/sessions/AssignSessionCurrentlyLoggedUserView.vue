@@ -80,6 +80,14 @@ const isFetchingSessionInformation = ref(true)
 async function assignSessionToLoggedUser() {
   if (!appStore.isAuthenticated) return
 
+  if (!session.value.project) {
+    throw new Error('`session.value.project` should be defined')
+  }
+
+  if (!session.value.project.company) {
+    throw new Error('`session.value.project.company` should be defined')
+  }
+
   try {
     isAssigningSessionToUser.value = true
 
@@ -90,8 +98,9 @@ async function assignSessionToLoggedUser() {
     await router.push({
       name: 'projectSession',
       params: {
-        projectId: response.data.data.project!.id,
-        sessionId: route.params.sessionId as string
+        projectId: response.data.data.project.id,
+        sessionId: route.params.sessionId as string,
+        companyId: session.value.project.company.id
       }
     })
   } catch (e) {
@@ -130,11 +139,16 @@ function copySessionUrl() {
     throw new Error('`session.value.project` should be defined')
   }
 
+  if (!session.value.project.company) {
+    throw new Error('`session.value.project.company` should be defined')
+  }
+
   const url = router.resolve({
     name: 'projectSession',
     params: {
       projectId: session.value.project.id,
-      sessionId: route.params.sessionId as string
+      sessionId: route.params.sessionId as string,
+      companyId: session.value.project.company.id
     }
   })
 
