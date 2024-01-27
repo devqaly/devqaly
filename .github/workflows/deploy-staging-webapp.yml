@@ -32,7 +32,7 @@ jobs:
 
       - name: Build
         working-directory: apps/webapp
-        run: npm build
+        run: npm run build
 
       - name: Deploy
         uses: reggionick/s3-deploy@v3
