@@ -82,8 +82,8 @@ able to see the recording with all important events that will help your develope
 To record `database transactions` and `logs` in your backend, you will need to install our SDK for your backend. 
 Currently, we have two SDKs:
 
-- [Get started with PHP](https://docs.devqaly.com/getting-started/backend/php/)
-- [Get started with Laravel](https://docs.devqaly.com/getting-started/backend/laravel/)
+- [Get started with PHP](https://docs.devqaly.com/connect-your-backend/php/)
+- [Get started with Laravel](https://docs.devqaly.com/connect-your-backend/laravel/)
 
 We are currently working on adding more Devqaly SDKs to make it easier than ever to integrate Devqaly into your
 backend project.
