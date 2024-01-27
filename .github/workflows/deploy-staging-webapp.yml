@@ -19,7 +19,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: apps/webapp
-        run: yarn
+        run: npm install
 
       - name: Copy .env.staging.example
         working-directory: apps/webapp
@@ -32,7 +32,7 @@ jobs:
 
       - name: Build
         working-directory: apps/webapp
-        run: yarn build
+        run: npm build
 
       - name: Deploy
         uses: reggionick/s3-deploy@v3
