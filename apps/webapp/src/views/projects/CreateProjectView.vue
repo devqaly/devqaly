@@ -86,7 +86,10 @@ const onSubmit = getSubmitFn(validationSchema, async (values) => {
 
     const { data } = await projectStore.createProject(appStore.activeCompany.id, values)
 
-    await router.push({ name: 'projectDashboard', params: { projectId: data.data.id } })
+    await router.push({
+      name: 'projectDashboard',
+      params: { projectId: data.data.id, companyId: appStore.activeCompany!.id }
+    })
   } catch (e) {
     displayGeneralError(e as WrappedResponse, { group: 'bottom-center' })
   } finally {

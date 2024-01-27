@@ -45,7 +45,7 @@
             <router-link
               data-cy="list-projects-view__project-dashboard"
               :data-project-id="data.id"
-              :to="{ name: 'projectDashboard', params: { projectId: data.id } }"
+              :to="{ name: 'projectDashboard', params: { projectId: data.id, companyId: appStore.activeCompany!.id } }"
             >
               <Button
                 v-tooltip.left="'Dashboard'"
@@ -59,7 +59,7 @@
             <router-link
               data-cy="list-projects-view__project-sessions"
               :data-project-id="data.id"
-              :to="{ name: 'projectSessions', params: { projectId: data.id } }"
+              :to="{ name: 'projectSessions', params: { projectId: data.id, companyId: appStore.activeCompany!.id } }"
             >
               <Button
                 v-tooltip.left="'Sessions'"

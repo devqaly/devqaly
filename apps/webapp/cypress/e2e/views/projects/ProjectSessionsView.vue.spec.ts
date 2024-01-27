@@ -36,7 +36,7 @@ describe('ProjectSessionsView.vue', () => {
   it('should display correct number sessions', () => {
     cy.intercept('GET', `**/api/projects/${project.id}/sessions**`).as('fetchSessionRequest')
 
-    cy.visit(`projects/${project.id}/sessions`)
+    cy.visit(`company/${companyId}/projects/${project.id}/sessions`)
 
     cy.wait('@fetchSessionRequest').then(({ request, response }) => {
       expect(request.url).to.include('createdAtOrder=desc')
@@ -66,7 +66,7 @@ describe('ProjectSessionsView.vue', () => {
 
       const searchCreatedBy = loggedUser.first_name
 
-      cy.visit(`projects/${project.id}/sessions`)
+      cy.visit(`company/${companyId}/projects/${project.id}/sessions`)
 
       cy.wait('@fetchSessionRequest')
 
@@ -91,7 +91,7 @@ describe('ProjectSessionsView.vue', () => {
       const os = sessions[0].os
       const sessionsWithOS = sessions.filter((s) => s.os === os)
 
-      cy.visit(`projects/${project.id}/sessions`)
+      cy.visit(`company/${companyId}/projects/${project.id}/sessions`)
 
       cy.wait('@fetchSessionRequest')
 
@@ -116,7 +116,7 @@ describe('ProjectSessionsView.vue', () => {
       const platform = sessions[0].platform_name
       const sessionsWithPlatform = sessions.filter((s) => s.platform_name === platform)
 
-      cy.visit(`projects/${project.id}/sessions`)
+      cy.visit(`company/${companyId}/projects/${project.id}/sessions`)
 
       cy.wait('@fetchSessionRequest')
 
@@ -141,7 +141,7 @@ describe('ProjectSessionsView.vue', () => {
       const version = sessions[0].version
       const sessionsWithVersion = sessions.filter((s) => s.version === version)
 
-      cy.visit(`projects/${project.id}/sessions`)
+      cy.visit(`company/${companyId}/projects/${project.id}/sessions`)
 
       cy.wait('@fetchSessionRequest')
 
@@ -165,7 +165,7 @@ describe('ProjectSessionsView.vue', () => {
     it('should make request when changing pages', () => {
       cy.intercept('GET', `**/api/projects/${project.id}/sessions**`).as('fetchSessionRequest')
 
-      cy.visit(`projects/${project.id}/sessions`)
+      cy.visit(`company/${companyId}/projects/${project.id}/sessions`)
 
       cy.wait('@fetchSessionRequest')
 

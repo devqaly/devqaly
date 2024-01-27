@@ -84,7 +84,7 @@ const onSubmit = getSubmitFn(validationSchema, async (values) => {
     appStore.activeCompany = data.data
     appStore.loggedUserCompanies.data.push(data.data)
 
-    await router.push({ name: 'listProjects' })
+    await router.push({ name: 'listProjects', params: { companyId: appStore.activeCompany!.id } })
   } catch (e) {
     displayGeneralError(e as WrappedResponse)
   } finally {

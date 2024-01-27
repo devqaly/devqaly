@@ -25,7 +25,7 @@ describe('ProjectSettingsView.vue', () => {
     it('should display correct project name', () => {
       cy.intercept('GET', `**/api/projects/${project.id}`).as('fetchProject')
 
-      cy.visit(`projects/${project.id}/settings`)
+      cy.visit(`company/${companyId}/projects/${project.id}/settings`)
 
       cy.wait('@fetchProject')
 
@@ -35,7 +35,7 @@ describe('ProjectSettingsView.vue', () => {
     it('should display correct project key', () => {
       cy.intercept('GET', `**/api/projects/${project.id}`).as('fetchProject')
 
-      cy.visit(`projects/${project.id}/settings`)
+      cy.visit(`company/${companyId}/projects/${project.id}/settings`)
 
       cy.wait('@fetchProject')
 
@@ -45,7 +45,7 @@ describe('ProjectSettingsView.vue', () => {
     it('should have link to docs on `project key` section', () => {
       cy.intercept('GET', `**/api/projects/${project.id}`).as('fetchProject')
 
-      cy.visit(`projects/${project.id}/settings`)
+      cy.visit(`company/${companyId}/projects/${project.id}/settings`)
 
       cy.wait('@fetchProject')
 
@@ -57,7 +57,7 @@ describe('ProjectSettingsView.vue', () => {
     it("should allow user to copy project's key", () => {
       cy.intercept('GET', `**/api/projects/${project.id}`).as('fetchProject')
 
-      cy.visit(`projects/${project.id}/settings`)
+      cy.visit(`company/${companyId}/projects/${project.id}/settings`)
 
       cy.wait('@fetchProject')
 
@@ -73,7 +73,7 @@ describe('ProjectSettingsView.vue', () => {
     it('should display warning saying security token is private', () => {
       cy.intercept('GET', `**/api/projects/${project.id}`).as('fetchProject')
 
-      cy.visit(`projects/${project.id}/settings`)
+      cy.visit(`company/${companyId}/projects/${project.id}/settings`)
 
       cy.wait('@fetchProject')
 
@@ -83,7 +83,7 @@ describe('ProjectSettingsView.vue', () => {
     it('should display correct information for security token', () => {
       cy.intercept('GET', `**/api/projects/${project.id}`).as('fetchProject')
 
-      cy.visit(`projects/${project.id}/settings`)
+      cy.visit(`company/${companyId}/projects/${project.id}/settings`)
 
       cy.wait('@fetchProject')
 
@@ -95,7 +95,7 @@ describe('ProjectSettingsView.vue', () => {
     it('should allow to copy security token', () => {
       cy.intercept('GET', `**/api/projects/${project.id}`).as('fetchProject')
 
-      cy.visit(`projects/${project.id}/settings`)
+      cy.visit(`company/${companyId}/projects/${project.id}/settings`)
 
       cy.wait('@fetchProject')
 
@@ -110,7 +110,7 @@ describe('ProjectSettingsView.vue', () => {
       cy.intercept('GET', `**/api/projects/${project.id}`).as('fetchProject')
       cy.intercept('PUT', `**/api/projects/${project.id}/securityToken`).as('updateSecurityToken')
 
-      cy.visit(`projects/${project.id}/settings`)
+      cy.visit(`company/${companyId}/projects/${project.id}/settings`)
 
       cy.wait('@fetchProject')
 
@@ -131,7 +131,7 @@ describe('ProjectSettingsView.vue', () => {
     it('should allow user to cancel updating security token', () => {
       cy.intercept('GET', `**/api/projects/${project.id}`).as('fetchProject')
 
-      cy.visit(`projects/${project.id}/settings`)
+      cy.visit(`company/${companyId}/projects/${project.id}/settings`)
 
       cy.wait('@fetchProject')
 

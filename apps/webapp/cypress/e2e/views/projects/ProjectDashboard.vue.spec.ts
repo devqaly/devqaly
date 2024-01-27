@@ -20,7 +20,7 @@ describe('ProjectDashboard.vue', () => {
   it('should show how to setup the SDK', () => {
     cy.intercept('GET', `**/api/projects/${project.id}`).as('getProjectRequest')
 
-    cy.visit(`projects/${project.id}/dashboard`)
+    cy.visit(`company/${companyId}/projects/${project.id}/dashboard`)
 
     cy.wait('@getProjectRequest')
 

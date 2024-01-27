@@ -65,8 +65,6 @@ export const useAppStore = defineStore('appStore', {
       const { data } = await getLoggedUserCompanies(userId, params)
 
       this.loggedUserCompanies = data
-
-      this.activeCompany = data.data[0] as CompanyCodec
     },
 
     async onLoadApp() {
