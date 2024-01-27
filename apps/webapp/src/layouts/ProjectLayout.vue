@@ -106,7 +106,7 @@ const projectNavigationItems = computed(() => [
     icon: 'pi pi-fw pi-home',
     to: {
       name: 'projectDashboard',
-      params: { projectId: projectStore.activeProject?.id }
+      params: { projectId: projectStore.activeProject?.id, companyId: route.params.companyId }
     }
   },
   {
@@ -114,7 +114,7 @@ const projectNavigationItems = computed(() => [
     icon: 'pi pi-fw pi-video',
     to: {
       name: 'projectSessions',
-      params: { projectId: projectStore.activeProject?.id }
+      params: { projectId: projectStore.activeProject?.id, companyId: route.params.companyId }
     }
   },
   {
@@ -122,7 +122,7 @@ const projectNavigationItems = computed(() => [
     icon: 'pi pi-fw pi-cog',
     to: {
       name: 'projectSettings',
-      params: { projectId: projectStore.activeProject?.id }
+      params: { projectId: projectStore.activeProject?.id, companyId: route.params.companyId }
     }
   }
 ])

@@ -1,6 +1,7 @@
 import type { DateTime, PaginationParameters, ResourceID } from '@/services/api'
 import type { UserCodec } from '@/services/api/resources/user/codec'
 import { OrderBy } from '@/services/api'
+import type { CompanyCodec } from '@/services/api/resources/company/codec'
 
 export interface ProjectCodec {
   id: ResourceID
@@ -9,6 +10,7 @@ export interface ProjectCodec {
   securityToken: string
   createdBy?: UserCodec
   createdAt: DateTime
+  company?: CompanyCodec
 }
 
 export type CreateProjectBody = { title: string }

@@ -14,7 +14,7 @@ describe('CreateProjectView.vue', () => {
   it('should allow to create correct project', () => {
     cy.intercept('POST', `api/companies/${companyId}/projects`).as('createProjectRequest')
 
-    cy.visit('/projects/create')
+    cy.visit(`/company/${companyId}/projects/create`)
 
     const projectName = 'project super awesome ' + Math.random().toString().slice(2, 8)
 

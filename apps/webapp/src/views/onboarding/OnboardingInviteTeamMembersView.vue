@@ -97,7 +97,10 @@
 
       <div class="flex justify-between !mt-4">
         <RouterLink
-          :to="{ name: 'projectDashboard', params: { projectId: route.params.projectId } }"
+          :to="{
+            name: 'projectDashboard',
+            params: { projectId: route.params.projectId, companyId: route.params.companyId }
+          }"
           data-cy="onboarding-invite-page__skip-step"
         >
           <Button
@@ -147,7 +150,7 @@ async function onFinishOnboarding() {
 
     await router.push({
       name: 'projectDashboard',
-      params: { projectId: route.params.projectId }
+      params: { projectId: route.params.projectId, companyId: route.params.companyId as string }
     })
   } catch (e) {
     toast.add({

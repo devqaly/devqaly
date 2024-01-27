@@ -126,6 +126,7 @@ import { useToast } from 'primevue/usetoast'
 import { displayGeneralError } from '@/services/ui'
 import { useAppStore } from '@/stores/app'
 import { useRoute, useRouter } from 'vue-router'
+import type { CompanyCodec } from '@/services/api/resources/company/codec'
 
 const isLoggingIn = ref(false)
 
@@ -152,10 +153,14 @@ const onSubmit = getSubmitFn(validationSchema, async (values) => {
 
     await appStore.loginUser({ ...values, ...initialValues })
 
+    const activeCompany = appStore.loggedUserCompanies.data[0] as CompanyCodec
+
+    appStore.activeCompany = activeCompany
+
     if (route.query.redirectTo) {
       await router.push(route.query.redirectTo as string)
     } else {
-      await router.push({ name: 'listProjects' })
+      await router.push({ name: 'listProjects', params: { companyId: activeCompany.id } })
     }
   } catch (e) {
     if (isError(e as WrappedResponse, HttpStatusCode.Forbidden)) {

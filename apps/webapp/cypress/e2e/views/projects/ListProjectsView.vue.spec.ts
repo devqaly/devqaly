@@ -25,7 +25,7 @@ describe('ListProjectsView.vue', () => {
   it('should display correct projects', () => {
     cy.intercept('GET', `**/companies/${companyId}/projects**`).as('projectsRequest')
 
-    cy.visit('/projects')
+    cy.visit(`company/${companyId}/projects`)
 
     cy.wait('@projectsRequest').then(({ request, response }) => {
       expect(request.url).to.contain(`perPage=${perPage}`)
@@ -58,7 +58,7 @@ describe('ListProjectsView.vue', () => {
   it('should open modal when clicking to view integration details', () => {
     cy.intercept('GET', `**/companies/${companyId}/projects**`).as('projectsRequest')
 
-    cy.visit('/projects')
+    cy.visit(`company/${companyId}/projects`)
 
     cy.wait('@projectsRequest')
 
@@ -73,7 +73,7 @@ describe('ListProjectsView.vue', () => {
 
       const searchTitle = projects[0].title
 
-      cy.visit('/projects')
+      cy.visit(`company/${companyId}/projects`)
 
       cy.wait('@projectsRequest')
 
@@ -97,7 +97,7 @@ describe('ListProjectsView.vue', () => {
     it('should display correct values when jumping to next page', () => {
       cy.intercept('GET', `**/companies/${companyId}/projects**`).as('projectsRequest')
 
-      cy.visit('/projects')
+      cy.visit(`company/${companyId}/projects`)
 
       cy.wait('@projectsRequest')
 

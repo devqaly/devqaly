@@ -11,7 +11,10 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: { name: 'listProjects' }
+      component: () => import('@/views/RootView.vue'),
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/',
