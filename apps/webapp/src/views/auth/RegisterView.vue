@@ -27,6 +27,7 @@
           />
 
           <ResendEmail
+            data-cy="register-view__resend-email-container"
             :email="email"
             v-if="requestedToken"
           />
