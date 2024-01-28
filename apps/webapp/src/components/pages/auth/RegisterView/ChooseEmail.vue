@@ -10,6 +10,7 @@
       >
         <label for="email">Email</label>
         <InputText
+          data-cy="register-view__email"
           v-bind="field"
           id="email"
           type="text"
@@ -26,11 +27,12 @@
       </Field>
 
       <Button
+        data-cy="register-view__submit"
         :loading="isCreatingToken"
         label="Sign Up"
         class="w-full !mt-4"
         type="submit"
-      ></Button>
+      />
 
       <div class="mx-auto block text-center mt-2 text-slate-400">
         <div class="mt-4">

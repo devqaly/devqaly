@@ -3,6 +3,7 @@
     Instructions have been sent to your email
 
     <Button
+      data-cy="register-view__resend-email"
       :loading="isResendingEmail"
       label="Resend Email"
       class="!mt-2 block"
