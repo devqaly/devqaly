@@ -31,4 +31,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'eu-central-1'),
     ],
 
+    'mixpanel' => [
+        'host' => env('MIXPANEL_HOST', 'api-eu.mixpanel.com'),
+        'token' => env('MIXPANEL_TOKEN'),
+        'enable-default-tracking' => true,
+        'consumer' => 'socket',
+        'connect-timeout' => 2,
+        'timeout' => 2,
+        "data_callback_class" => null,
+    ]
 ];
