@@ -32,6 +32,6 @@ class DispatchMixpanelListener implements ShouldQueue
 
     private function shouldProcessEvents(): bool
     {
-        return config('services.mixpanel.host') !== null;
+        return config('services.mixpanel.token') !== null && config('services.mixpanel.token') !== '';
     }
 }
