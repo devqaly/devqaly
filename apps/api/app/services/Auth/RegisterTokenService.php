@@ -2,10 +2,12 @@
 
 namespace App\services\Auth;
 
+use App\Events\MixpanelEventCreated;
 use App\Mail\Auth\SignupEmail;
 use App\Models\Auth\RegisterToken;
 use App\Models\Company\CompanyMember;
 use App\Models\User;
+use App\services\MixpanelService;
 use App\services\Resources\CompanyService;
 use App\services\Resources\ProjectService;
 use Carbon\Carbon;
@@ -19,7 +21,7 @@ class RegisterTokenService
     private CompanyService $companyService;
     private ProjectService $projectService;
 
-    public function __construct(CompanyService $companyService, ProjectService $projectService)
+    public function __construct(CompanyService $companyService, ProjectService $projectService, MixpanelService $mixpanel)
     {
         $this->companyService = $companyService;
         $this->projectService = $projectService;
@@ -46,6 +48,8 @@ class RegisterTokenService
         if ($sendEmail) {
             $this->sendEmail($email, $registerToken);
         }
+
+        MixpanelEventCreated::dispatch('register-token-created', MixpanelService::getBaseData(request()), $email);
 
         return $registerToken;
     }
