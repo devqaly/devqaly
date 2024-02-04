@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\MixpanelEventCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ResendEmailSignUpRequest;
 use App\Http\Requests\Auth\StoreRegisterTokenRequest;
 use App\Http\Requests\Auth\UpdateRegisterTokenRequest;
 use App\Models\Auth\RegisterToken;
 use App\services\Auth\RegisterTokenService;
+use app\services\MixpanelService;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use function collect;
@@ -24,7 +26,8 @@ class RegisterTokenController extends Controller
     {
         $registerTokenService->createToken(
             data: collect($request->validated()),
-            hasOnboarding: true
+            hasOnboarding: true,
+            sendMixpanelEvent: true,
         );
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
@@ -77,10 +80,14 @@ class RegisterTokenController extends Controller
 
         if ($registerToken) {
             $registerToken->update(['revoked' => 1]);
+
             $registerTokenService->createToken(
                 data: collect(['email' => $email]),
-                hasOnboarding: $registerToken->has_onboarding
+                hasOnboarding: $registerToken->has_onboarding,
+                sendMixpanelEvent: false
             );
+
+            MixpanelEventCreated::dispatch('register-token-resend-email', MixpanelService::getBaseData(request()), $email);
         }
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
