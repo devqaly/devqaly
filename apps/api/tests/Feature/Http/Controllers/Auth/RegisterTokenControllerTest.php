@@ -276,6 +276,8 @@ class RegisterTokenControllerTest extends TestCase
             ->unrevoked()
             ->create(['email' => $email]);
 
+        Event::fake([MixpanelEventCreated::class]);
+
         $this
             ->putJson(route('registerTokens.update', ['registerToken' => $token]), [
                 'firstName' => $firstName,
@@ -286,6 +288,10 @@ class RegisterTokenControllerTest extends TestCase
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonPath('data.user.email', $email);
+
+        Event::assertDispatched(function (MixpanelEventCreated $event) use ($token) {
+            return $event->eventName === 'finished-registration' && $event->email === $token->email;
+        });
 
         $this->assertDatabaseHas((new User())->getTable(), [
             'email' => $email,
@@ -323,12 +329,16 @@ class RegisterTokenControllerTest extends TestCase
 
         $token = RegisterToken::factory()->revoked()->create(['email' => $email]);
 
+        Event::fake([MixpanelEventCreated::class]);
+
         $response = $this->putJson(route('registerTokens.update', ['registerToken' => $token]), [
             'firstName' => $firstName,
             'lastName' => $lastName,
             'timezone' => $timezone,
             'password' => $password
         ]);
+
+        Event::assertNotDispatched(MixpanelEventCreated::class);
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $this->assertDatabaseCount((new User())->getTable(), 0);
@@ -350,12 +360,16 @@ class RegisterTokenControllerTest extends TestCase
 
         $token = RegisterToken::factory()->used()->create(['email' => $email]);
 
+        Event::fake([MixpanelEventCreated::class]);
+
         $response = $this->putJson(route('registerTokens.update', ['registerToken' => $token]), [
             'firstName' => $firstName,
             'lastName' => $lastName,
             'timezone' => $timezone,
             'password' => $password
         ]);
+
+        Event::assertNotDispatched(MixpanelEventCreated::class);
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $this->assertDatabaseCount((new User())->getTable(), 0);
