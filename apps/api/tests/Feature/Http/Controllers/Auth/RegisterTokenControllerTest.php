@@ -121,6 +121,10 @@ class RegisterTokenControllerTest extends TestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonPath('data.user.email', $email);
 
+        Event::assertDispatched(function (MixpanelEventCreated $event) use ($token) {
+            return $event->eventName === 'finished-registration' && $event->email === $token->email;
+        });
+
         $user = User::query()->where('email', $email)->firstOrFail();
         $company = Company::query()->where('created_by_id', $user->id)->firstOrFail();
         $project = Project::query()->where('company_id', $company->id)->where('created_by_id', $user->id)->firstOrFail();
@@ -161,6 +165,8 @@ class RegisterTokenControllerTest extends TestCase
 
         Config::set('devqaly.isSelfHosting', false);
 
+        Event::fake([MixpanelEventCreated::class]);
+
         $response = $this
             ->putJson(route('registerTokens.update', ['registerToken' => $token]), [
                 'firstName' => $firstName,
@@ -172,6 +178,9 @@ class RegisterTokenControllerTest extends TestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonPath('data.user.email', $email);
 
+        Event::assertDispatched(function (MixpanelEventCreated $event) use ($token) {
+            return $event->eventName === 'finished-registration' && $event->email === $token->email;
+        });
 
         $user = User::query()->where('email', $email)->firstOrFail();
         $company = Company::query()->where('created_by_id', $user->id)->firstOrFail();

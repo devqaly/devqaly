@@ -21,7 +21,10 @@ class RegisterTokenService
     private CompanyService $companyService;
     private ProjectService $projectService;
 
-    public function __construct(CompanyService $companyService, ProjectService $projectService, MixpanelService $mixpanel)
+    public function __construct(
+        CompanyService $companyService,
+        ProjectService $projectService,
+    )
     {
         $this->companyService = $companyService;
         $this->projectService = $projectService;
@@ -73,10 +76,11 @@ class RegisterTokenService
         // Now that we have the user, we can update the `CompanyMember` to have
         // the real `member_id` that is attached to the `RegisterToken`
         /** @var CompanyMember|null $projectMember */
-        CompanyMember::where('register_token_id', $registerToken->id)
-            ->update([
-                'member_id' => $user->id
-            ]);
+        CompanyMember::query()
+            ->where('register_token_id', $registerToken->id)
+            ->update(['member_id' => $user->id]);
+
+        MixpanelEventCreated::dispatch('finished-registration', MixpanelService::getBaseData(request()), $user->email);
 
         // If the user registered first, the user won't have a company or a project.
         // First time users that doesn't have a Company and a Project will have the field
