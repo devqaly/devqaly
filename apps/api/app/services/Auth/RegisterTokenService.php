@@ -30,7 +30,8 @@ class RegisterTokenService
     public function createToken(
         Collection $data,
         bool $sendEmail = true,
-        bool $hasOnboarding = false
+        bool $hasOnboarding = false,
+        bool $sendMixpanelEvent = false,
     ): RegisterToken
     {
         $email = $data->get('email');
@@ -49,7 +50,9 @@ class RegisterTokenService
             $this->sendEmail($email, $registerToken);
         }
 
-        MixpanelEventCreated::dispatch('register-token-created', MixpanelService::getBaseData(request()), $email);
+        if ($sendMixpanelEvent) {
+            MixpanelEventCreated::dispatch('register-token-created', MixpanelService::getBaseData(request()), $email);
+        }
 
         return $registerToken;
     }
