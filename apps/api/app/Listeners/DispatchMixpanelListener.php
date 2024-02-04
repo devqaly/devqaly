@@ -5,7 +5,6 @@ namespace App\Listeners;
 use App\Events\MixpanelEventCreated;
 use App\services\MixpanelService;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Log;
 
 class DispatchMixpanelListener implements ShouldQueue
 {
