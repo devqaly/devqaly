@@ -3,6 +3,7 @@
 namespace tests\Feature\Http\Controllers\Auth;
 
 use app\Enum\User\UserCurrentPositionEnum;
+use App\Events\MixpanelEventCreated;
 use App\Mail\Auth\SignupEmail;
 use App\Models\Auth\RegisterToken;
 use App\Models\Company\Company;
@@ -12,6 +13,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Laravel\Sanctum\Sanctum;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,6 +32,7 @@ class RegisterTokenControllerTest extends TestCase
     public function test_user_is_able_to_create_register_token()
     {
         Mail::fake();
+        Event::fake([MixpanelEventCreated::class]);
 
         $email = $this->faker->email;
 
@@ -40,6 +43,9 @@ class RegisterTokenControllerTest extends TestCase
         ]);
 
         Mail::assertQueued(SignupEmail::class);
+        Event::assertDispatched(function (MixpanelEventCreated $event) {
+            return $event->eventName === 'register-token-created';
+        });
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
         $this->assertDatabaseHas((new RegisterToken())->getTable(), [
@@ -65,12 +71,14 @@ class RegisterTokenControllerTest extends TestCase
         RegisterToken::factory()->unrevoked()->create(['email' => $email]);
 
         Mail::assertNothingQueued();
+        Event::fake([MixpanelEventCreated::class]);
 
         $response = $this->postJson(route('registerTokens.store'), [
             'email' => $email
         ]);
 
         Mail::assertNotQueued(SignupEmail::class);
+        Event::assertNotDispatched(MixpanelEventCreated::class);
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertDatabaseCount((new RegisterToken())->getTable(), 1);
@@ -100,6 +108,8 @@ class RegisterTokenControllerTest extends TestCase
 
         Config::set('devqaly.isSelfHosting', true);
 
+        Event::fake([MixpanelEventCreated::class]);
+
         $response = $this
             ->putJson(route('registerTokens.update', ['registerToken' => $token]), [
                 'firstName' => $firstName,
@@ -110,6 +120,10 @@ class RegisterTokenControllerTest extends TestCase
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonPath('data.user.email', $email);
+
+        Event::assertDispatched(function (MixpanelEventCreated $event) use ($token) {
+            return $event->eventName === 'finished-registration' && $event->email === $token->email;
+        });
 
         $user = User::query()->where('email', $email)->firstOrFail();
         $company = Company::query()->where('created_by_id', $user->id)->firstOrFail();
@@ -151,6 +165,8 @@ class RegisterTokenControllerTest extends TestCase
 
         Config::set('devqaly.isSelfHosting', false);
 
+        Event::fake([MixpanelEventCreated::class]);
+
         $response = $this
             ->putJson(route('registerTokens.update', ['registerToken' => $token]), [
                 'firstName' => $firstName,
@@ -161,6 +177,10 @@ class RegisterTokenControllerTest extends TestCase
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonPath('data.user.email', $email);
+
+        Event::assertDispatched(function (MixpanelEventCreated $event) use ($token) {
+            return $event->eventName === 'finished-registration' && $event->email === $token->email;
+        });
 
         $user = User::query()->where('email', $email)->firstOrFail();
         $company = Company::query()->where('created_by_id', $user->id)->firstOrFail();
@@ -193,12 +213,16 @@ class RegisterTokenControllerTest extends TestCase
         RegisterToken::factory()->unrevoked()->create(['email' => $email]);
 
         Mail::assertNothingQueued();
+        Event::fake([MixpanelEventCreated::class]);
 
         $response = $this->postJson(route('registerTokens.resendEmail'), [
             'email' => $email
         ]);
 
         Mail::assertQueued(SignupEmail::class);
+        Event::assertDispatched(function (MixpanelEventCreated $event) {
+            return $event->eventName === 'register-token-resend-email';
+        });
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
         $this->assertDatabaseCount((new RegisterToken())->getTable(), 2);
@@ -217,12 +241,14 @@ class RegisterTokenControllerTest extends TestCase
         $email = $this->faker->email;
 
         Mail::assertNothingQueued();
+        Event::fake(MixpanelEventCreated::class);
 
         $response = $this->postJson(route('registerTokens.resendEmail'), [
             'email' => $email
         ]);
 
         Mail::assertNothingQueued();
+        Event::assertNotDispatched(MixpanelEventCreated::class);
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
         $this->assertDatabaseCount((new RegisterToken())->getTable(), 0);
@@ -250,6 +276,8 @@ class RegisterTokenControllerTest extends TestCase
             ->unrevoked()
             ->create(['email' => $email]);
 
+        Event::fake([MixpanelEventCreated::class]);
+
         $this
             ->putJson(route('registerTokens.update', ['registerToken' => $token]), [
                 'firstName' => $firstName,
@@ -260,6 +288,10 @@ class RegisterTokenControllerTest extends TestCase
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonPath('data.user.email', $email);
+
+        Event::assertDispatched(function (MixpanelEventCreated $event) use ($token) {
+            return $event->eventName === 'finished-registration' && $event->email === $token->email;
+        });
 
         $this->assertDatabaseHas((new User())->getTable(), [
             'email' => $email,
@@ -297,12 +329,16 @@ class RegisterTokenControllerTest extends TestCase
 
         $token = RegisterToken::factory()->revoked()->create(['email' => $email]);
 
+        Event::fake([MixpanelEventCreated::class]);
+
         $response = $this->putJson(route('registerTokens.update', ['registerToken' => $token]), [
             'firstName' => $firstName,
             'lastName' => $lastName,
             'timezone' => $timezone,
             'password' => $password
         ]);
+
+        Event::assertNotDispatched(MixpanelEventCreated::class);
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $this->assertDatabaseCount((new User())->getTable(), 0);
@@ -324,12 +360,16 @@ class RegisterTokenControllerTest extends TestCase
 
         $token = RegisterToken::factory()->used()->create(['email' => $email]);
 
+        Event::fake([MixpanelEventCreated::class]);
+
         $response = $this->putJson(route('registerTokens.update', ['registerToken' => $token]), [
             'firstName' => $firstName,
             'lastName' => $lastName,
             'timezone' => $timezone,
             'password' => $password
         ]);
+
+        Event::assertNotDispatched(MixpanelEventCreated::class);
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $this->assertDatabaseCount((new User())->getTable(), 0);

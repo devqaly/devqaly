@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2a8612d77b1befe36010d27beb79a57b",
+    "content-hash": "5801726c1a4e26c06959786933cf439c",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2099,6 +2099,55 @@
             "time": "2022-04-17T13:12:02+00:00"
         },
         {
+            "name": "mixpanel/mixpanel-php",
+            "version": "2.11.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mixpanel/mixpanel-php.git",
+                "reference": "4b0fafacf2129eff5d50721e129b07f0c32687e7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mixpanel/mixpanel-php/zipball/4b0fafacf2129eff5d50721e129b07f0c32687e7",
+                "reference": "4b0fafacf2129eff5d50721e129b07f0c32687e7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.0"
+            },
+            "require-dev": {
+                "phpdocumentor/phpdocumentor": "2.9.*",
+                "phpunit/phpunit": "5.6.*"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "lib/Mixpanel.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Mixpanel <dev@mixpanel.com>",
+                    "homepage": "https://mixpanel.com/"
+                }
+            ],
+            "description": "The Official PHP library for Mixpanel",
+            "homepage": "https://mixpanel.com/help/reference/php",
+            "keywords": [
+                "mixpanel",
+                "mixpanel php"
+            ],
+            "support": {
+                "issues": "https://github.com/mixpanel/mixpanel-php/issues",
+                "source": "https://github.com/mixpanel/mixpanel-php/tree/2.11.0"
+            },
+            "time": "2023-04-11T23:03:57+00:00"
+        },
+        {
             "name": "moneyphp/money",
             "version": "v4.2.0",
             "source": {
@@ -3619,6 +3668,60 @@
                 }
             ],
             "time": "2023-04-15T23:01:58+00:00"
+        },
+        {
+            "name": "sinergi/browser-detector",
+            "version": "6.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sinergi/php-browser-detector.git",
+                "reference": "4927f7c2bedc48b68f183bd420aa3549c59e133b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sinergi/php-browser-detector/zipball/4927f7c2bedc48b68f183bd420aa3549c59e133b",
+                "reference": "4927f7c2bedc48b68f183bd420aa3549c59e133b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.0 || ^9.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Sinergi\\BrowserDetector\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gabriel Bull",
+                    "email": "me@gabrielbull.com"
+                },
+                {
+                    "name": "Chris Schuld"
+                }
+            ],
+            "description": "Detecting the user's browser, operating system and language.",
+            "keywords": [
+                "browser",
+                "detection",
+                "language",
+                "operating system",
+                "os"
+            ],
+            "support": {
+                "issues": "https://github.com/sinergi/php-browser-detector/issues",
+                "source": "https://github.com/sinergi/php-browser-detector/tree/6.1.4"
+            },
+            "abandoned": true,
+            "time": "2021-09-23T13:51:44+00:00"
         },
         {
             "name": "spatie/temporary-directory",

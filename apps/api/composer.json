@@ -13,7 +13,9 @@
         "laravel/sanctum": "dev-develop",
         "laravel/tinker": "dev-develop",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "php-ffmpeg/php-ffmpeg": "*"
+        "mixpanel/mixpanel-php": "^2.11",
+        "php-ffmpeg/php-ffmpeg": "*",
+        "sinergi/browser-detector": "^6.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
