@@ -2,10 +2,12 @@
 
 namespace App\services\Auth;
 
+use App\Events\MixpanelEventCreated;
 use App\Mail\Auth\SignupEmail;
 use App\Models\Auth\RegisterToken;
 use App\Models\Company\CompanyMember;
 use App\Models\User;
+use App\services\MixpanelService;
 use App\services\Resources\CompanyService;
 use App\services\Resources\ProjectService;
 use Carbon\Carbon;
@@ -19,7 +21,10 @@ class RegisterTokenService
     private CompanyService $companyService;
     private ProjectService $projectService;
 
-    public function __construct(CompanyService $companyService, ProjectService $projectService)
+    public function __construct(
+        CompanyService $companyService,
+        ProjectService $projectService,
+    )
     {
         $this->companyService = $companyService;
         $this->projectService = $projectService;
@@ -28,7 +33,8 @@ class RegisterTokenService
     public function createToken(
         Collection $data,
         bool $sendEmail = true,
-        bool $hasOnboarding = false
+        bool $hasOnboarding = false,
+        bool $sendMixpanelEvent = false,
     ): RegisterToken
     {
         $email = $data->get('email');
@@ -45,6 +51,10 @@ class RegisterTokenService
 
         if ($sendEmail) {
             $this->sendEmail($email, $registerToken);
+        }
+
+        if ($sendMixpanelEvent) {
+            MixpanelEventCreated::dispatch('register-token-created', MixpanelService::getBaseData(request()), $email);
         }
 
         return $registerToken;
@@ -66,10 +76,11 @@ class RegisterTokenService
         // Now that we have the user, we can update the `CompanyMember` to have
         // the real `member_id` that is attached to the `RegisterToken`
         /** @var CompanyMember|null $projectMember */
-        CompanyMember::where('register_token_id', $registerToken->id)
-            ->update([
-                'member_id' => $user->id
-            ]);
+        CompanyMember::query()
+            ->where('register_token_id', $registerToken->id)
+            ->update(['member_id' => $user->id]);
+
+        MixpanelEventCreated::dispatch('finished-registration', MixpanelService::getBaseData(request()), $user->email);
 
         // If the user registered first, the user won't have a company or a project.
         // First time users that doesn't have a Company and a Project will have the field
