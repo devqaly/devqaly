@@ -9,7 +9,7 @@ use App\Http\Requests\Auth\StoreRegisterTokenRequest;
 use App\Http\Requests\Auth\UpdateRegisterTokenRequest;
 use App\Models\Auth\RegisterToken;
 use App\services\Auth\RegisterTokenService;
-use app\services\MixpanelService;
+use App\services\MixpanelService;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use function collect;
