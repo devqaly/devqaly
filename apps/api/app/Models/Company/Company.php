@@ -2,6 +2,7 @@
 
 namespace App\Models\Company;
 
+use App\Models\Project\Project;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,5 +30,10 @@ class Company extends Model
     public function members(): HasMany
     {
         return $this->hasMany(CompanyMember::class, 'company_id');
+    }
+
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class, 'company_id');
     }
 }

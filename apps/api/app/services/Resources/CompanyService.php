@@ -7,6 +7,7 @@ use App\Models\Company\Company;
 use App\Models\Company\CompanyMember;
 use App\Models\User;
 use App\services\Auth\RegisterTokenService;
+use App\services\SubscriptionService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -26,10 +27,8 @@ class CompanyService
             ]);
 
             if (!config('devqaly.isSelfHosting')) {
-                $company->createOrGetStripeCustomer([
-                    'email' => $company->createdBy->email,
-                    'name' => $company->name
-                ]);
+                $this->createCustomOnStripe($company);
+                $this->addCompanyTrial($company);
             }
 
             DB::commit();
@@ -133,5 +132,24 @@ class CompanyService
                 'invited_by_id' => $invitedBy->id,
             ]);
         }
+    }
+
+    private function createCustomOnStripe(Company $company): void
+    {
+        $company->createOrGetStripeCustomer([
+            'email' => $company->createdBy->email,
+            'name' => $company->name
+        ]);
+    }
+
+    private function addCompanyTrial(Company $company): void
+    {
+        $company
+            ->newSubscription(
+                SubscriptionService::SUBSCRIPTION_DEFAULT_NAME,
+                config('stripe.products.gold.prices.monthly')
+            )
+            ->trialDays(SubscriptionService::SUBSCRIPTION_INITIAL_TRIAL_DAYS)
+            ->create();
     }
 }

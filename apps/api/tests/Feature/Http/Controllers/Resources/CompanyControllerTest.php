@@ -4,11 +4,11 @@ namespace Tests\Feature\Http\Controllers\Resources;
 
 use App\Models\Company\Company;
 use App\Models\User;
+use App\services\SubscriptionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Config;
 use Laravel\Sanctum\Sanctum;
-use Mockery\MockInterface;
 use Tests\TestCase;
 
 class CompanyControllerTest extends TestCase
@@ -37,7 +37,8 @@ class CompanyControllerTest extends TestCase
         $company = Company::query()->firstOrFail();
 
         $this->assertDatabaseCount((new Company())->getTable(), 1);
-        $this->assertFalse($company->subscribed());
+        $this->assertTrue($company->subscribedToProduct(config('stripe.products.gold.id')));
+        $this->assertTrue($company->onTrial(SubscriptionService::SUBSCRIPTION_DEFAULT_NAME));
     }
 
     public function test_stripe_client_is_not_called_on_self_hosted_instance_when_creating_company()
