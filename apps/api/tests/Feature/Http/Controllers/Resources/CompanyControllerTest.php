@@ -37,8 +37,16 @@ class CompanyControllerTest extends TestCase
         $company = Company::query()->firstOrFail();
 
         $this->assertDatabaseCount((new Company())->getTable(), 1);
-        $this->assertTrue($company->subscribedToProduct(config('stripe.products.gold.id')));
-        $this->assertTrue($company->onTrial(SubscriptionService::SUBSCRIPTION_DEFAULT_NAME));
+
+        $this->assertTrue($company->subscribedToProduct(
+            config('stripe.products.gold.id'),
+            SubscriptionService::SUBSCRIPTION_GOLD_NAME
+        ));
+
+        $this->assertTrue($company->onTrial(
+            SubscriptionService::SUBSCRIPTION_GOLD_NAME,
+            config('stripe.products.gold.prices.monthly')
+        ));
     }
 
     public function test_stripe_client_is_not_called_on_self_hosted_instance_when_creating_company()

@@ -146,9 +146,12 @@ class CompanyService
     {
         $company
             ->newSubscription(
-                SubscriptionService::SUBSCRIPTION_DEFAULT_NAME,
+                SubscriptionService::SUBSCRIPTION_GOLD_NAME,
                 config('stripe.products.gold.prices.monthly')
             )
+            // Quantity is necessary to set to null on metered plans
+            // @see https://stackoverflow.com/a/64613077/4581336
+            ->quantity(null)
             ->trialDays(SubscriptionService::SUBSCRIPTION_INITIAL_TRIAL_DAYS)
             ->create();
     }

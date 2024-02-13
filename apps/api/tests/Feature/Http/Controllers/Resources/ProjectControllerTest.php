@@ -5,8 +5,10 @@ namespace Tests\Feature\Http\Controllers\Resources;
 use App\Models\Company\Company;
 use App\Models\Project\Project;
 use App\Models\User;
+use App\services\SubscriptionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Config;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -44,6 +46,155 @@ class ProjectControllerTest extends TestCase
                 'company' => $project->company
             ]))
             ->assertForbidden();
+    }
+
+    public function test_subscription_limits_check_should_not_be_called_on_self_hosting(): void
+    {
+        $spy = $this->spy(SubscriptionService::class)->makePartial();
+
+        $company = Company::factory()
+            ->withMembers(1)
+            ->create();
+
+        $projectMember = $company
+            ->members
+            ->random()
+            ->first()
+            ->member;
+
+        Project::factory()
+            ->count(SubscriptionService::MAXIMUM_NUMBER_PROJECTS_GOLD_PLAN_PER_COMPANY)
+            ->create(['company_id' => $company->id]);
+
+        Config::set('devqaly.isSelfHosting', true);
+
+        $projectName = $this->faker->words(2, true);
+
+        Sanctum::actingAs($projectMember, ['*']);
+
+        $this
+            ->postJson(route('companies.projects.store', ['company' => $company]), [
+                'title' => $projectName
+            ])
+            ->assertCreated();
+
+        $this->assertDatabaseHas((new Project())->getTable(), [
+            'company_id' => $company->id,
+            'title' => $projectName
+        ]);
+
+        $spy->shouldNotReceive('canCreateProject');
+    }
+
+    public function test_subscription_gold_on_trial_cant_create_more_than_x_projects_per_company(): void
+    {
+        $company = Company::factory()
+            ->withMembers(1)
+            ->create();
+
+        $projectMember = $company
+            ->members
+            ->random()
+            ->first()
+            ->member;
+
+        Project::factory()
+            ->count(SubscriptionService::MAXIMUM_NUMBER_PROJECTS_GOLD_PLAN_PER_COMPANY)
+            ->create(['company_id' => $company->id]);
+
+        $this->createStripeCustomerAndAddTrial(
+            $company,
+            SubscriptionService::SUBSCRIPTION_GOLD_NAME,
+            config('stripe.products.gold.prices.monthly'),
+            true,
+        );
+
+        $projectName = $this->faker->words(2, true);
+
+        Sanctum::actingAs($projectMember, ['*']);
+
+        $this
+            ->postJson(route('companies.projects.store', ['company' => $company]), [
+                'title' => $projectName
+            ])
+            ->assertForbidden();
+
+        $this->assertDatabaseMissing((new Project())->getTable(), [
+            'company_id' => $company->id,
+            'title' => $projectName
+        ]);
+    }
+
+    public function test_subscription_enterprise_can_create_more_than_x_projects_per_company(): void
+    {
+        $company = Company::factory()
+            ->withMembers(1)
+            ->create();
+
+        $projectMember = $company
+            ->members
+            ->random()
+            ->first()
+            ->member;
+
+        Project::factory()
+            ->count(500)
+            ->create(['company_id' => $company->id]);
+
+        $this->createStripeCustomerAndAddTrial(
+            $company,
+            SubscriptionService::SUBSCRIPTION_ENTERPRISE_NAME,
+            config('stripe.products.enterprise.prices.default'),
+            false
+        );
+
+        $projectName = $this->faker->words(2, true);
+
+        Sanctum::actingAs($projectMember, ['*']);
+
+        $this
+            ->postJson(route('companies.projects.store', ['company' => $company]), [
+                'title' => $projectName
+            ])
+            ->assertCreated();
+
+        $this->assertDatabaseHas((new Project())->getTable(), [
+            'company_id' => $company->id,
+            'title' => $projectName
+        ]);
+    }
+
+    public function test_subscription_free_cant_create_more_than_x_projects_per_company(): void
+    {
+        $company = Company::factory()
+            ->withMembers(1)
+            ->create();
+
+        $projectMember = $company
+            ->members
+            ->random()
+            ->first()
+            ->member;
+
+        Project::factory()
+            ->count(SubscriptionService::MAXIMUM_NUMBER_PROJECTS_FREE_PLAN_PER_COMPANY)
+            ->create(['company_id' => $company->id]);
+
+        $projectName = $this->faker->words(2, true);
+
+        Sanctum::actingAs($projectMember, ['*']);
+
+        $this
+            ->postJson(route('companies.projects.store', ['company' => $company]), [
+                'title' => $projectName
+            ])
+            ->assertForbidden()
+            ->assertJsonPath('message', 'You have exceed the amount of projects for this plan');
+
+        $this->assertDatabaseMissing((new Project())->getTable(), [
+            'company_id' => $company->id,
+            'title' => $projectName
+        ]);
     }
 
     public function test_company_member_can_create_project_for_company(): void
@@ -134,5 +285,35 @@ class ProjectControllerTest extends TestCase
         $project->refresh();
 
         $this->assertEquals($response['securityToken'], $project->security_token);
+    }
+
+    private function createStripeCustomerAndAddTrial(
+        Company $company,
+        string  $subscriptionName,
+        string  $pricing,
+        bool    $hasTrial
+    ): void
+    {
+        $company->createOrGetStripeCustomer([
+            'email' => $company->createdBy->email,
+            'name' => $company->name
+        ]);
+
+        if ($hasTrial) {
+            $company
+                ->newSubscription($subscriptionName, $pricing)
+                ->trialDays(SubscriptionService::SUBSCRIPTION_INITIAL_TRIAL_DAYS)
+                // Quantity is necessary to set to null on metered plans
+                // @see https://stackoverflow.com/a/64613077/4581336
+                ->quantity(null)
+                ->create();
+        } else {
+            $company
+                ->newSubscription($subscriptionName, $pricing)
+                // Quantity is necessary to set to null on metered plans
+                // @see https://stackoverflow.com/a/64613077/4581336
+                ->quantity(null)
+                ->create();
+        }
     }
 }
