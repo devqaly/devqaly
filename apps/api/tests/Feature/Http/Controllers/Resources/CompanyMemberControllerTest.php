@@ -6,15 +6,19 @@ use App\Mail\Auth\SignupEmail;
 use App\Models\Auth\RegisterToken;
 use App\Models\Company\Company;
 use App\Models\User;
+use app\services\SubscriptionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
+use Tests\Support\UsesSubscriptionTrait;
 use Tests\TestCase;
 
 class CompanyMemberControllerTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase, WithFaker, UsesSubscriptionTrait;
 
     public function test_company_member_can_list_company_members(): void
     {
@@ -50,7 +54,7 @@ class CompanyMemberControllerTest extends TestCase
     {
         $company = Company::factory()->create();
         $companyMember = $company->createdBy;
-        $email = $this->faker->unique()->email();
+        $emails = $this->generateEmails(4);
 
         Sanctum::actingAs($companyMember, ['*']);
 
@@ -60,24 +64,16 @@ class CompanyMemberControllerTest extends TestCase
 
         $this
             ->postJson(route('companyMembers.store', ['company' => $company]), [
-                'emails' => [$email]
+                'emails' => $emails
             ])
             ->assertNoContent();
 
-        $this->assertDatabaseHas((new RegisterToken())->getTable(), [
-            'email' => $email,
-            'revoked' => false,
-        ]);
-
-
-        Mail::assertQueued(SignupEmail::class, function (SignupEmail $signupEmail) use ($email) {
-            return $signupEmail->hasTo($email);
-        });
+        $this->postCheckEmails($emails);
     }
 
     public function test_company_member_cant_invite_same_member_twice()
     {
-        $company = Company::factory()->withMembers()->create();
+        $company = Company::factory()->withMembers(2)->create();
         $companyMember = $company->members->random()->first()->member;
         $email = $companyMember->email;
 
@@ -116,5 +112,166 @@ class CompanyMemberControllerTest extends TestCase
         Mail::assertNothingOutgoing();
 
         $this->assertDatabaseCount((new RegisterToken())->getTable(), 0);
+    }
+
+    public function test_free_company_cant_invite_more_than_freemium_allows(): void
+    {
+        $company = Company::factory()
+            ->withMembers(SubscriptionService::MAXIMUM_NUMBER_MEMBERS_FREE_PLAN_PER_COMPANY)
+            ->create();
+
+        $companyMember = $company->createdBy;
+        $email = $this->faker->unique()->email();
+
+        Sanctum::actingAs($companyMember, ['*']);
+
+        Mail::fake();
+
+        Mail::assertNothingOutgoing();
+
+        $this
+            ->postJson(route('companyMembers.store', ['company' => $company]), [
+                'emails' => [$email]
+            ])
+            ->assertForbidden();
+
+        $this->assertDatabaseMissing((new RegisterToken())->getTable(), ['email' => $email]);
+
+        Mail::assertNothingOutgoing();
+    }
+
+    public function test_company_on_enterprise_plan_can_invite_members(): void
+    {
+        $membersSize = rand(50, 100);
+        $companyEnterprise = Company::factory()->withMembers($membersSize)->create();
+
+        $companyMemberEnterprise = $companyEnterprise->createdBy;
+        $email = sprintf('bruno.francisco.%s@devqaly.com', substr(Str::uuid()->toString(), -5));
+
+        $this->createSubscriptionForCompany(
+            $companyEnterprise,
+            $this->subscriptionService->getEnterpriseMonthlyPricingId()
+        );
+
+        Sanctum::actingAs($companyMemberEnterprise, ['*']);
+
+        Mail::fake();
+
+        Mail::assertNothingOutgoing();
+
+        $this
+            ->postJson(route('companyMembers.store', ['company' => $companyEnterprise]), ['emails' => [$email]])
+            ->assertNoContent();
+
+        $this->assertDatabaseHas((new RegisterToken())->getTable(), [
+            'email' => $email,
+            'revoked' => false,
+        ]);
+
+        Mail::assertQueued(SignupEmail::class, function (SignupEmail $signupEmail) use ($email) {
+            return $signupEmail->hasTo($email);
+        });
+
+        $this->assertEquals(
+        // "+ 2" because we need to include the user that created the company PLUS the user that just got invited
+            $membersSize + 2,
+            $companyEnterprise
+                ->subscription()
+                ->usageRecordsFor($this->subscriptionService->getEnterpriseMonthlyPricingId())
+                ->reduce(fn($carry, $item) => $carry + $item['total_usage'], 0)
+        );
+    }
+
+    public function test_company_on_gold_plan_can_invite_members(): void
+    {
+        $membersSize = rand(50, 100);
+        $companyGold = Company::factory()->withMembers($membersSize)->create();
+
+        $companyMemberEnterprise = $companyGold->createdBy;
+        $email = sprintf('bruno.francisco.%s@devqaly.com', substr(Str::uuid()->toString(), -5));
+
+        $this->createSubscriptionForCompany(
+            $companyGold,
+            $this->subscriptionService->getGoldMonthlyPricingId()
+        );
+
+        Sanctum::actingAs($companyMemberEnterprise, ['*']);
+
+        Mail::fake();
+
+        Mail::assertNothingOutgoing();
+
+        $this
+            ->postJson(route('companyMembers.store', ['company' => $companyGold]), ['emails' => [$email]])
+            ->assertNoContent();
+
+        $this->assertDatabaseHas((new RegisterToken())->getTable(), [
+            'email' => $email,
+            'revoked' => false,
+        ]);
+
+        Mail::assertQueued(SignupEmail::class, function (SignupEmail $signupEmail) use ($email) {
+            return $signupEmail->hasTo($email);
+        });
+
+        $this->assertEquals(
+        // "+ 2" because we need to include the user that created the company PLUS the user that just got invited
+            $membersSize + 2,
+            $companyGold
+                ->subscription()
+                ->usageRecordsFor($this->subscriptionService->getGoldMonthlyPricingId())
+                ->reduce(fn($carry, $item) => $carry + $item['total_usage'], 0)
+        );
+    }
+
+    public function test_self_hosted_version_does_not_have_subscription_concerns(): void
+    {
+        $spy = $this->spy(SubscriptionService::class)->makePartial();
+
+        $company = Company::factory()->create();
+        $companyMember = $company->createdBy;
+        $emails = $this->generateEmails(6);
+
+        Config::set('devqaly.isSelfHosting', true);
+
+        Sanctum::actingAs($companyMember, ['*']);
+
+        Mail::fake();
+
+        Mail::assertNothingOutgoing();
+
+        $this
+            ->postJson(route('companyMembers.store', ['company' => $company]), [
+                'emails' => $emails
+            ])
+            ->assertNoContent();
+
+        $this->postCheckEmails($emails);
+
+        $spy->shouldNotReceive('isPayingCustomer');
+        $spy->shouldNotReceive('isSubscribedToGoldPlan');
+        $spy->shouldNotReceive('isSubscribedToEnterprisePlan');
+    }
+
+    private function postCheckEmails(array $emails): void
+    {
+        foreach ($emails as $email) {
+            $this->assertDatabaseHas((new RegisterToken())->getTable(), [
+                'email' => $email,
+                'revoked' => false,
+            ]);
+
+
+            Mail::assertQueued(SignupEmail::class, function (SignupEmail $signupEmail) use ($email) {
+                return $signupEmail->hasTo($email);
+            });
+        }
+    }
+
+    private function generateEmails(int $numberEmails): array
+    {
+        return collect(array_fill(1, $numberEmails, ''))
+            ->map(fn () => $this->faker->unique()->email())
+            ->toArray();
     }
 }

@@ -5,7 +5,8 @@ return [
         'enterprise' => [
             'id' => env('STRIPE_PRODUCT_ENTERPRISE_ID'),
             'prices' => [
-                'default' => env('STRIPE_PRICE_ENTERPRISE_ID')
+                'default' => env('STRIPE_PRICE_ENTERPRISE_ID'),
+                'monthly' => env('STRIPE_PRICE_ENTERPRISE_ID')
             ]
         ],
         'gold' => [

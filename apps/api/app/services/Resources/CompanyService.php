@@ -7,13 +7,22 @@ use App\Models\Company\Company;
 use App\Models\Company\CompanyMember;
 use App\Models\User;
 use App\services\Auth\RegisterTokenService;
+use App\services\SubscriptionService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Laravel\Cashier\Exceptions\IncompletePayment;
+use Symfony\Component\HttpFoundation\Response;
 
 class CompanyService
 {
+    private SubscriptionService $subscriptionService;
+
+    public function __construct(SubscriptionService $subscriptionService)
+    {
+        $this->subscriptionService = $subscriptionService;
+    }
+
     public function createCompany(Collection $data, User $createdBy, array $customerOptionsMetadata = []): Company
     {
         DB::beginTransaction();
@@ -58,6 +67,10 @@ class CompanyService
 
         $registeredUsers = User::whereIn('email', $emails)->get();
 
+        $unregisteredUsersEmails = $emails->diff($registeredUsers->pluck('email'));
+
+        $this->canInviteUsers($data->get('emails'), $company);
+
         foreach ($registeredUsers as $registeredUser) {
             CompanyMember::create([
                 'company_id' => $company->id,
@@ -66,8 +79,6 @@ class CompanyService
                 'invited_by_id' => $invitedBy->id,
             ]);
         }
-
-        $unregisteredUsersEmails = $emails->diff($registeredUsers->pluck('email'));
 
         /** @var Collection $registerTokens */
         $registerTokens = RegisterToken::query()
@@ -131,6 +142,8 @@ class CompanyService
                 'invited_by_id' => $invitedBy->id,
             ]);
         }
+
+        $this->reportUsageForMembers($company);
     }
 
     private function createCustomOnStripe(Company $company): void
@@ -139,5 +152,41 @@ class CompanyService
             'email' => $company->createdBy->email,
             'name' => $company->name
         ]);
+    }
+
+    private function canInviteUsers(array $newUsers, Company $company): void
+    {
+        if (config('devqaly.isSelfHosting')) return;
+
+        if ($this->subscriptionService->isPayingCustomer($company)) return;
+
+        $numberCompanyMembers = $company->members()->count();
+        $numberMembersBeingInvited = count($newUsers);
+        $totalNumberMembers = ($numberCompanyMembers + $numberMembersBeingInvited);
+
+        if ($totalNumberMembers > SubscriptionService::MAXIMUM_NUMBER_MEMBERS_FREE_PLAN_PER_COMPANY) {
+            abort(Response::HTTP_FORBIDDEN, "Your plan does not support the amount of $totalNumberMembers members");
+        }
+    }
+
+    private function reportUsageForMembers(Company $company): void
+    {
+        if (config('devqaly.isSelfHosting')) return;
+
+        if ($this->subscriptionService->isSubscribedToGoldPlan($company)) {
+            $company->subscription()->reportUsageFor(
+                $this->subscriptionService->getGoldMonthlyPricingId(),
+                $company->members()->count()
+            );
+
+            return;
+        }
+
+        if ($this->subscriptionService->isSubscribedToEnterprisePlan($company)) {
+            $company->subscription()->reportUsageFor(
+                $this->subscriptionService->getEnterpriseMonthlyPricingId(),
+                $company->members()->count()
+            );
+        }
     }
 }

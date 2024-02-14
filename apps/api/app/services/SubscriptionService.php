@@ -14,6 +14,8 @@ class SubscriptionService
 
     const MAXIMUM_NUMBER_SESSIONS_GOLD_PLAN_PER_COMPANY = 100;
 
+    const MAXIMUM_NUMBER_MEMBERS_FREE_PLAN_PER_COMPANY = 5;
+
     const SUBSCRIPTION_INITIAL_TRIAL_DAYS = 30;
 
     public function canCreateProject(Company $company): bool
@@ -60,6 +62,16 @@ class SubscriptionService
         return config('stripe.products.enterprise.id');
     }
 
+    public function getEnterpriseMonthlyPricingId(): string
+    {
+        return config('stripe.products.enterprise.prices.monthly');
+    }
+
+    public function getGoldMonthlyPricingId(): string
+    {
+        return config('stripe.products.gold.prices.monthly');
+    }
+
     public function isSubscribedToGoldPlan(Company $company): bool
     {
         return $company->subscribedToProduct($this->getGoldProductId());
@@ -68,5 +80,12 @@ class SubscriptionService
     public function isSubscribedToEnterprisePlan(Company $company): bool
     {
         return $company->subscribedToProduct($this->getEnterpriseProductId());
+    }
+
+    public function isPayingCustomer(Company $company): bool
+    {
+        return $company->onTrial()
+            || $this->isSubscribedToGoldPlan($company)
+            || $this->isSubscribedToEnterprisePlan($company);
     }
 }
