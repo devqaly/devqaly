@@ -19,7 +19,12 @@ class Company extends Model
 
     protected $fillable = [
         'name',
-        'created_by_id'
+        'created_by_id',
+        'trial_ends_at',
+    ];
+
+    protected $casts = [
+        'trial_ends_at' => 'datetime'
     ];
 
     public function createdBy(): BelongsTo

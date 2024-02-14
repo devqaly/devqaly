@@ -6,6 +6,7 @@ use App\Models\Company\Company;
 use App\Models\Project\Project;
 use App\Models\Session\Session;
 use App\Models\User;
+use App\services\SubscriptionService;
 use Database\Factories\Session\SessionFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -76,7 +77,7 @@ class ProjectSessionControllerTest extends TestCase
         ]);
     }
 
-    public function test_session_returns_correct_maximum_session_length_for_company_with_enterprise(): void
+    public function test_session_returns_correct_maximum_session_length_for_company_with_enterprise_plan(): void
     {
         /** @var Project $project */
         $project = Project::factory()->create();
@@ -84,14 +85,15 @@ class ProjectSessionControllerTest extends TestCase
         /** @var Company $company */
         $company = $project->company;
 
-        $company
-            ->newSubscription('default')
-            ->meteredPrice(config('stripe.products.enterprise.prices.default'))
-            ->create(customerOptions: [
-                'metadata' => [
-                    'environment' => \config('app.env')
-                ]
-            ]);
+        $company->createOrGetStripeCustomer([
+            'email' => $company->createdBy->email,
+            'name' => $company->name
+        ]);
+
+        $this->createSubscriptionForCompany(
+            $company,
+            config('stripe.products.enterprise.prices.default')
+        );
 
         $sessionPayload = $this->createSessionPayload();
 
@@ -101,6 +103,34 @@ class ProjectSessionControllerTest extends TestCase
             ]), $sessionPayload)
             ->assertCreated()
             ->assertJsonPath('meta.maximumSessionLengthInSeconds', 600);
+    }
+
+    public function test_session_returns_correct_maximum_session_length_for_company_with_gold_plan(): void
+    {
+        /** @var Project $project */
+        $project = Project::factory()->create();
+
+        /** @var Company $company */
+        $company = $project->company;
+
+        $company->createOrGetStripeCustomer([
+            'email' => $company->createdBy->email,
+            'name' => $company->name
+        ]);
+
+        $this->createSubscriptionForCompany(
+            $company,
+            config('stripe.products.gold.prices.monthly')
+        );
+
+        $sessionPayload = $this->createSessionPayload();
+
+        $this
+            ->postJson(route('projects.sessions.store', [
+                'project' => $project
+            ]), $sessionPayload)
+            ->assertCreated()
+            ->assertJsonPath('meta.maximumSessionLengthInSeconds', 300);
     }
 
     public function test_session_returns_correct_maximum_session_length_for_company_on_free_plan(): void
@@ -115,7 +145,7 @@ class ProjectSessionControllerTest extends TestCase
                 'project' => $project
             ]), $sessionPayload)
             ->assertCreated()
-            ->assertJsonPath('meta.maximumSessionLengthInSeconds', 300);
+            ->assertJsonPath('meta.maximumSessionLengthInSeconds', 90);
     }
 
     public function test_last_x_sessions_are_soft_deleted_when_creating_session_in_freemium_and_not_self_hosting()
@@ -257,5 +287,23 @@ class ProjectSessionControllerTest extends TestCase
             'windowHeight' => $windowDimensions[1],
             'environment' => $environment
         ];
+    }
+
+    private function createSubscriptionForCompany(
+        Company $company,
+        string $pricing
+    ): void
+    {
+        $company
+            ->newSubscription('default', $pricing)
+            // Quantity is necessary to set to null on metered plans
+            // @see https://stackoverflow.com/a/64613077/4581336
+            ->quantity(null)
+            ->trialDays(SubscriptionService::SUBSCRIPTION_INITIAL_TRIAL_DAYS)
+            ->create(customerOptions: [
+                'metadata' => [
+                    'environment' => \config('app.env')
+                ]
+            ]);
     }
 }

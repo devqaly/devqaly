@@ -86,6 +86,39 @@ class ProjectControllerTest extends TestCase
         $spy->shouldNotReceive('canCreateProject');
     }
 
+    public function test_company_on_trial_cant_create_more_than_x_projects_per_company(): void
+    {
+        $company = Company::factory()
+            ->withMembers(1)
+            ->withTrial()
+            ->create();
+
+        $projectMember = $company
+            ->members
+            ->random()
+            ->first()
+            ->member;
+
+        Project::factory()
+            ->count(SubscriptionService::MAXIMUM_NUMBER_PROJECTS_GOLD_PLAN_PER_COMPANY)
+            ->create(['company_id' => $company->id]);
+
+        $projectName = $this->faker->words(2, true);
+
+        Sanctum::actingAs($projectMember, ['*']);
+
+        $this
+            ->postJson(route('companies.projects.store', ['company' => $company]), [
+                'title' => $projectName
+            ])
+            ->assertForbidden();
+
+        $this->assertDatabaseMissing((new Project())->getTable(), [
+            'company_id' => $company->id,
+            'title' => $projectName
+        ]);
+    }
+
     public function test_subscription_gold_on_trial_cant_create_more_than_x_projects_per_company(): void
     {
         $company = Company::factory()
@@ -104,7 +137,6 @@ class ProjectControllerTest extends TestCase
 
         $this->createStripeCustomerAndAddTrial(
             $company,
-            SubscriptionService::SUBSCRIPTION_GOLD_NAME,
             config('stripe.products.gold.prices.monthly'),
             true,
         );
@@ -143,7 +175,6 @@ class ProjectControllerTest extends TestCase
 
         $this->createStripeCustomerAndAddTrial(
             $company,
-            SubscriptionService::SUBSCRIPTION_ENTERPRISE_NAME,
             config('stripe.products.enterprise.prices.default'),
             false
         );
@@ -289,7 +320,6 @@ class ProjectControllerTest extends TestCase
 
     private function createStripeCustomerAndAddTrial(
         Company $company,
-        string  $subscriptionName,
         string  $pricing,
         bool    $hasTrial
     ): void
@@ -301,7 +331,7 @@ class ProjectControllerTest extends TestCase
 
         if ($hasTrial) {
             $company
-                ->newSubscription($subscriptionName, $pricing)
+                ->newSubscription('default', $pricing)
                 ->trialDays(SubscriptionService::SUBSCRIPTION_INITIAL_TRIAL_DAYS)
                 // Quantity is necessary to set to null on metered plans
                 // @see https://stackoverflow.com/a/64613077/4581336
@@ -309,7 +339,7 @@ class ProjectControllerTest extends TestCase
                 ->create();
         } else {
             $company
-                ->newSubscription($subscriptionName, $pricing)
+                ->newSubscription('default', $pricing)
                 // Quantity is necessary to set to null on metered plans
                 // @see https://stackoverflow.com/a/64613077/4581336
                 ->quantity(null)

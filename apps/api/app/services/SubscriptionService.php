@@ -10,22 +10,49 @@ class SubscriptionService
 
     const MAXIMUM_NUMBER_PROJECTS_GOLD_PLAN_PER_COMPANY = 3;
 
-    const SUBSCRIPTION_GOLD_NAME = 'gold';
-
-    const SUBSCRIPTION_ENTERPRISE_NAME = 'enterprise';
-
     const SUBSCRIPTION_INITIAL_TRIAL_DAYS = 30;
 
     public function canCreateProject(Company $company): bool
     {
-        if ($company->subscribed(self::SUBSCRIPTION_ENTERPRISE_NAME)) {
+        if ($company->subscribedToProduct($this->getEnterpriseProductId())) {
             return true;
         }
 
-        if ($company->subscribed(self::SUBSCRIPTION_GOLD_NAME)) {
+        if ($company->subscribedToProduct($this->getGoldProductId())) {
+            return $company->projects()->count() < self::MAXIMUM_NUMBER_PROJECTS_GOLD_PLAN_PER_COMPANY;
+        }
+
+        if ($company->onTrial()) {
             return $company->projects()->count() < self::MAXIMUM_NUMBER_PROJECTS_GOLD_PLAN_PER_COMPANY;
         }
 
         return $company->projects()->count() < self::MAXIMUM_NUMBER_PROJECTS_FREE_PLAN_PER_COMPANY;
+    }
+
+    public function getMaximumSessionLength(Company $company): int
+    {
+        if ($company->subscribedToProduct($this->getEnterpriseProductId())) {
+            return 600;
+        }
+
+        if ($company->subscribedToProduct($this->getGoldProductId())) {
+            return 300;
+        }
+
+        if ($company->onTrial()) {
+            return 300;
+        }
+
+        return 90;
+    }
+
+    public function getGoldProductId(): string
+    {
+        return config('stripe.products.gold.id');
+    }
+
+    public function getEnterpriseProductId(): string
+    {
+        return config('stripe.products.enterprise.id');
     }
 }

@@ -5,6 +5,7 @@ namespace Database\Factories\Company;
 use App\Models\Company\Company;
 use App\Models\Company\CompanyMember;
 use App\Models\User;
+use App\services\SubscriptionService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -52,6 +53,15 @@ class CompanyFactory extends Factory
                     'invited_by_id' => $company->created_by_id,
                 ]);
             });
+        });
+    }
+
+    public function withTrial(): CompanyFactory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'trial_ends_at' => now()->addDays(SubscriptionService::SUBSCRIPTION_INITIAL_TRIAL_DAYS)
+            ];
         });
     }
 }

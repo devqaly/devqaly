@@ -7,7 +7,6 @@ use App\Models\Company\Company;
 use App\Models\Company\CompanyMember;
 use App\Models\User;
 use App\services\Auth\RegisterTokenService;
-use App\services\SubscriptionService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -23,12 +22,12 @@ class CompanyService
             /** @var Company $company */
             $company = Company::create([
                 'name' => $data->get('name'),
-                'created_by_id' => $createdBy->id
+                'created_by_id' => $createdBy->id,
+                'trial_ends_at' => now()->addDays(30),
             ]);
 
             if (!config('devqaly.isSelfHosting')) {
                 $this->createCustomOnStripe($company);
-                $this->addCompanyTrial($company);
             }
 
             DB::commit();
@@ -140,19 +139,5 @@ class CompanyService
             'email' => $company->createdBy->email,
             'name' => $company->name
         ]);
-    }
-
-    private function addCompanyTrial(Company $company): void
-    {
-        $company
-            ->newSubscription(
-                SubscriptionService::SUBSCRIPTION_GOLD_NAME,
-                config('stripe.products.gold.prices.monthly')
-            )
-            // Quantity is necessary to set to null on metered plans
-            // @see https://stackoverflow.com/a/64613077/4581336
-            ->quantity(null)
-            ->trialDays(SubscriptionService::SUBSCRIPTION_INITIAL_TRIAL_DAYS)
-            ->create();
     }
 }
