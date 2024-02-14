@@ -10,6 +10,10 @@ class SubscriptionService
 
     const MAXIMUM_NUMBER_PROJECTS_GOLD_PLAN_PER_COMPANY = 3;
 
+    const MAXIMUM_NUMBER_SESSIONS_FREE_PLAN_PER_COMPANY = 5;
+
+    const MAXIMUM_NUMBER_SESSIONS_GOLD_PLAN_PER_COMPANY = 100;
+
     const SUBSCRIPTION_INITIAL_TRIAL_DAYS = 30;
 
     public function canCreateProject(Company $company): bool
@@ -54,5 +58,15 @@ class SubscriptionService
     public function getEnterpriseProductId(): string
     {
         return config('stripe.products.enterprise.id');
+    }
+
+    public function isSubscribedToGoldPlan(Company $company): bool
+    {
+        return $company->subscribedToProduct($this->getGoldProductId());
+    }
+
+    public function isSubscribedToEnterprisePlan(Company $company): bool
+    {
+        return $company->subscribedToProduct($this->getEnterpriseProductId());
     }
 }

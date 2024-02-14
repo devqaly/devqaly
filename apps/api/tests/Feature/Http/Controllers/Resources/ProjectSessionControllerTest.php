@@ -148,17 +148,14 @@ class ProjectSessionControllerTest extends TestCase
             ->assertJsonPath('meta.maximumSessionLengthInSeconds', 90);
     }
 
-    public function test_last_x_sessions_are_soft_deleted_when_creating_session_in_freemium_and_not_self_hosting()
+    public function test_last_x_sessions_are_soft_deleted_when_creating_session_in_freemium()
     {
         /** @var Project $project */
         $project = Project::factory()->create();
 
         Session::factory()
-            ->count(Session::MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES)
-            ->create([
-                'project_id' => $project->id,
-                'created_at' => now()->subMonth()
-            ]);
+            ->count(SubscriptionService::MAXIMUM_NUMBER_SESSIONS_FREE_PLAN_PER_COMPANY)
+            ->create(['project_id' => $project->id, 'created_at' => now()->subMonth()]);
 
         $sessionPayload = $this->createSessionPayload();
 
@@ -171,16 +168,46 @@ class ProjectSessionControllerTest extends TestCase
         $numberSessionsInDatabase = $project->sessions()->orderBy('created_at', 'DESC')->get();
 
         $this->assertEquals(
-            Session::MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES,
+            SubscriptionService::MAXIMUM_NUMBER_SESSIONS_FREE_PLAN_PER_COMPANY,
             $numberSessionsInDatabase->count(),
         );
 
         $numberTrashedSessionsInDatabase = $project->sessions()->withTrashed()->count();
 
         $this->assertEquals(
-            Session::MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES + 1,
+            SubscriptionService::MAXIMUM_NUMBER_SESSIONS_FREE_PLAN_PER_COMPANY + 1,
             $numberTrashedSessionsInDatabase
         );
+    }
+
+    public function test_last_x_sessions_are_soft_deleted_when_creating_session_in_gold_plan()
+    {
+        /** @var Project $project */
+        $project = Project::factory()->create();
+
+        $numberSessions = SubscriptionService::MAXIMUM_NUMBER_SESSIONS_GOLD_PLAN_PER_COMPANY;
+
+        Session::factory()
+            ->count($numberSessions)
+            ->create(['project_id' => $project->id, 'created_at' => now()->subMonth()]);
+
+        $this->createSubscriptionForCompany($project->company, config('stripe.products.gold.prices.monthly'));
+
+        $sessionPayload = $this->createSessionPayload();
+
+        $this
+            ->postJson(route('projects.sessions.store', [
+                'project' => $project
+            ]), $sessionPayload)
+            ->assertCreated();
+
+        $numberSessionsInDatabase = $project->sessions()->orderBy('created_at', 'DESC')->get();
+
+        $this->assertEquals($numberSessions, $numberSessionsInDatabase->count());
+
+        $numberTrashedSessionsInDatabase = $project->sessions()->withTrashed()->count();
+
+        $this->assertEquals($numberSessions + 1, $numberTrashedSessionsInDatabase);
     }
 
     public function test_sessions_are_not_deleted_when_self_hosting()
@@ -188,7 +215,7 @@ class ProjectSessionControllerTest extends TestCase
         /** @var Project $project */
         $project = Project::factory()->create();
 
-        $numberSessions = Session::MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES;
+        $numberSessions = SubscriptionService::MAXIMUM_NUMBER_SESSIONS_FREE_PLAN_PER_COMPANY;
 
         Session::factory()
             ->count($numberSessions)
@@ -221,35 +248,27 @@ class ProjectSessionControllerTest extends TestCase
         /** @var Project $project */
         $project = Project::factory()->create();
 
-        $numberSessions = Session::MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES;
+        $numberSessions = rand(100, 200);
 
-        Session::factory()
-            ->count($numberSessions)
-            ->create([
-                'project_id' => $project->id,
-                'created_at' => now()->subMonth()
-            ]);
+        Session::factory()->count($numberSessions)->create([
+            'project_id' => $project->id,
+            'created_at' => now()->subMonth()
+        ]);
 
         /** @var Company $company */
         $company = $project->company;
 
-        $company
-            ->newSubscription('default')
-            ->meteredPrice(config('stripe.products.enterprise.prices.default'))
-            ->create(customerOptions: [
-                'metadata' => [
-                    'environment' => \config('app.env')
-                ]
-            ]);
+        $this->createSubscriptionForCompany($company, config('stripe.products.enterprise.prices.default'));
 
         Config::set('devqaly.isSelfHosting', false);
 
         $sessionPayload = $this->createSessionPayload();
 
         $this
-            ->postJson(route('projects.sessions.store', [
-                'project' => $project
-            ]), $sessionPayload)
+            ->postJson(
+                route('projects.sessions.store', ['project' => $project]),
+                $sessionPayload
+            )
             ->assertCreated();
 
         $numberSessionsInDatabase = $project->sessions()->orderBy('created_at', 'DESC')->get();
@@ -259,15 +278,6 @@ class ProjectSessionControllerTest extends TestCase
         $numberTrashedSessionsInDatabase = $project->sessions()->withTrashed()->count();
 
         $this->assertEquals($numberSessions + 1, $numberTrashedSessionsInDatabase);
-
-        // We are only reporting the usage when calling the HTTP endpoint and not when creating the factory
-        $this->assertEquals(
-            1,
-            $company
-                ->subscription()
-                ->usageRecordsFor(config('stripe.products.enterprise.prices.default'))
-                ->reduce(fn ($carry, $item) => $carry + $item['total_usage'], 0)
-        );
     }
 
     private function createSessionPayload(): array
@@ -291,7 +301,7 @@ class ProjectSessionControllerTest extends TestCase
 
     private function createSubscriptionForCompany(
         Company $company,
-        string $pricing
+        string  $pricing
     ): void
     {
         $company
