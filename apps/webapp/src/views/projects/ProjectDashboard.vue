@@ -24,13 +24,33 @@
     <InitiateDevqalyScript
       :project-id="projectStore.activeProject ? projectStore.activeProject.projectKey : '...'"
     />
+
+    <CompanyTrialInformationDialog
+      v-model:visible="isShowingTrialWarning"
+      @update:visible="onUpdateVisibleCompanyTrialDialog"
+    />
   </div>
 </template>
 <script setup lang="ts">
-import DCode from '@/components/DCode.vue'
 import { useProjectsStore } from '@/stores/projects'
 import InstallDevqaly from '@/components/InstallDevqaly.vue'
 import InitiateDevqalyScript from '@/components/InitiateDevqalyScript.vue'
+import CompanyTrialInformationDialog from '@/components/resources/company/CompanyTrialInformationDialog.vue'
+import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { SHOW_FREE_TRIAL_COMPANY_PARAMETER_NAME } from '@/services/resources/Company'
 
 const projectStore = useProjectsStore()
+
+const route = useRoute()
+
+const router = useRouter()
+
+const isShowingTrialWarning = ref(route.query[SHOW_FREE_TRIAL_COMPANY_PARAMETER_NAME] !== undefined)
+
+function onUpdateVisibleCompanyTrialDialog(isOpen: boolean) {
+  if (isOpen) return
+
+  router.replace({ name: route.name! })
+}
 </script>

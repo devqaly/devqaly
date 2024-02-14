@@ -99,6 +99,7 @@
         <RouterLink
           :to="{
             name: 'projectDashboard',
+            query: { [SHOW_FREE_TRIAL_COMPANY_PARAMETER_NAME]: 1 },
             params: { projectId: route.params.projectId, companyId: route.params.companyId }
           }"
           data-cy="onboarding-invite-page__skip-step"
@@ -129,6 +130,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { addMembersToCompany } from '@/services/api/resources/company/companyMember/actions'
 import { useToast } from 'primevue/usetoast'
+import { SHOW_FREE_TRIAL_COMPANY_PARAMETER_NAME } from '@/services/resources/Company'
 
 const { emails, email, errorMessage, onSubmit, onRemoveEmail } = useSelectEmail()
 
@@ -150,6 +152,7 @@ async function onFinishOnboarding() {
 
     await router.push({
       name: 'projectDashboard',
+      query: { [SHOW_FREE_TRIAL_COMPANY_PARAMETER_NAME]: 1 },
       params: { projectId: route.params.projectId, companyId: route.params.companyId as string }
     })
   } catch (e) {
