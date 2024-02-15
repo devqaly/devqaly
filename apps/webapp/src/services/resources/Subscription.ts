@@ -23,5 +23,6 @@ export function hasPaymentMethod(
 export function isWithinRangeForWarningTrialEnding(date: string): boolean {
   const minutesUntilTrialEnds = differenceInMinutes(new Date(date), new Date())
 
-  return minutesUntilTrialEnds >= 0 && minutesUntilTrialEnds < 100
+  // 10 days = 14400 minutes
+  return minutesUntilTrialEnds >= 0 && minutesUntilTrialEnds < 14400
 }

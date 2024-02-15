@@ -7,8 +7,8 @@
       <div class="font-semibold">Payment method missing</div>
 
       <div class="mt-1">
-        Your trial is ending in {{ endUntilTrial.value }} {{ endUntilTrial.unit }} and no payment
-        method have been added. Please, add a payment method to avoid losing access to your sessions
+        Your trial is ending in {{ endUntilTrial.value }} {{ endUntilTrial.unit }} and subscription
+        have been chosen. Switch to a paid plan to avoid losing access to your sessions, projects
         and allow team members to see sessions.
       </div>
     </div>
@@ -75,10 +75,7 @@ function shouldShowSubscriptionWarning(): boolean {
 
   if (endUntilTrial.value === null) return false
 
-  return (
-    isWithinRangeForWarningTrialEnding(appStore.activeCompany.trialEndsAt!) &&
-    !hasPaymentMethod(appStore.activeCompany)
-  )
+  return isWithinRangeForWarningTrialEnding(appStore.activeCompany.trialEndsAt!)
 }
 
 async function getCompanyPortalUrl() {
