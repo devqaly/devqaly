@@ -1,5 +1,6 @@
 import type { SubscriptionCodec } from '@/services/api/resources/subscription/codec'
 import type { CompanyCodec } from '@/services/api/resources/company/codec'
+import differenceInMinutes from 'date-fns/differenceInMinutes'
 
 export function isActiveSubscription(status: SubscriptionCodec['status']) {
   return status === 'active'
@@ -19,6 +20,8 @@ export function hasPaymentMethod(
   return !!(method.paymentMethodType && method.paymentLastFourDigits)
 }
 
-export function isWithinRangeForWarningTrialEnding(days: number): boolean {
-  return days > 0 && days < 11
+export function isWithinRangeForWarningTrialEnding(date: string): boolean {
+  const minutesUntilTrialEnds = differenceInMinutes(new Date(date), new Date())
+
+  return minutesUntilTrialEnds >= 0 && minutesUntilTrialEnds < 100
 }

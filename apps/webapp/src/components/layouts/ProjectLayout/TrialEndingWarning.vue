@@ -1,15 +1,15 @@
 <template>
   <div
     class="flex justify-between items-center rounded-lg bg-red-50 text-red-700 border border-red-200 p-3"
-    v-show="shouldShowSubscriptionWarning()"
+    v-if="endUntilTrial && shouldShowSubscriptionWarning()"
   >
     <div class="w-full md:max-w-[600px] flex-wrap">
       <div class="font-semibold">Payment method missing</div>
 
       <div class="mt-1">
-        Your trial is ending in {{ daysUntilEndTrial }} days and no payment method have been added.
-        Please, add a payment method to avoid losing access to your sessions and allow team members
-        to see sessions.
+        Your trial is ending in {{ endUntilTrial.value }} {{ endUntilTrial.unit }} and no payment
+        method have been added. Please, add a payment method to avoid losing access to your sessions
+        and allow team members to see sessions.
       </div>
     </div>
 
@@ -31,11 +31,11 @@ import { useAppStore } from '@/stores/app'
 import { assertsIsCompanyCodec } from '@/services/resources/Company'
 import {
   hasPaymentMethod,
-  isActiveSubscription,
   isWithinRangeForWarningTrialEnding,
   shouldShowSubscriptionConcerns
 } from '@/services/resources/Subscription'
-import differenceInDays from 'date-fns/differenceInDays'
+import { differenceInDays, intervalToDuration } from 'date-fns'
+import differenceInMinutes from 'date-fns/differenceInMinutes'
 
 const portalUrl = ref<null | string>(null)
 
@@ -43,12 +43,25 @@ const isFetchingPortalUrl = ref(true)
 
 const appStore = useAppStore()
 
-const daysUntilEndTrial = computed<number>(() => {
+const endUntilTrial = computed<{ unit: string; value: number } | null>(() => {
   assertsIsCompanyCodec(appStore.activeCompany)
 
-  if (!appStore.activeCompany.trialEndsAt) return -1
+  if (!appStore.activeCompany.trialEndsAt) return null
 
-  return differenceInDays(new Date(appStore.activeCompany.trialEndsAt), new Date())
+  const daysUntilEndTrial = differenceInDays(
+    new Date(appStore.activeCompany.trialEndsAt),
+    new Date()
+  )
+
+  if (daysUntilEndTrial > 0)
+    return { unit: daysUntilEndTrial > 1 ? 'days' : 'day', value: daysUntilEndTrial }
+
+  const minutesUntilEndTrial = differenceInMinutes(
+    new Date(appStore.activeCompany.trialEndsAt),
+    new Date()
+  )
+
+  return { unit: minutesUntilEndTrial > 1 ? 'minutes' : 'minute', value: minutesUntilEndTrial }
 })
 
 const hasError = ref(false)
@@ -60,8 +73,10 @@ function shouldShowSubscriptionWarning(): boolean {
 
   assertsIsCompanyCodec(appStore.activeCompany)
 
+  if (endUntilTrial.value === null) return false
+
   return (
-    isWithinRangeForWarningTrialEnding(daysUntilEndTrial.value) &&
+    isWithinRangeForWarningTrialEnding(appStore.activeCompany.trialEndsAt!) &&
     !hasPaymentMethod(appStore.activeCompany)
   )
 }
