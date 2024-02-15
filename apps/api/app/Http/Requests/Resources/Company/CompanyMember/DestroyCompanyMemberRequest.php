@@ -15,9 +15,9 @@ class DestroyCompanyMemberRequest extends FormRequest
     {
         return [
             'users' => 'array|min:1',
-            'users.*' => 'string|uuid',
+            'users.*' => 'string|uuid|distinct',
             'registerTokens' => 'array|min:1',
-            'registerTokens.*' => 'string|uuid',
+            'registerTokens.*' => 'string|uuid|distinct',
         ];
     }
 }

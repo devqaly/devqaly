@@ -149,14 +149,23 @@ class CompanyService
 
     public function removeUsersFromCompany(Collection $data, Company $company): void
     {
+        $users = $data->get('users', []);
+        $registerTokens = $data->get('registerTokens', []);
+
+        $totalNumberMembers = $company->members()->count();
+
+        if ((count($users) + count($registerTokens)) === $totalNumberMembers) {
+            abort(Response::HTTP_FORBIDDEN, 'You must have at least 1 members in the company');
+        }
+
         CompanyMember::query()
             ->where('company_id', $company->id)
-            ->whereIn('member_id', $data->get('users'))
-            ->orWhereIn('register_token_id', $data->get('registerTokens'))
+            ->whereIn('member_id', $users)
+            ->orWhereIn('register_token_id', $registerTokens)
             ->delete();
 
         RegisterToken::query()
-            ->whereIn('id', $data->get('registerTokens'))
+            ->whereIn('id', $registerTokens)
             ->delete();
 
         $this->reportUsageForMembers($company);

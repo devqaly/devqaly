@@ -287,6 +287,17 @@ class CompanyMemberControllerTest extends TestCase
             ->assertForbidden();
 
         $this->assertDatabaseCount((new CompanyMember())->getTable(), 1);
+
+        $company = Company::factory()->withMembers()->create();
+
+        Sanctum::actingAs($company->createdBy);
+
+        $this
+            ->deleteJson(route('companyMembers.destroy', ['company' => $company]), [
+                'users' => $company->members->map(fn (CompanyMember $companyMember) => $companyMember->member_id)
+            ])
+            ->assertForbidden()
+            ->assertJsonPath('message', 'You must have at least 1 members in the company');
     }
 
     public function test_company_user_can_delete_company_members(): void
