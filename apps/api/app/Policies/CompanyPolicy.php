@@ -21,7 +21,7 @@ class CompanyPolicy
      */
     public function view(User $user, Company $company): bool
     {
-        //
+        return $company->members()->where('member_id', $user->id)->exists();
     }
 
     /**

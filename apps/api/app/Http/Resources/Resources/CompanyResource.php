@@ -30,6 +30,10 @@ class CompanyResource extends JsonResource
                     'status' => $subscription->stripe_status,
                     'trialEndsAt' => $subscription->trial_ends_at,
                 ] : null);
+
+                $collection->put('trialEndsAt', $this->trial_ends_at);
+                $collection->put('paymentMethodType', $this->pm_type);
+                $collection->put('paymentLastFourDigits', $this->pm_last_four);
             })
             ->toArray();
     }
