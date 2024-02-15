@@ -265,7 +265,7 @@ class CompanyMemberControllerTest extends TestCase
         Sanctum::actingAs(User::factory()->create());
 
         $this
-            ->deleteJson(route('companyMembers.destroy', ['company' => $company]), [
+            ->postJson(route('companyMembers.removeMembers', ['company' => $company]), [
                 'users' => [$companyMember->id],
             ])
             ->assertForbidden();
@@ -281,7 +281,7 @@ class CompanyMemberControllerTest extends TestCase
         Sanctum::actingAs($company->createdBy);
 
         $this
-            ->deleteJson(route('companyMembers.destroy', ['company' => $company]), [
+            ->postJson(route('companyMembers.removeMembers', ['company' => $company]), [
                 'users' => [$company->createdBy->id],
             ])
             ->assertForbidden();
@@ -293,7 +293,7 @@ class CompanyMemberControllerTest extends TestCase
         Sanctum::actingAs($company->createdBy);
 
         $this
-            ->deleteJson(route('companyMembers.destroy', ['company' => $company]), [
+            ->postJson(route('companyMembers.removeMembers', ['company' => $company]), [
                 'users' => $company->members->map(fn (CompanyMember $companyMember) => $companyMember->member_id)
             ])
             ->assertForbidden()
@@ -315,7 +315,7 @@ class CompanyMemberControllerTest extends TestCase
         Sanctum::actingAs($company->createdBy);
 
         $this
-            ->deleteJson(route('companyMembers.destroy', ['company' => $company]), [
+            ->postJson(route('companyMembers.removeMembers', ['company' => $company]), [
                 'users' => $companyMembers->map(fn (CompanyMember $companyMember) => $companyMember->member_id),
                 'registerTokens' => [$registerToken->id],
             ])

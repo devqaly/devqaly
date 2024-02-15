@@ -156,6 +156,59 @@ describe('ListCompanyMembers.vue', () => {
     })
   })
 
+  context('remove member', () => {
+    const totalNumberMembers = 15
+    let members: any
+
+    beforeEach(() => {
+      cy.create({
+        model: 'App\\Models\\Company\\CompanyMember',
+        count: totalNumberMembers,
+        attributes: { company_id: companyId, invited_by_id: loggedUser.id }
+      }).then((m) => (members = m))
+    })
+
+    it('should allow to remove a member', () => {
+      const member = members.filter((m: any) => m.member_id !== loggedUser.id)[0]
+
+      cy.intercept('POST', `**/companies/${companyId}/removeMembers**`).as('removeCompanyMembers')
+
+      cy.visit(`company/${companyId}/members`)
+
+      cy.dataCy('list-company-members-view__remove-user', {
+        'data-member-id': member.id
+      }).click()
+
+      cy.contains('button', 'Remove Member').click()
+
+      cy.wait('@removeCompanyMembers').then(({ request, response }) => {
+        expect(request.body.users).to.have.length(1)
+        expect(request.body.users[0]).to.be.eq(member.member_id)
+
+        expect(response?.statusCode).to.be.eq(204)
+      })
+
+      cy.dataCy('list-company-members-view__remove-user', {
+        'data-member-id': member.id
+      }).should('not.exist')
+
+      cy.dataCy('list-company-members-view__remove-user').should(
+        'have.length',
+        totalNumberMembers - 1
+      )
+    })
+
+    it('should not allow user to remove itself', () => {
+      cy.intercept('POST', `**/companies/${companyId}/removeMembers**`).as('removeCompanyMembers')
+
+      cy.visit(`company/${companyId}/members`)
+
+      cy.dataCy('list-company-members-view__remove-user', {
+        'data-member-id': loggedUser.id
+      }).should('not.exist')
+    })
+  })
+
   it('should display the members of a company', () => {
     cy.intercept('GET', `**/companies/${companyId}/members**`).as('companyMembersRequest')
 

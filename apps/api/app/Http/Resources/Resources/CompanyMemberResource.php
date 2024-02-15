@@ -23,6 +23,7 @@ class CompanyMemberResource extends JsonResource
             ->when($this->resource->relationLoaded('registerToken') && $this->resource->registerToken, function (Collection $collection) {
                 $collection->put('registerToken', [
                     'email' => $this->resource->registerToken->email,
+                    'id' => $this->resource->registerToken->id,
                 ]);
             })
             ->toArray();
