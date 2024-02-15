@@ -11,6 +11,7 @@ use App\services\SubscriptionService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Laravel\Cashier\Exceptions\IncompletePayment;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -142,6 +143,21 @@ class CompanyService
                 'invited_by_id' => $invitedBy->id,
             ]);
         }
+
+        $this->reportUsageForMembers($company);
+    }
+
+    public function removeUsersFromCompany(Collection $data, Company $company): void
+    {
+        CompanyMember::query()
+            ->where('company_id', $company->id)
+            ->whereIn('member_id', $data->get('users'))
+            ->orWhereIn('register_token_id', $data->get('registerTokens'))
+            ->delete();
+
+        RegisterToken::query()
+            ->whereIn('id', $data->get('registerTokens'))
+            ->delete();
 
         $this->reportUsageForMembers($company);
     }

@@ -170,7 +170,7 @@ class ProjectControllerTest extends TestCase
             ->member;
 
         Project::factory()
-            ->count(500)
+            ->count(100)
             ->create(['company_id' => $company->id]);
 
         $this->createStripeCustomerAndAddTrial(

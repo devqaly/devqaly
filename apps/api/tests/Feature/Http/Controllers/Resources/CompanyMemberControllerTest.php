@@ -5,10 +5,12 @@ namespace Tests\Feature\Http\Controllers\Resources;
 use App\Mail\Auth\SignupEmail;
 use App\Models\Auth\RegisterToken;
 use App\Models\Company\Company;
+use App\Models\Company\CompanyMember;
 use App\Models\User;
 use app\services\SubscriptionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -253,6 +255,64 @@ class CompanyMemberControllerTest extends TestCase
         $spy->shouldNotReceive('isSubscribedToEnterprisePlan');
     }
 
+    public function test_non_company_user_cant_delete_company_members(): void
+    {
+        $numberCompanyMembers = 2;
+        $company = Company::factory()->withMembers($numberCompanyMembers)->create();
+
+        $companyMember = $company->members->random()->first()->member;
+
+        Sanctum::actingAs(User::factory()->create());
+
+        $this
+            ->deleteJson(route('companyMembers.destroy', ['company' => $company]), [
+                'users' => [$companyMember->id],
+            ])
+            ->assertForbidden();
+
+        // "+ 1" because the owner of the company is added to the CompanyMember table
+        $this->assertDatabaseCount((new CompanyMember())->getTable(), $numberCompanyMembers + 1);
+    }
+
+    public function test_company_must_have_at_least_one_members(): void
+    {
+        $company = Company::factory()->create();
+
+        Sanctum::actingAs($company->createdBy);
+
+        $this
+            ->deleteJson(route('companyMembers.destroy', ['company' => $company]), [
+                'users' => [$company->createdBy->id],
+            ])
+            ->assertForbidden();
+
+        $this->assertDatabaseCount((new CompanyMember())->getTable(), 1);
+    }
+
+    public function test_company_user_can_delete_company_members(): void
+    {
+        $numberCompanyMembers = 2;
+        $company = Company::factory()->withMembers($numberCompanyMembers)->create();
+
+        /** @var Collection $companyMembers */
+        $companyMembers = $company->members->random($numberCompanyMembers);
+
+        $registerToken = RegisterToken::factory()
+            ->withCompanyMember($company)
+            ->create();
+
+        Sanctum::actingAs($company->createdBy);
+
+        $this
+            ->deleteJson(route('companyMembers.destroy', ['company' => $company]), [
+                'users' => $companyMembers->map(fn (CompanyMember $companyMember) => $companyMember->member_id),
+                'registerTokens' => [$registerToken->id],
+            ])
+            ->assertNoContent();
+
+        $this->assertDatabaseCount((new CompanyMember())->getTable(), 1);
+    }
+
     private function postCheckEmails(array $emails): void
     {
         foreach ($emails as $email) {
@@ -271,7 +331,7 @@ class CompanyMemberControllerTest extends TestCase
     private function generateEmails(int $numberEmails): array
     {
         return collect(array_fill(1, $numberEmails, ''))
-            ->map(fn () => $this->faker->unique()->email())
+            ->map(fn() => $this->faker->unique()->email())
             ->toArray();
     }
 }

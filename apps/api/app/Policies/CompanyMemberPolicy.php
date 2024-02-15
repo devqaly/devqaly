@@ -44,9 +44,15 @@ class CompanyMemberPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, CompanyMember $companyMember): bool
+    public function delete(User $user, Company $company): Response
     {
-        //
+        if ($company->members()->count() === 1) {
+            return Response::deny('Company must have at least one member');
+        }
+
+        return $company->members()->where('member_id', $user->id)->exists()
+            ? Response::allow()
+            : Response::deny('You do not have the permissions');
     }
 
     /**
