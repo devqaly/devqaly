@@ -47,6 +47,7 @@ import TabPanel from 'primevue/tabpanel'
 import Sidebar from 'primevue/sidebar'
 import ConfirmDialog from 'primevue/confirmdialog'
 import Tag from 'primevue/tag'
+import Textarea from 'primevue/textarea'
 
 export const app = createApp(App)
 
@@ -94,5 +95,6 @@ app.component(TabPanel.name, TabPanel)
 app.component(Sidebar.name, Sidebar)
 app.component(ConfirmDialog.name, ConfirmDialog)
 app.component(Tag.name, Tag)
+app.component(Textarea.name, Textarea)
 
 app.mount('#app')

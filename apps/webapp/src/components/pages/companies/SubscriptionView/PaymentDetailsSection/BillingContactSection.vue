@@ -84,7 +84,7 @@ import { displayGeneralError } from '@/services/ui'
 
 const appStore = useAppStore()
 
-const isDialogOpen = ref(true)
+const isDialogOpen = ref(false)
 
 const isUpdatingBillingContact = ref(false)
 
