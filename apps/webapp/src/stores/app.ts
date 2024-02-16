@@ -17,7 +17,11 @@ import type { AxiosError } from 'axios'
 import { isAxiosError } from 'axios'
 import { StatusCodes } from 'http-status-codes'
 import { assertsIsCompanyCodec } from '@/services/resources/Company'
-import { getCompanyStripePortalUrl } from '@/services/api/resources/company/actions'
+import {
+  getCompanyStripePortalUrl,
+  updateCompanyBillingDetails
+} from '@/services/api/resources/company/actions'
+import type { UpdateCompanyBillingDetailsBody } from '@/services/api/resources/company/requests'
 
 interface AppStoreState {
   isAuthenticated: boolean
@@ -96,6 +100,14 @@ export const useAppStore = defineStore('appStore', {
       const { data } = await getCompanyStripePortalUrl(this.activeCompany.id, { returnUrl })
 
       this.activeCompanyStripePortalUrl = data.data.portalUrl
+    },
+    async updateActiveCompanyBillingDetails(body: UpdateCompanyBillingDetailsBody) {
+      assertsIsCompanyCodec(this.activeCompany)
+
+      const { data } = await updateCompanyBillingDetails(this.activeCompany.id, body)
+
+      this.activeCompany.billingContact = data.data.billingContact
+      this.activeCompany.invoiceDetails = data.data.invoiceDetails
     }
   }
 })

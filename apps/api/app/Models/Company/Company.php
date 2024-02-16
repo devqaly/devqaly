@@ -21,6 +21,8 @@ class Company extends Model
         'name',
         'created_by_id',
         'trial_ends_at',
+        'billing_contact',
+        'invoice_details',
     ];
 
     protected $casts = [

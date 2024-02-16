@@ -11,7 +11,6 @@ use App\services\SubscriptionService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Laravel\Cashier\Exceptions\IncompletePayment;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -169,6 +168,16 @@ class CompanyService
             ->delete();
 
         $this->reportUsageForMembers($company);
+    }
+
+    public function updateCompanyBillingDetails(Collection $data, Company $company): Company
+    {
+        $company->update([
+            'billing_contact' => $data->get('billingContact', $company->billing_contact),
+            'invoice_details' => $data->get('invoiceDetails', $company->invoice_details),
+        ]);
+
+        return $company;
     }
 
     private function createCustomOnStripe(Company $company): void

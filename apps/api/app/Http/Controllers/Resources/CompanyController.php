@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Resources;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Resources\Company\CreateCompanyRequest;
+use App\Http\Requests\Resources\Company\UpdateCompanyBillingDetailsMemberRequest;
 use App\Http\Resources\Resources\CompanyResource;
 use App\Models\Company\Company;
 use App\services\Resources\CompanyService;
@@ -72,5 +73,16 @@ class CompanyController extends Controller
                 'portalUrl' => $company->billingPortalUrl($returnUrl)
             ]
         ]);
+    }
+
+    public function updateBillingDetails(
+        UpdateCompanyBillingDetailsMemberRequest $request,
+        Company $company,
+        CompanyService $companyService
+    ): CompanyResource
+    {
+        $company = $companyService->updateCompanyBillingDetails(collect($request->validated()), $company);
+
+        return new CompanyResource($company);
     }
 }

@@ -90,4 +90,64 @@ class CompanyControllerTest extends TestCase
 
         $this->assertDatabaseCount((new Company())->getTable(), Company::MAX_NUMBER_COMPANIES_PER_USER);
     }
+
+    public function test_user_can_update_company_billing_details(): void
+    {
+        $company = Company::factory()->withMembers()->create();
+
+        $randomMember = $company->members()->where('member_id', '!=', $company->created_by_id)->get()->random()->member;
+
+        $invoiceDetails = 'This is the new billing details';
+        $billingContact = $this->faker->safeEmail();
+
+        Sanctum::actingAs($randomMember, ['*']);
+
+        $this
+            ->putJson(route('company.updateBillingDetails', ['company' => $company]), [
+                'billingContact' => $billingContact
+            ])
+            ->assertOk()
+            ->assertJsonPath('data.billingContact', $billingContact)
+            ->assertJsonPath('data.invoiceDetails', null);
+
+        $this->assertDatabaseHas((new Company())->getTable(), [
+            'id' => $company->id,
+            'billing_contact' => $billingContact,
+            'invoice_details' => null,
+        ]);
+
+        $this
+            ->putJson(route('company.updateBillingDetails', ['company' => $company]), [
+                'invoiceDetails' => $invoiceDetails
+            ])
+            ->assertOk()
+            ->assertJsonPath('data.billingContact', $billingContact)
+            ->assertJsonPath('data.invoiceDetails', $invoiceDetails);
+
+        $this->assertDatabaseHas((new Company())->getTable(), [
+            'id' => $company->id,
+            'billing_contact' => $billingContact,
+            'invoice_details' => $invoiceDetails
+        ]);
+    }
+
+    public function test_non_company_member_cant_update_billing_details(): void
+    {
+        $company = Company::factory()->withMembers()->create();
+
+        $invoiceDetails = 'some details';
+
+        Sanctum::actingAs(User::factory()->create(), ['*']);
+
+        $this
+            ->putJson(route('company.updateBillingDetails', ['company' => $company]), [
+                'invoiceDetails' => $invoiceDetails
+            ])
+            ->assertForbidden();
+
+        $this->assertDatabaseMissing((new Company())->getTable(), [
+            'id' => $company->id,
+            'invoice_details' => $invoiceDetails
+        ]);
+    }
 }

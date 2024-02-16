@@ -34,6 +34,8 @@ class CompanyResource extends JsonResource
                 $collection->put('trialEndsAt', $this->trial_ends_at);
                 $collection->put('paymentMethodType', $this->pm_type);
                 $collection->put('paymentLastFourDigits', $this->pm_last_four);
+                $collection->put('billingContact', $this->billing_contact);
+                $collection->put('invoiceDetails', $this->invoice_details);
             })
             ->toArray();
     }

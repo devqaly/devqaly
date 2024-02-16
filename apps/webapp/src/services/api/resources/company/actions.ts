@@ -1,7 +1,8 @@
 import { axios } from '@/services/api/axios'
 import type {
   CreateCompanyBody,
-  GetCompanyStripePortalRequest
+  GetCompanyStripePortalRequest,
+  UpdateCompanyBillingDetailsBody
 } from '@/services/api/resources/company/requests'
 import type { BaseSingleResource } from '@/services/api'
 import type {
@@ -20,3 +21,8 @@ export const getCompanyStripePortalUrl = (
     `/companies/${companyId}/stripe/portal`,
     { params }
   )
+
+export const updateCompanyBillingDetails = (
+  companyId: string,
+  body: UpdateCompanyBillingDetailsBody
+) => axios.put<BaseSingleResource<CompanyCodec>>(`/companies/${companyId}/billingDetails`, body)
