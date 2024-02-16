@@ -3,14 +3,20 @@
     <ChooseSubscriptionDialog
       v-model:visible="isChoosingPlan"
       :current-plan="selectedSubscription"
+      :loading="isChangingPlan"
+      @chose:plan="onPlanChange"
     />
 
     <h2 class="font-semibold text-lg">Your plan details</h2>
     <div class="bg-white shadow p-10 rounded-lg mt-1">
       <div class="flex justify-between items-center">
         <div>
-          <h3 class="text-[2.8rem] font-bold leading-[normal]">
-            {{ companyHasActiveSubscription ? 'HAS ACTIVE SUBSCRIPTION' : 'Free Plan' }}
+          <h3 class="text-[2.8rem] font-bold leading-[normal] capitalize">
+            {{
+              companyHasActiveSubscription
+                ? `${appStore.activeCompany!.subscription!.planName} (Monthly)`
+                : 'Free Plan'
+            }}
           </h3>
           <div
             class="text-gray-500 text-xl mt-2"
@@ -21,7 +27,6 @@
         <Button
           label="Update Plan"
           icon-pos="right"
-          severity="success"
           icon="pi pi-chevron-right"
           @click="onChoosePlanClick"
         />
@@ -31,7 +36,9 @@
 
       <div class="flex justify-between">
         <div class="font-semibold text-xl">Total Price Per Month:</div>
-        <div class="font-semibold text-xl">{{ totalPricePerMonth }}$</div>
+        <div class="font-semibold text-xl hover:cursor-pointer hover:underline">
+          <a :href="appStore.activeCompanyStripePortalUrl"> See Here </a>
+        </div>
       </div>
     </div>
   </section>
@@ -43,12 +50,16 @@ import { computed, ref } from 'vue'
 import {
   hasActiveSubscription,
   hasPaymentMethod,
+  POSSIBLE_CHANGE_PLANS,
   SUBSCRIPTION_PLANS
 } from '@/services/resources/Subscription'
 import ChooseSubscriptionDialog from '@/components/subscription/ChooseSubscriptionDialog/ChooseSubscriptionDialog.vue'
 import { useToast } from 'primevue/usetoast'
+import { displayGeneralError } from '@/services/ui'
 
 const isChoosingPlan = ref(false)
+
+const isChangingPlan = ref(false)
 
 const toast = useToast()
 
@@ -59,19 +70,23 @@ const companyHasActiveSubscription = computed(() => hasActiveSubscription(appSto
 const selectedSubscription = computed<SUBSCRIPTION_PLANS>(() => {
   if (!hasActiveSubscription(appStore.activeCompany!)) return 'free'
 
-  return 'enterprise'
+  return appStore.activeCompany!.subscription!.planName
 })
 
 const subtext = computed(() => {
   if (!hasActiveSubscription(appStore.activeCompany!)) return 'Ideal to people trying out Devqaly'
 
-  return 'SUBTEXTTTT'
-})
+  if (appStore.activeCompany!.subscription!.planName === 'gold') {
+    if (appStore.activeCompany!.subscription!.endsAt) {
+      return `Subscription ends at ${new Date(
+        appStore.activeCompany!.subscription!.endsAt
+      ).toLocaleDateString()}`
+    }
 
-const totalPricePerMonth = computed(() => {
-  if (!hasActiveSubscription(appStore.activeCompany!)) return 0
+    return 'Perfect for small and medium companies'
+  }
 
-  return -1
+  return 'Perfect for enterprise companies with 100+ engineering team members'
 })
 
 function onChoosePlanClick() {
@@ -88,5 +103,17 @@ function onChoosePlanClick() {
   }
 
   isChoosingPlan.value = true
+}
+
+async function onPlanChange(plan: POSSIBLE_CHANGE_PLANS) {
+  try {
+    isChangingPlan.value = true
+    await appStore.updateActiveCompanySubscription({ newPlan: plan })
+    isChoosingPlan.value = false
+  } catch (e) {
+    displayGeneralError(e)
+  } finally {
+    isChangingPlan.value = false
+  }
 }
 </script>

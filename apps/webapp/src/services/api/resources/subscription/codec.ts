@@ -1,4 +1,5 @@
 import type { DateTime } from '@/services/api'
+import type { SUBSCRIPTION_PLANS } from '@/services/resources/Subscription'
 
 export interface SubscriptionCodec {
   createdAt: DateTime
@@ -15,4 +16,5 @@ export interface SubscriptionCodec {
     | 'all'
     | 'ended'
   trialEndsAt: DateTime | null
+  planName: SUBSCRIPTION_PLANS
 }

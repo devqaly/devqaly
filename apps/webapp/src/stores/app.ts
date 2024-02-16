@@ -19,9 +19,13 @@ import { StatusCodes } from 'http-status-codes'
 import { assertsIsCompanyCodec } from '@/services/resources/Company'
 import {
   getCompanyStripePortalUrl,
-  updateCompanyBillingDetails
+  updateCompanyBillingDetails,
+  updateCompanySubscription
 } from '@/services/api/resources/company/actions'
-import type { UpdateCompanyBillingDetailsBody } from '@/services/api/resources/company/requests'
+import type {
+  UpdateCompanyBillingDetailsBody,
+  UpdateCompanySubscriptionBody
+} from '@/services/api/resources/company/requests'
 
 interface AppStoreState {
   isAuthenticated: boolean
@@ -108,6 +112,13 @@ export const useAppStore = defineStore('appStore', {
 
       this.activeCompany.billingContact = data.data.billingContact
       this.activeCompany.invoiceDetails = data.data.invoiceDetails
+    },
+    async updateActiveCompanySubscription(body: UpdateCompanySubscriptionBody) {
+      assertsIsCompanyCodec(this.activeCompany)
+
+      const { data } = await updateCompanySubscription(this.activeCompany.id, body)
+
+      this.activeCompany = data.data
     }
   }
 })

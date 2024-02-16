@@ -48,6 +48,7 @@ import Sidebar from 'primevue/sidebar'
 import ConfirmDialog from 'primevue/confirmdialog'
 import Tag from 'primevue/tag'
 import Textarea from 'primevue/textarea'
+import InlineMessage from 'primevue/inlinemessage'
 
 export const app = createApp(App)
 
@@ -96,5 +97,6 @@ app.component(Sidebar.name, Sidebar)
 app.component(ConfirmDialog.name, ConfirmDialog)
 app.component(Tag.name, Tag)
 app.component(Textarea.name, Textarea)
+app.component(InlineMessage.name, InlineMessage)
 
 app.mount('#app')

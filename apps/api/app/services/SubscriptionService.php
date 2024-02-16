@@ -72,6 +72,16 @@ class SubscriptionService
         return config('stripe.products.gold.prices.monthly');
     }
 
+    public function isGoldProduct(string $productId): bool
+    {
+        return $productId === $this->getEnterpriseProductId();
+    }
+
+    public function isEnterpriseProduct(string $productId): bool
+    {
+        return $productId === $this->getEnterpriseProductId();
+    }
+
     public function isSubscribedToGoldPlan(Company $company): bool
     {
         return $company->subscribedToProduct($this->getGoldProductId());

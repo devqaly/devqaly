@@ -5,6 +5,8 @@ import isFuture from 'date-fns/isFuture'
 
 export type SUBSCRIPTION_PLANS = 'free' | 'gold' | 'enterprise'
 
+export type POSSIBLE_CHANGE_PLANS = Exclude<SUBSCRIPTION_PLANS, 'enterprise'>
+
 export function isActiveSubscription(status: SubscriptionCodec['status']) {
   return status === 'active'
 }
@@ -52,7 +54,8 @@ export const PLAN_FREE_ADVANTAGES = [
   { name: 'Database transactions', supported: true },
   { name: 'Custom events', supported: true },
   { name: 'Github connection (upcoming)', supported: false },
-  { name: 'Priority support', supported: false }
+  { name: 'Priority support', supported: false },
+  { name: 'Support on setting up self-hosted', supported: false }
 ]
 
 export const PLAN_GOLD_ADVANTAGES = [
@@ -63,7 +66,8 @@ export const PLAN_GOLD_ADVANTAGES = [
   { name: 'Database transactions', supported: true },
   { name: 'Custom events', supported: true },
   { name: 'Github connection (upcoming)', supported: true },
-  { name: 'Priority support', supported: true }
+  { name: 'Priority support', supported: true },
+  { name: 'Support on setting up self-hosted', supported: false }
 ]
 
 export const PLAN_ENTERPRISE_ADVANTAGES = [

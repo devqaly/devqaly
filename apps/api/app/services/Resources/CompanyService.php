@@ -182,6 +182,8 @@ class CompanyService
 
     public function createCustomOnStripe(Company $company, array $options = []): void
     {
+        if (config('devqaly.isSelfHosting')) return;
+
         $company->createOrGetStripeCustomer(array_merge($options, [
             'email' => $company->createdBy->email,
             'name' => $company->name

@@ -46,6 +46,8 @@
           :label="planSelected ? 'Current Plan' : 'Choose Plan'"
           class="w-full"
           :disabled="planSelected"
+          :loading="loading"
+          @click="onChosePlan"
         />
       </slot>
     </div>
@@ -54,12 +56,26 @@
 
 <script lang="ts" setup>
 import type { SUBSCRIPTION_PLANS } from '@/services/resources/Subscription'
+import { POSSIBLE_CHANGE_PLANS } from '@/services/resources/Subscription'
 
-defineProps<{
+const props = defineProps<{
   planSelected: boolean
   planName: SUBSCRIPTION_PLANS
   planDisplayName: string
   planPricing: string
   planAdvantages: { name: string; supported: boolean }[]
+  loading?: boolean
 }>()
+
+const emit = defineEmits<{
+  (e: 'chose:plan', plan: POSSIBLE_CHANGE_PLANS): void
+}>()
+
+function onChosePlan() {
+  if (props.planName === 'enterprise') {
+    throw new Error('Enterprise should not be able to be chosen by the user')
+  }
+
+  emit('chose:plan', props.planName)
+}
 </script>

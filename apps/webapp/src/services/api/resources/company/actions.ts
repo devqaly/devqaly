@@ -2,7 +2,8 @@ import { axios } from '@/services/api/axios'
 import type {
   CreateCompanyBody,
   GetCompanyStripePortalRequest,
-  UpdateCompanyBillingDetailsBody
+  UpdateCompanyBillingDetailsBody,
+  UpdateCompanySubscriptionBody
 } from '@/services/api/resources/company/requests'
 import type { BaseSingleResource } from '@/services/api'
 import type {
@@ -26,3 +27,6 @@ export const updateCompanyBillingDetails = (
   companyId: string,
   body: UpdateCompanyBillingDetailsBody
 ) => axios.put<BaseSingleResource<CompanyCodec>>(`/companies/${companyId}/billingDetails`, body)
+
+export const updateCompanySubscription = (companyId: string, body: UpdateCompanySubscriptionBody) =>
+  axios.put<BaseSingleResource<CompanyCodec>>(`/companies/${companyId}/subscription`, body)

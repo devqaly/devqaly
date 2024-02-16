@@ -7,7 +7,7 @@ use App\Models\Auth\RegisterToken;
 use App\Models\Company\Company;
 use App\Models\Company\CompanyMember;
 use App\Models\User;
-use app\services\SubscriptionService;
+use App\services\SubscriptionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Collection;
