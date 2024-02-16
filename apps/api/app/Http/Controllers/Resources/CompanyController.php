@@ -9,6 +9,7 @@ use App\Models\Company\Company;
 use App\services\Resources\CompanyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class CompanyController extends Controller
 {
@@ -55,9 +56,20 @@ class CompanyController extends Controller
     {
         $this->authorize('view', $company);
 
+        $this->validate($request, [
+            'returnUrl' => 'required|url'
+        ]);
+
+        $returnUrl = $request->get('returnUrl');
+        $host = parse_url($returnUrl)['host'];
+
+        if (!in_array($host, ['app.devqaly.com', 'localhost', 'staging-app.devqaly.com'])) {
+            abort(Response::HTTP_FORBIDDEN, 'Return URL must be a URL pointing to devqaly servers');
+        }
+
         return response()->json([
             'data' => [
-                'portalUrl' => $company->billingPortalUrl($request->headers->get('referer'))
+                'portalUrl' => $company->billingPortalUrl($returnUrl)
             ]
         ]);
     }

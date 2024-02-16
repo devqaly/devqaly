@@ -13,54 +13,36 @@
       </div>
     </div>
 
-    <a :href="portalUrl">
+    <RouterLink
+      :to="{ name: 'companySubscription', params: { companyId: route.params.companyId } }"
+    >
       <Button
         class="!text-red-500"
         link
         :loading="isFetchingPortalUrl"
-        >Add Payment Method</Button
       >
-    </a>
+        Manage Subscription
+      </Button>
+    </RouterLink>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onBeforeMount, ref, toRef } from 'vue'
-import { getCompanyStripePortalUrl } from '@/services/api/resources/company/actions'
+import { ref, toRef } from 'vue'
 import { useAppStore } from '@/stores/app'
 import { assertsIsCompanyCodec } from '@/services/resources/Company'
-import {
-  isWithinRangeForWarningTrialEnding,
-  shouldShowSubscriptionConcerns
-} from '@/services/resources/Subscription'
 import { useCompanyTrial } from '@/composables/company/useCompanyTrial'
-
-const portalUrl = ref<null | string>(null)
+import { useRoute } from 'vue-router'
 
 const isFetchingPortalUrl = ref(true)
 
-const hasError = ref(false)
-
 const appStore = useAppStore()
+
+const route = useRoute()
 
 assertsIsCompanyCodec(appStore.activeCompany)
 
 const { shouldShowSubscriptionEndingWarning, endUntilTrial } = useCompanyTrial(
   toRef(appStore.activeCompany)
 )
-
-onBeforeMount(getCompanyPortalUrl)
-
-async function getCompanyPortalUrl() {
-  assertsIsCompanyCodec(appStore.activeCompany)
-
-  try {
-    const { data } = await getCompanyStripePortalUrl(appStore.activeCompany.id)
-    portalUrl.value = data.data.portalUrl
-  } catch (e) {
-    hasError.value = true
-  } finally {
-    isFetchingPortalUrl.value = false
-  }
-}
 </script>

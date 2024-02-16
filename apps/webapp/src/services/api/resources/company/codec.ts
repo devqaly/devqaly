@@ -7,6 +7,8 @@ export interface CompanyCodec {
   trialEndsAt?: DateTime | null
   paymentMethodType?: string | null
   paymentLastFourDigits?: string | null
+  invoiceDetails?: string | null
+  billingContact?: string | null
   subscription?: SubscriptionCodec | null
 }
 
