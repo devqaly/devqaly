@@ -4,7 +4,6 @@ import type { SubscriptionCodec } from '@/services/api/resources/subscription/co
 export interface CompanyCodec {
   id: ResourceID
   name: string
-  hasSeenTrialWarning: boolean
   trialEndsAt?: DateTime | null
   paymentMethodType?: string | null
   paymentLastFourDigits?: string | null

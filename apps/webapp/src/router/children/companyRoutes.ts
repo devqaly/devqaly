@@ -16,5 +16,13 @@ export const companyRoutes: RouteRecordRaw[] = [
     meta: {
       requiresAuth: true
     }
+  },
+  {
+    path: '/company/:companyId/subscription',
+    name: 'companySubscription',
+    component: () => import('@/views/companies/SubscriptionView.vue'),
+    meta: {
+      requiresAuth: true
+    }
   }
 ]
