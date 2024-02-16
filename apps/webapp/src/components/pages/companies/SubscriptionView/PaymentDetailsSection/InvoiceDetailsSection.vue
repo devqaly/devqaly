@@ -2,13 +2,17 @@
   <div class="flex justify-between mt-10">
     <h2 class="font-semibold text-xl">Invoice Details</h2>
     <div
+      data-cy="company-subscription-view__open-invoice-details-dialog"
       class="text-green-500 hover:underline px-2 py-1 hover:cursor-pointer"
       @click="isDialogOpen = true"
     >
       Edit
     </div>
   </div>
-  <div class="mt-2 line-clamp-1 text-gray-500">
+  <div
+    data-cy="company-subscription-view__invoice-details"
+    class="mt-2 line-clamp-1 text-gray-500"
+  >
     {{
       appStore.activeCompany!.invoiceDetails
         ? appStore.activeCompany!.invoiceDetails
@@ -42,6 +46,7 @@
       >
         <label for="invoiceDetails">Invoice Details</label>
         <Textarea
+          data-cy="company-subscription-view__open-invoice-details-textarea"
           v-bind="field"
           id="invoiceDetails"
           type="text"
@@ -57,6 +62,7 @@
       </Field>
 
       <Button
+        data-cy="company-subscription-view__update-invoice-details"
         :loading="isUpdatingInvoiceDetails"
         label="Update"
         class="w-full !mt-4"

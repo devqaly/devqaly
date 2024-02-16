@@ -2,13 +2,17 @@
   <div class="flex justify-between mt-10">
     <h2 class="font-semibold text-xl">Billing Contact</h2>
     <div
+      data-cy="company-subscription-view__open-billing-contact-dialog"
       class="text-green-500 hover:underline hover:cursor-pointer px-2 py-1"
       @click="isDialogOpen = true"
     >
       Edit
     </div>
   </div>
-  <div class="mt-2 line-clamp-1 text-gray-500">
+  <div
+    class="mt-2 line-clamp-1 text-gray-500"
+    data-cy="company-subscription-view__billing-contact"
+  >
     {{
       appStore.activeCompany?.billingContact
         ? appStore.activeCompany?.billingContact
@@ -41,6 +45,7 @@
       >
         <label for="email">Email</label>
         <InputText
+          data-cy="company-subscription-view__billing-contact-input"
           v-bind="field"
           id="email"
           type="text"
@@ -57,6 +62,7 @@
       </Field>
 
       <Button
+        data-cy="company-subscription-view__billing-contact-submit"
         :loading="isUpdatingBillingContact"
         label="Update"
         class="w-full !mt-4"

@@ -64,7 +64,7 @@ class CompanyController extends Controller
         $returnUrl = $request->get('returnUrl');
         $host = parse_url($returnUrl)['host'];
 
-        if (!in_array($host, ['app.devqaly.com', 'localhost', 'staging-app.devqaly.com'])) {
+        if (!in_array($host, ['app.devqaly.com', 'localhost', 'staging-app.devqaly.com', '0.0.0.0'])) {
             abort(Response::HTTP_FORBIDDEN, 'Return URL must be a URL pointing to devqaly servers');
         }
 

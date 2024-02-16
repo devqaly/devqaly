@@ -180,12 +180,12 @@ class CompanyService
         return $company;
     }
 
-    private function createCustomOnStripe(Company $company): void
+    public function createCustomOnStripe(Company $company, array $options = []): void
     {
-        $company->createOrGetStripeCustomer([
+        $company->createOrGetStripeCustomer(array_merge($options, [
             'email' => $company->createdBy->email,
             'name' => $company->name
-        ]);
+        ]));
     }
 
     private function canInviteUsers(array $newUsers, Company $company): void

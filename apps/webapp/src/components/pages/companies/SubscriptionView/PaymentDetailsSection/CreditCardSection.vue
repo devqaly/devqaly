@@ -2,6 +2,7 @@
   <div class="flex justify-between">
     <h2 class="font-semibold text-xl">Credit Card</h2>
     <a
+      data-cy="company-subscription-view__stripe-portal-url"
       :href="appStore.activeCompanyStripePortalUrl"
       class="text-green-500 hover:underline px-2 py-1"
     >
@@ -9,6 +10,7 @@
     </a>
   </div>
   <div
+    data-cy="company-subscription-view__no-payment-method-added-warning"
     class="flex gap-5 justify-between bg-red-200 border-red-300 text-red-500 px-5 py-2 rounded mt-2"
     v-if="!companyHasPaymentMethod"
   >
