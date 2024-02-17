@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import addDays from 'date-fns/addDays'
-import { companyFactoryCodec } from '@/services/factories/companyFactory'
+import { companyFactoryCodec, subscriptionFactoryCodec } from '@/services/factories/companyFactory'
 import { useCompanyTrial } from '@/composables/company/useCompanyTrial'
 import { toRef } from 'vue'
 import subDays from 'date-fns/subDays'
@@ -82,5 +82,17 @@ describe('useCompanyTrial', () => {
     expect(isCompanyTrialing.value).to.be.eq(false)
     expect(shouldShowSubscriptionEndingWarning.value).to.be.eq(false)
     expect(shouldShowCompanyIsTrialingWarning.value).to.be.eq(false)
+  })
+
+  it('should not show trial warning if user has active subscription', () => {
+    const company: ReturnType<typeof companyFactoryCodec> = {
+      ...companyFactoryCodec(),
+      trialEndsAt: addDays(new Date(), 2).toUTCString(),
+      subscription: subscriptionFactoryCodec()
+    }
+
+    const { shouldShowSubscriptionEndingWarning } = useCompanyTrial(toRef(company))
+
+    expect(shouldShowSubscriptionEndingWarning.value).to.be.eq(false)
   })
 })
