@@ -9,14 +9,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('companies', function (Blueprint $table) {
-            $table->boolean('is_blocked_after_trial')->default(false);
+            $table->json('blocked_reasons')->nullable();
         });
     }
 
     public function down(): void
     {
         Schema::table('companies', function (Blueprint $table) {
-            $table->dropColumn('is_blocked_after_trial');
+            $table->dropColumn('blocked_reasons');
         });
     }
 };

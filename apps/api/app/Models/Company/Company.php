@@ -2,6 +2,7 @@
 
 namespace App\Models\Company;
 
+use App\Enum\Company\CompanyBlockedReasonEnum;
 use App\Models\Project\Project;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -26,7 +27,8 @@ class Company extends Model
     ];
 
     protected $casts = [
-        'trial_ends_at' => 'datetime'
+        'trial_ends_at' => 'datetime',
+        'blocked_reasons' => 'json',
     ];
 
     public function createdBy(): BelongsTo

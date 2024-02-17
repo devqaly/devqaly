@@ -3,6 +3,7 @@
 namespace app\services;
 
 use App\Models\Company\Company;
+use App\Models\Session\Session;
 
 class SubscriptionService
 {
@@ -97,5 +98,19 @@ class SubscriptionService
         return $company->onTrial()
             || $this->isSubscribedToGoldPlan($company)
             || $this->isSubscribedToEnterprisePlan($company);
+    }
+
+    public function hasMoreMembersThanAllowedOnFreePlan(Company $company): bool
+    {
+        $numberCurrentMembers = $company->members()->count();
+
+        return $numberCurrentMembers > SubscriptionService::MAXIMUM_NUMBER_MEMBERS_FREE_PLAN_PER_COMPANY;
+    }
+
+    public function hasMoreProjectsThanAllowedOnFreePlan(Company $company): bool
+    {
+        $numberProjects = $company->projects()->count();
+
+        return $numberProjects > SubscriptionService::MAXIMUM_NUMBER_PROJECTS_FREE_PLAN_PER_COMPANY;
     }
 }
