@@ -36,8 +36,13 @@
 
       <div class="flex justify-between">
         <div class="font-semibold text-xl">Total Price Per Month:</div>
-        <div class="font-semibold text-xl hover:cursor-pointer hover:underline">
-          <a :href="appStore.activeCompanyStripePortalUrl"> See Here </a>
+        <div class="font-semibold text-xl hover:cursor-pointer">
+          <a
+            :href="appStore.activeCompanyStripePortalUrl"
+            class="flex gap-4 items-center"
+          >
+            Open Customer Portal <i class="pi pi-external-link"></i>
+          </a>
         </div>
       </div>
     </div>
