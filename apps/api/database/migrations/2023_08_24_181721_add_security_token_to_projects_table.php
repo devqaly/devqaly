@@ -18,13 +18,6 @@ return new class extends Migration
                 ->unique()
                 ->nullable();
         });
-
-        Project::query()->chunk(50, function (Collection $projects) {
-            $projects->each(function (Project $project) {
-                $project->project_key = Str::random(60);
-                $project->save();
-            });
-        });
     }
 
     public function down(): void

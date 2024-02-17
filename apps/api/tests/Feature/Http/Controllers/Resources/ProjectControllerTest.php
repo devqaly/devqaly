@@ -318,6 +318,39 @@ class ProjectControllerTest extends TestCase
         $this->assertEquals($response['securityToken'], $project->security_token);
     }
 
+    public function test_non_company_member_cant_delete_project(): void
+    {
+        $project = Project::factory()->create();
+
+        Sanctum::actingAs(User::factory()->create());
+
+        $this
+            ->deleteJson(route('projects.destroy', ['project' => $project]))
+            ->assertForbidden();
+
+        $this->assertDatabaseHas((new Project())->getTable(), [
+            'id' => $project->id,
+            'deleted_at' => null,
+        ]);
+    }
+
+    public function test_company_member_can_delete_project(): void
+    {
+        $project = Project::factory()->create();
+
+        $member = $project->company->members->random()->member;
+
+        Sanctum::actingAs($member, ['*']);
+
+        $this
+            ->deleteJson(route('projects.destroy', ['project' => $project]))
+            ->assertNoContent();
+
+        $project->refresh();
+
+        $this->assertNotNull($project->deleted_at);
+    }
+
     private function createStripeCustomerAndAddTrial(
         Company $company,
         string  $pricing,

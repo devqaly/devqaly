@@ -23,3 +23,5 @@ export const getProjectSessions = (projectId: string, params: GetProjectSessions
 
 export const updateProjectSecurityToken = (projectId: string) =>
   axios.put<BaseSingleResource<ProjectCodec>>(`/projects/${projectId}/securityToken`)
+
+export const deleteProject = (projectId: string) => axios.delete<null>(`/projects/${projectId}`)
