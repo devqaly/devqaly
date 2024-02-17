@@ -22,6 +22,8 @@ export function useCompanyTrial(company: Ref<CompanyCodec>) {
 
     if (shouldShowSubscriptionEndingWarning.value) return false
 
+    if (companyHasActiveSubscription.value) return false
+
     return isWithinRangeForWarningTrial(company.value.trialEndsAt!)
   })
 

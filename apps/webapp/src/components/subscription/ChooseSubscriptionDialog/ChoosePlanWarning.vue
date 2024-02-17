@@ -9,8 +9,8 @@
     <template v-if="currentPlan === 'gold'">
       <div class="text-[3.4rem] font-bold text-center text-black">You are downgrading</div>
       <div class="text-gray-400 text-[1.5rem] mt-1 text-center px-5">
-        You will be billed for this subscription cycle and at the end of your subscription, you will
-        be transferred to the free plan
+        You will be billed for this billing cycle and at the end of your subscription, you will be
+        transferred to the free plan
       </div>
     </template>
 
