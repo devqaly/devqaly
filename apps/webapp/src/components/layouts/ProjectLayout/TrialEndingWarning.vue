@@ -7,9 +7,9 @@
       <div class="font-semibold">Payment method missing</div>
 
       <div class="mt-1">
-        Your trial is ending in {{ endUntilTrial.value }} {{ endUntilTrial.unit }} and subscription
-        have been chosen. Switch to a paid plan to avoid losing access to your sessions, projects
-        and allow team members to see sessions.
+        Your trial is ending in {{ endUntilTrial.value }} {{ endUntilTrial.unit }} and no
+        subscription have been chosen. Switch to a paid plan to avoid losing access to your
+        sessions, projects and allow team members to see sessions.
       </div>
     </div>
 
