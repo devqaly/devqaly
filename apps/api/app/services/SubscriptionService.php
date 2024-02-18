@@ -3,7 +3,7 @@
 namespace app\services;
 
 use App\Models\Company\Company;
-use App\Models\Session\Session;
+use Laravel\Cashier\Subscription;
 
 class SubscriptionService
 {
@@ -112,5 +112,14 @@ class SubscriptionService
         $numberProjects = $company->projects()->count();
 
         return $numberProjects > SubscriptionService::MAXIMUM_NUMBER_PROJECTS_FREE_PLAN_PER_COMPANY;
+    }
+
+    public function getCompanyFromStripeId(string $stripeId)
+    {
+        $subscription = Subscription::query()
+            ->where('stripe_id', $stripeId)
+            ->first();
+
+        return Company::query()->findOrFail($subscription->company_id);
     }
 }

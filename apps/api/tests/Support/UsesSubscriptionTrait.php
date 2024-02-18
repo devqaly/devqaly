@@ -4,10 +4,13 @@ namespace tests\Support;
 
 use App\Models\Company\Company;
 use App\services\SubscriptionService;
+use Laravel\Cashier\Subscription;
 
 trait UsesSubscriptionTrait
 {
     public SubscriptionService $subscriptionService;
+
+    public Subscription $subscription;
 
     /**
      * @before
@@ -19,18 +22,11 @@ trait UsesSubscriptionTrait
         });
     }
 
-    private function createSubscriptionForCompany(Company $company, string  $pricing): void
+    private function createSubscriptionForCompany(Company $company, string $pricing): void
     {
-        $company
-            ->newSubscription('default', $pricing)
-            // Quantity is necessary to set to null on metered plans
-            // @see https://stackoverflow.com/a/64613077/4581336
-            ->quantity(null)
-            ->trialDays(SubscriptionService::SUBSCRIPTION_INITIAL_TRIAL_DAYS)
-            ->create(customerOptions: [
-                'metadata' => [
-                    'environment' => \config('app.env')
-                ]
-            ]);
+        $this->subscription = $company
+            ->newSubscription('default')
+            ->meteredPrice($pricing)
+            ->create(customerOptions: ['metadata' => ['environment' => \config('app.env')]]);
     }
 }

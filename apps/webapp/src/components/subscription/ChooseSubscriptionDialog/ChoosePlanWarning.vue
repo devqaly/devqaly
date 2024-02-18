@@ -3,7 +3,8 @@
     <template v-if="currentPlan === 'free'">
       <div class="text-[3.4rem] font-bold text-center text-black">Gold Plan</div>
       <div class="text-gray-400 text-[1.5rem] mt-1 text-center px-5">
-        Your subscription will start right away and you will enjoy the features as soon as you start
+        Your subscription will start right away and you will enjoy the features as soon as you
+        start. Your first bill will be billed at {{ oneMonthAhead.toLocaleDateString() }}
       </div>
     </template>
     <template v-if="currentPlan === 'gold'">
@@ -31,6 +32,7 @@
 
 <script setup lang="ts">
 import { POSSIBLE_CHANGE_PLANS, SUBSCRIPTION_PLANS } from '@/services/resources/Subscription'
+import addMonths from 'date-fns/addMonths'
 
 defineProps<{
   currentPlan: SUBSCRIPTION_PLANS
@@ -42,6 +44,8 @@ const emit = defineEmits<{
   (e: 'close'): void
   (e: 'accepted'): void
 }>()
+
+const oneMonthAhead = addMonths(new Date(), 1)
 
 function onClose() {
   emit('close')
