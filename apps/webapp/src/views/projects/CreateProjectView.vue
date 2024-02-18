@@ -1,5 +1,7 @@
 <template>
   <div class="p-5">
+    <CompanyBlockedDialog :company="appStore.activeCompany!" />
+
     <div class="text-3xl font-medium">Create Project</div>
     <div class="font-medium text-slate-500 mb-4">
       A project allows you to group your sessions in a logical manner and collaborate with
@@ -71,6 +73,7 @@ import {
   SHOW_FREE_TRIAL_COMPANY_PARAMETER_NAME
 } from '@/services/resources/Company'
 import CompanyTrialInformationDialog from '@/components/resources/company/CompanyTrialInformationDialog.vue'
+import CompanyBlockedDialog from '@/components/subscription/CompanyBlockedDialog/CompanyBlockedDialog.vue'
 
 const isCreatingProject = ref(false)
 

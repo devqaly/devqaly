@@ -7,3 +7,11 @@ export function assertsIsCompanyCodec(
 ): asserts company is CompanyCodec {
   if (company === null) throw new Error('`company` should not be null')
 }
+
+export function hasBlockedReasons(reasons: CompanyCodec['blockedReasons']): boolean {
+  if (reasons === null) return false
+
+  if (reasons === undefined) return false
+
+  return reasons.length > 0
+}

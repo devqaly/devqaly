@@ -1,5 +1,7 @@
 <template>
   <div>
+    <CompanyBlockedDialog :company="appStore.activeCompany!" />
+
     <div class="m-5">
       <TrialEndingWarning />
     </div>
@@ -75,6 +77,7 @@ import {
 import { assertsIsCompanyCodec } from '@/services/resources/Company'
 import { useAppStore } from '@/stores/app'
 import TrialEndingWarning from '@/components/layouts/ProjectLayout/TrialEndingWarning.vue'
+import CompanyBlockedDialog from '@/components/subscription/CompanyBlockedDialog/CompanyBlockedDialog.vue'
 
 const isFetchingActiveProject = ref(false)
 
