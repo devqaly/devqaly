@@ -39,6 +39,13 @@ class CompanyControllerTest extends TestCase
         $this->assertDatabaseCount((new Company())->getTable(), 1);
 
         $this->assertTrue($company->onTrial());
+
+        $now = now();
+
+        $this->assertEquals(
+            $now->diffInDays($company->trial_ends_at),
+            SubscriptionService::SUBSCRIPTION_INITIAL_TRIAL_DAYS - 1
+        );
     }
 
     public function test_stripe_client_is_not_called_on_self_hosted_instance_when_creating_company()

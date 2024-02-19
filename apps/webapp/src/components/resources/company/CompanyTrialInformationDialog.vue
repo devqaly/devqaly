@@ -9,7 +9,9 @@
     <template #header>
       <div class="inline-flex align-items-center justify-content-center gap-2 text-xl">
         🎉
-        <span class="font-bold white-space-nowrap"> You have a 30 days free trial </span>
+        <span class="font-bold white-space-nowrap">
+          You have a {{ NUMBER_DAYS_FOR_FREE_TRIAL }} days free trial
+        </span>
       </div>
     </template>
 
@@ -67,14 +69,15 @@
     />
 
     <div class="mt-2 text-sm text-gray-500 text-center">
-      After your 30 day free trial ends, you can choose to subscribe to the pro version or continue
-      using Devqaly for free, but with limited access.
+      After your {{ NUMBER_DAYS_FOR_FREE_TRIAL }} day free trial ends, you can choose to subscribe
+      to the pro version or continue using Devqaly for free, but with limited access.
     </div>
   </Dialog>
 </template>
 
 <script setup lang="ts">
 import Dialog from 'primevue/dialog'
+import { NUMBER_DAYS_FOR_FREE_TRIAL } from '@/services/resources/Subscription'
 
 const visible = defineModel<boolean>('visible', { required: true })
 </script>

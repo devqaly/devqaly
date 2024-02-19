@@ -17,7 +17,7 @@ class SubscriptionService
 
     const MAXIMUM_NUMBER_MEMBERS_FREE_PLAN_PER_COMPANY = 5;
 
-    const SUBSCRIPTION_INITIAL_TRIAL_DAYS = 30;
+    const SUBSCRIPTION_INITIAL_TRIAL_DAYS = 15;
 
     public function canCreateProject(Company $company): bool
     {

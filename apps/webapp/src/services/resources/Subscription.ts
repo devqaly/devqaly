@@ -46,6 +46,8 @@ export function isWithinRangeForWarningTrialEnding(date: string): boolean {
   return minutesUntilTrialEnds >= 0 && minutesUntilTrialEnds < 14400
 }
 
+export const NUMBER_DAYS_FOR_FREE_TRIAL = 15
+
 export const PLAN_FREE_ADVANTAGES = [
   { name: '1 project', supported: true },
   { name: '5 members per company', supported: true },

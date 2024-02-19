@@ -32,7 +32,7 @@ class CompanyService
             $company = Company::create([
                 'name' => $data->get('name'),
                 'created_by_id' => $createdBy->id,
-                'trial_ends_at' => now()->addDays(30),
+                'trial_ends_at' => now()->addDays(SubscriptionService::SUBSCRIPTION_INITIAL_TRIAL_DAYS),
             ]);
 
             if (!config('devqaly.isSelfHosting')) {
