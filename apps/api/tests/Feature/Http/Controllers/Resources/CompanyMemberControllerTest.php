@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers\Resources;
 
+use App\Enum\Company\CompanyBlockedReasonEnum;
 use App\Mail\Auth\SignupEmail;
 use App\Models\Auth\RegisterToken;
 use App\Models\Company\Company;
@@ -294,7 +295,7 @@ class CompanyMemberControllerTest extends TestCase
 
         $this
             ->postJson(route('companyMembers.removeMembers', ['company' => $company]), [
-                'users' => $company->members->map(fn (CompanyMember $companyMember) => $companyMember->member_id)
+                'users' => $company->members->map(fn(CompanyMember $companyMember) => $companyMember->member_id)
             ])
             ->assertForbidden()
             ->assertJsonPath('message', 'You must have at least 1 members in the company');
@@ -316,12 +317,49 @@ class CompanyMemberControllerTest extends TestCase
 
         $this
             ->postJson(route('companyMembers.removeMembers', ['company' => $company]), [
-                'users' => $companyMembers->map(fn (CompanyMember $companyMember) => $companyMember->member_id),
+                'users' => $companyMembers->map(fn(CompanyMember $companyMember) => $companyMember->member_id),
                 'registerTokens' => [$registerToken->id],
             ])
             ->assertNoContent();
 
         $this->assertDatabaseCount((new CompanyMember())->getTable(), 1);
+    }
+
+    public function test_blocked_reason_gets_removed_if_it_has_one()
+    {
+        /** @var Company $company */
+        $company = Company::factory()
+            ->withBlockedReasons([
+                CompanyBlockedReasonEnum::TRIAL_FINISHED_AND_HAS_MORE_MEMBERS_THAN_ALLOWED_ON_FREE_PLAN,
+                CompanyBlockedReasonEnum::TRIAL_FINISHED_AND_HAS_MORE_PROJECTS_THAN_ALLOWED_ON_FREE_PLAN,
+            ])
+            // -1 because the owner of the company will count as a member
+            ->withMembers(SubscriptionService::MAXIMUM_NUMBER_MEMBERS_FREE_PLAN_PER_COMPANY - 1)
+            ->create();
+
+        /** @var Collection $invitedMember */
+        $invitedMember = $company
+            ->members
+            ->first(function (CompanyMember $companyMember) use ($company) {
+                return $companyMember->member_id !== $company->created_by_id;
+            });
+
+        Sanctum::actingAs($company->createdBy);
+
+        $this
+            ->postJson(route('companyMembers.removeMembers', ['company' => $company]), [
+                'users' => [$invitedMember->member_id],
+            ])
+            ->assertNoContent();
+
+        $company->refresh();
+
+        $this->assertIsArray($company->blocked_reasons);
+        $this->assertCount(1, $company->blocked_reasons);
+        $this->assertEquals(
+            collect($company->blocked_reasons)->first()['reason'],
+            CompanyBlockedReasonEnum::TRIAL_FINISHED_AND_HAS_MORE_PROJECTS_THAN_ALLOWED_ON_FREE_PLAN->value
+        );
     }
 
     private function postCheckEmails(array $emails): void

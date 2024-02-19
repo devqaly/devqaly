@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers\Resources;
 
+use App\Enum\Company\CompanyBlockedReasonEnum;
 use App\Models\Company\Company;
 use App\Models\Project\Project;
 use App\Models\User;
@@ -349,6 +350,40 @@ class ProjectControllerTest extends TestCase
         $project->refresh();
 
         $this->assertNotNull($project->deleted_at);
+    }
+
+    public function test_blocked_reason_gets_removed_if_it_has_one(): void
+    {
+        /** @var Company $company */
+        $company = Company::factory()
+            ->withBlockedReasons([
+                CompanyBlockedReasonEnum::TRIAL_FINISHED_AND_HAS_MORE_MEMBERS_THAN_ALLOWED_ON_FREE_PLAN,
+                CompanyBlockedReasonEnum::TRIAL_FINISHED_AND_HAS_MORE_PROJECTS_THAN_ALLOWED_ON_FREE_PLAN,
+            ])
+            // -1 because the owner of the company will count as a member
+            ->withMembers(SubscriptionService::MAXIMUM_NUMBER_MEMBERS_FREE_PLAN_PER_COMPANY - 1)
+            ->create();
+
+        /** @var Project $project */
+        $project = Project::factory()
+            ->count(SubscriptionService::MAXIMUM_NUMBER_PROJECTS_FREE_PLAN_PER_COMPANY + 1)
+            ->create(['company_id' => $company->id])
+            ->first();
+
+        Sanctum::actingAs($company->createdBy, ['*']);
+
+        $this
+            ->deleteJson(route('projects.destroy', ['project' => $project]))
+            ->assertNoContent();
+
+        $company->refresh();
+
+        $this->assertIsArray($company->blocked_reasons);
+        $this->assertCount(1, $company->blocked_reasons);
+        $this->assertEquals(
+            $company->blocked_reasons[0]['reason'],
+            CompanyBlockedReasonEnum::TRIAL_FINISHED_AND_HAS_MORE_MEMBERS_THAN_ALLOWED_ON_FREE_PLAN->value
+        );
     }
 
     private function createStripeCustomerAndAddTrial(

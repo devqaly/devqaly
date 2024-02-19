@@ -2,6 +2,7 @@
 
 namespace App\services\Resources;
 
+use App\Enum\Company\CompanyBlockedReasonEnum;
 use App\Models\Company\Company;
 use App\Models\Project\Project;
 use App\Models\User;
@@ -74,8 +75,28 @@ class ProjectService
         return $project;
     }
 
-    private function checkCanCreateProject(): void
+    public function destroyProject(Project $project): void
     {
+        $project->delete();
 
+        $this->removeBlockedReasons($project->company);
+    }
+
+    private function removeBlockedReasons(Company $company): void
+    {
+        if (config('devqaly.isSelfHosting')) return;
+
+        if (is_null($company->blocked_reasons)) return;
+
+        if (count($company->blocked_reasons) < 1) return;
+
+        if (!$this->subscriptionService->hasMoreProjectsThanAllowedOnFreePlan($company)) {
+            $company->blocked_reasons = collect($company->blocked_reasons)
+                ->filter(function (array $reason) {
+                    return $reason['reason'] !== CompanyBlockedReasonEnum::TRIAL_FINISHED_AND_HAS_MORE_PROJECTS_THAN_ALLOWED_ON_FREE_PLAN->value;
+                });
+
+            $company->save();
+        }
     }
 }

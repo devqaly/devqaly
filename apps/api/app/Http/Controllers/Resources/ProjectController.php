@@ -57,9 +57,13 @@ class ProjectController extends Controller
         //
     }
 
-    public function destroy(DestroyProjectRequest $request, Project $project): Response
+    public function destroy(
+        DestroyProjectRequest $request,
+        Project $project,
+        ProjectService $projectService
+    ): Response
     {
-        $project->delete();
+        $projectService->destroyProject($project);
 
         return response()->noContent();
     }

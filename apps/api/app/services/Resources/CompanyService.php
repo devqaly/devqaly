@@ -2,6 +2,7 @@
 
 namespace App\services\Resources;
 
+use App\Enum\Company\CompanyBlockedReasonEnum;
 use App\Models\Auth\RegisterToken;
 use App\Models\Company\Company;
 use App\Models\Company\CompanyMember;
@@ -157,16 +158,8 @@ class CompanyService
             abort(Response::HTTP_FORBIDDEN, 'You must have at least 1 members in the company');
         }
 
-        CompanyMember::query()
-            ->where('company_id', $company->id)
-            ->whereIn('member_id', $users)
-            ->orWhereIn('register_token_id', $registerTokens)
-            ->delete();
-
-        RegisterToken::query()
-            ->whereIn('id', $registerTokens)
-            ->delete();
-
+        $this->destroyUsersFromCompany($company, $users, $registerTokens);
+        $this->removeBlockedReasons($company);
         $this->reportUsageForMembers($company);
     }
 
@@ -223,6 +216,37 @@ class CompanyService
                 $this->subscriptionService->getEnterpriseMonthlyPricingId(),
                 $company->members()->count()
             );
+        }
+    }
+
+    private function destroyUsersFromCompany(Company $company, array $userIds, array $registerTokenIds): void
+    {
+        CompanyMember::query()
+            ->where('company_id', $company->id)
+            ->whereIn('member_id', $userIds)
+            ->orWhereIn('register_token_id', $registerTokenIds)
+            ->delete();
+
+        RegisterToken::query()
+            ->whereIn('id', $registerTokenIds)
+            ->delete();
+    }
+
+    private function removeBlockedReasons(Company $company): void
+    {
+        if (config('devqaly.isSelfHosting')) return;
+
+        if (is_null($company->blocked_reasons)) return;
+
+        if (count($company->blocked_reasons) < 1) return;
+
+        if (!$this->subscriptionService->hasMoreMembersThanAllowedOnFreePlan($company)) {
+            $company->blocked_reasons = collect($company->blocked_reasons)
+                ->filter(function (array $reason) {
+                    return $reason['reason'] !== CompanyBlockedReasonEnum::TRIAL_FINISHED_AND_HAS_MORE_MEMBERS_THAN_ALLOWED_ON_FREE_PLAN->value;
+                });
+
+            $company->save();
         }
     }
 }
