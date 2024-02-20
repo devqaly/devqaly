@@ -147,18 +147,18 @@ class CompanyService
         $this->reportUsageForMembers($company);
     }
 
-    public function removeUsersFromCompany(Collection $data, Company $company): void
+    public function removeUsersFromCompany(CompanyMember $companyMember): void
     {
-        $users = $data->get('users', []);
-        $registerTokens = $data->get('registerTokens', []);
+        /** @var Company $totalNumberMembers */
+        $company = $companyMember->company;
 
         $totalNumberMembers = $company->members()->count();
 
-        if ((count($users) + count($registerTokens)) === $totalNumberMembers) {
+        if ($totalNumberMembers === 1) {
             abort(Response::HTTP_FORBIDDEN, 'You must have at least 1 members in the company');
         }
 
-        $this->destroyUsersFromCompany($company, $users, $registerTokens);
+        $this->destroyUsersFromCompany($companyMember);
         $this->removeBlockedReasons($company);
         $this->reportUsageForMembers($company);
     }
@@ -219,17 +219,23 @@ class CompanyService
         }
     }
 
-    private function destroyUsersFromCompany(Company $company, array $userIds, array $registerTokenIds): void
+    private function destroyUsersFromCompany(CompanyMember $companyMember): void
     {
         CompanyMember::query()
-            ->where('company_id', $company->id)
-            ->whereIn('member_id', $userIds)
-            ->orWhereIn('register_token_id', $registerTokenIds)
+            ->where('company_id', $companyMember->company->id)
+            ->when($companyMember->member_id, function ($query) use ($companyMember) {
+                $query->where('member_id', $companyMember->member_id);
+            })
+            ->when($companyMember->register_token_id, function ($query) use ($companyMember) {
+                $query->where('register_token_id', $companyMember->register_token_id);
+            })
             ->delete();
 
-        RegisterToken::query()
-            ->whereIn('id', $registerTokenIds)
-            ->delete();
+        if ($companyMember->register_token_id) {
+            RegisterToken::query()
+                ->where('id', $companyMember->register_token_id)
+                ->delete();
+        }
     }
 
     private function removeBlockedReasons(Company $company): void

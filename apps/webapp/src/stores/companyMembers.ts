@@ -1,9 +1,6 @@
 import { defineStore } from 'pinia'
 import type { PaginatableRecord } from '@/services/api'
-import type {
-  CompanyMemberCodec,
-  RemoveCompanyMemberBody
-} from '@/services/api/resources/company/companyMember/codec'
+import type { CompanyMemberCodec } from '@/services/api/resources/company/companyMember/codec'
 import { emptyPagination } from '@/services/api'
 import {
   getCompanyMembers,
@@ -25,28 +22,12 @@ export const useCompanyMembersStore = defineStore('companyMembersStore', {
 
       this.companyMembersRequest = data
     },
-    async removeUsersFromCompany(companyId: string, body: RemoveCompanyMemberBody) {
-      await removeMembersFromCompany(companyId, body)
+    async removeUsersFromCompany(companyId: string, companyMemberId: string) {
+      await removeMembersFromCompany(companyId, companyMemberId)
 
-      if (body.users !== undefined) {
-        this.companyMembersRequest.data = this.companyMembersRequest.data.filter((member) => {
-          if (member.registerToken) return true
-
-          return body.users && member.member && !body.users.includes(member.member.id)
-        })
-      }
-
-      if (body.registerTokens !== undefined) {
-        this.companyMembersRequest.data = this.companyMembersRequest.data.filter((member) => {
-          if (member.member) return true
-
-          return (
-            body.registerTokens &&
-            member.registerToken &&
-            !body.registerTokens.includes(member.registerToken.id)
-          )
-        })
-      }
+      this.companyMembersRequest.data = this.companyMembersRequest.data.filter(
+        (c) => c.id !== companyMemberId
+      )
     }
   }
 })

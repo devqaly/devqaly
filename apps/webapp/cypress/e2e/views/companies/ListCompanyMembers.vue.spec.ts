@@ -171,7 +171,9 @@ describe('ListCompanyMembers.vue', () => {
     it('should allow to remove a member', () => {
       const member = members.filter((m: any) => m.member_id !== loggedUser.id)[0]
 
-      cy.intercept('POST', `**/companies/${companyId}/removeMembers**`).as('removeCompanyMembers')
+      cy.intercept('DELETE', `**/companies/${companyId}/members/${member.id}`).as(
+        'removeCompanyMembers'
+      )
 
       cy.visit(`company/${companyId}/members`)
 
@@ -181,10 +183,7 @@ describe('ListCompanyMembers.vue', () => {
 
       cy.contains('button', 'Remove Member').click()
 
-      cy.wait('@removeCompanyMembers').then(({ request, response }) => {
-        expect(request.body.users).to.have.length(1)
-        expect(request.body.users[0]).to.be.eq(member.member_id)
-
+      cy.wait('@removeCompanyMembers').then(({ response }) => {
         expect(response?.statusCode).to.be.eq(204)
       })
 
@@ -199,7 +198,7 @@ describe('ListCompanyMembers.vue', () => {
     })
 
     it('should not allow user to remove itself', () => {
-      cy.intercept('POST', `**/companies/${companyId}/removeMembers**`).as('removeCompanyMembers')
+      cy.intercept('DELETE', `**/companies/${companyId}/members/**`).as('removeCompanyMembers')
 
       cy.visit(`company/${companyId}/members`)
 

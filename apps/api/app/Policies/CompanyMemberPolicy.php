@@ -44,8 +44,11 @@ class CompanyMemberPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Company $company): Response
+    public function delete(User $user, CompanyMember $companyMember): Response
     {
+        /** @var Company $company */
+        $company = $companyMember->company;
+
         if ($company->members()->count() === 1) {
             return Response::deny('Company must have at least one member');
         }

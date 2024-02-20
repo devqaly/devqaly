@@ -11,7 +11,6 @@ use App\Models\User;
 use App\services\SubscriptionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -261,14 +260,15 @@ class CompanyMemberControllerTest extends TestCase
         $numberCompanyMembers = 2;
         $company = Company::factory()->withMembers($numberCompanyMembers)->create();
 
-        $companyMember = $company->members->random()->first()->member;
+        $companyMember = $company->members->random()->first();
 
         Sanctum::actingAs(User::factory()->create());
 
         $this
-            ->postJson(route('companyMembers.removeMembers', ['company' => $company]), [
-                'users' => [$companyMember->id],
-            ])
+            ->deleteJson(route('companyMembers.destroy', [
+                'company' => $company,
+                'companyMember' => $companyMember
+            ]))
             ->assertForbidden();
 
         // "+ 1" because the owner of the company is added to the CompanyMember table
@@ -282,32 +282,18 @@ class CompanyMemberControllerTest extends TestCase
         Sanctum::actingAs($company->createdBy);
 
         $this
-            ->postJson(route('companyMembers.removeMembers', ['company' => $company]), [
-                'users' => [$company->createdBy->id],
-            ])
+            ->deleteJson(route('companyMembers.destroy', [
+                'company' => $company,
+                'companyMember' => $company->members->first()
+            ]))
             ->assertForbidden();
 
         $this->assertDatabaseCount((new CompanyMember())->getTable(), 1);
-
-        $company = Company::factory()->withMembers()->create();
-
-        Sanctum::actingAs($company->createdBy);
-
-        $this
-            ->postJson(route('companyMembers.removeMembers', ['company' => $company]), [
-                'users' => $company->members->map(fn(CompanyMember $companyMember) => $companyMember->member_id)
-            ])
-            ->assertForbidden()
-            ->assertJsonPath('message', 'You must have at least 1 members in the company');
     }
 
     public function test_company_user_can_delete_company_members(): void
     {
-        $numberCompanyMembers = 2;
-        $company = Company::factory()->withMembers($numberCompanyMembers)->create();
-
-        /** @var Collection $companyMembers */
-        $companyMembers = $company->members->random($numberCompanyMembers);
+        $company = Company::factory()->create();
 
         $registerToken = RegisterToken::factory()
             ->withCompanyMember($company)
@@ -316,10 +302,10 @@ class CompanyMemberControllerTest extends TestCase
         Sanctum::actingAs($company->createdBy);
 
         $this
-            ->postJson(route('companyMembers.removeMembers', ['company' => $company]), [
-                'users' => $companyMembers->map(fn(CompanyMember $companyMember) => $companyMember->member_id),
-                'registerTokens' => [$registerToken->id],
-            ])
+            ->deleteJson(route('companyMembers.destroy', [
+                'company' => $company,
+                'companyMember' => $registerToken->companyMember,
+            ]))
             ->assertNoContent();
 
         $this->assertDatabaseCount((new CompanyMember())->getTable(), 1);
@@ -333,11 +319,10 @@ class CompanyMemberControllerTest extends TestCase
                 CompanyBlockedReasonEnum::TRIAL_FINISHED_AND_HAS_MORE_MEMBERS_THAN_ALLOWED_ON_FREE_PLAN,
                 CompanyBlockedReasonEnum::TRIAL_FINISHED_AND_HAS_MORE_PROJECTS_THAN_ALLOWED_ON_FREE_PLAN,
             ])
-            // -1 because the owner of the company will count as a member
-            ->withMembers(SubscriptionService::MAXIMUM_NUMBER_MEMBERS_FREE_PLAN_PER_COMPANY - 1)
+            ->withMembers(1)
             ->create();
 
-        /** @var Collection $invitedMember */
+        /** @var CompanyMember $invitedMember */
         $invitedMember = $company
             ->members
             ->first(function (CompanyMember $companyMember) use ($company) {
@@ -347,9 +332,10 @@ class CompanyMemberControllerTest extends TestCase
         Sanctum::actingAs($company->createdBy);
 
         $this
-            ->postJson(route('companyMembers.removeMembers', ['company' => $company]), [
-                'users' => [$invitedMember->member_id],
-            ])
+            ->deleteJson(route('companyMembers.destroy', [
+                'company' => $company,
+                'companyMember' => $invitedMember,
+            ]))
             ->assertNoContent();
 
         $company->refresh();

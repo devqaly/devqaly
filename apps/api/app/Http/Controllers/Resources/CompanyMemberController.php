@@ -74,12 +74,13 @@ class CompanyMemberController extends Controller
     public function destroy(
         DestroyCompanyMemberRequest $request,
         Company $company,
-        CompanyService $companyService
+        CompanyService $companyService,
+        CompanyMember $companyMember
     ): JsonResponse
     {
-        $this->authorize('delete', [CompanyMember::class, $company]);
+        $this->authorize('delete', [CompanyMember::class, $companyMember]);
 
-        $companyService->removeUsersFromCompany(collect($request->validated()), $company);
+        $companyService->removeUsersFromCompany($companyMember);
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }

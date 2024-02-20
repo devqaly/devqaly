@@ -10,5 +10,3 @@ export interface CompanyMemberCodec {
 }
 
 export type InviteMembersToCompanyBody = { emails: string[] }
-
-export type RemoveCompanyMemberBody = { users?: ResourceID[]; registerTokens?: ResourceID[] }

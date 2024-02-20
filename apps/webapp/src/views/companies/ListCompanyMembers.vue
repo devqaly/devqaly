@@ -111,7 +111,6 @@ import type { PageState } from 'primevue/paginator'
 import { OrderBy } from '@/services/api'
 import { assertsIsCompanyCodec } from '@/services/resources/Company'
 import { useConfirm } from 'primevue/useconfirm'
-import { RemoveCompanyMemberBody } from '@/services/api/resources/company/companyMember/codec'
 import { WrappedResponse } from '@/services/api/axios'
 
 const companyMemberStore = useCompanyMembersStore()
@@ -194,18 +193,10 @@ function onClickRemoveUserFromCompany(member: CompanyMemberCodec) {
 async function onConfirmRemoveUserFromCompany(member: CompanyMemberCodec) {
   assertsIsCompanyCodec(appStore.activeCompany)
 
-  const payload: RemoveCompanyMemberBody = {}
-
-  if (member.registerToken) {
-    payload.registerTokens = [member.registerToken.id]
-  } else if (member.member) {
-    payload.users = [member.member.id]
-  }
-
   isRemovingMember.value = true
 
   try {
-    await companyMemberStore.removeUsersFromCompany(appStore.activeCompany.id, payload)
+    await companyMemberStore.removeUsersFromCompany(appStore.activeCompany.id, member.id)
   } catch (e) {
     displayGeneralError(e as WrappedResponse, { group: 'bottom-center' })
   } finally {
