@@ -17,8 +17,11 @@ export function useSelectEmail() {
   )
 
   const onSubmit = handleSubmit((values) => {
-    emails.value.unshift(values.email)
     resetForm()
+
+    if (emails.value.includes(values.email)) return
+
+    emails.value.unshift(values.email)
   })
 
   return {
