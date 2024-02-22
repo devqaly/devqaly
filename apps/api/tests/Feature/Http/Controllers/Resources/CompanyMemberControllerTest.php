@@ -73,6 +73,49 @@ class CompanyMemberControllerTest extends TestCase
         $this->postCheckEmails($emails);
     }
 
+    public function test_usage_is_reported_when_company_has_subscription()
+    {
+        $numberMembersInvited = rand(1, 4);
+        /** @var Company $company */
+        $company = Company::factory()->create();
+        $companyMember = $company->createdBy;
+        $emails = $this->generateEmails($numberMembersInvited);
+
+        $this->createSubscriptionForCompany(
+            $company,
+            $this->subscriptionService->getGoldMonthlyPricingId()
+        );
+
+        Sanctum::actingAs($companyMember, ['*']);
+
+        Mail::fake();
+
+        Mail::assertNothingOutgoing();
+
+        $this
+            ->postJson(route('companyMembers.store', ['company' => $company]), [
+                'emails' => $emails
+            ])
+            ->assertNoContent();
+
+        $this->postCheckEmails($emails);
+
+        $company->refresh();
+
+        $usages = $company->subscription()->usageRecords();
+
+        $this->assertEquals(
+            $company->last_time_reported_usage_to_stripe->month,
+            now()->month
+        );
+
+        $this->assertEquals(
+            $usages->first()['total_usage'],
+            $numberMembersInvited + 1,
+            'The `total_usage` reported to stripe should be equal to number members invited plus the company owner'
+        );
+    }
+
     public function test_company_member_cant_invite_same_member_twice()
     {
         $company = Company::factory()->withMembers(2)->create();

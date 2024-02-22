@@ -24,11 +24,13 @@ class Company extends Model
         'trial_ends_at',
         'billing_contact',
         'invoice_details',
+        'last_time_reported_usage_to_stripe',
     ];
 
     protected $casts = [
         'trial_ends_at' => 'datetime',
         'blocked_reasons' => 'json',
+        'last_time_reported_usage_to_stripe' => 'datetime'
     ];
 
     public function createdBy(): BelongsTo

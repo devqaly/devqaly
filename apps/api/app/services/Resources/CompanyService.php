@@ -208,6 +208,9 @@ class CompanyService
                 $company->members()->count()
             );
 
+            $company->last_time_reported_usage_to_stripe = now();
+            $company->save();
+
             return;
         }
 
@@ -216,6 +219,9 @@ class CompanyService
                 $this->subscriptionService->getEnterpriseMonthlyPricingId(),
                 $company->members()->count()
             );
+
+            $company->last_time_reported_usage_to_stripe = now();
+            $company->save();
         }
     }
 
