@@ -8,6 +8,7 @@ use App\Http\Requests\Resources\Project\Session\IndexSessionRequest;
 use App\Http\Resources\Resources\SessionResource;
 use App\Models\Project\Project;
 use App\services\Resources\SessionService;
+use App\services\SubscriptionService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -28,9 +29,14 @@ class ProjectSessionController extends Controller
         return SessionResource::collection($sessions);
     }
 
-    public function store(CreateSessionRequest $request, Project $project, SessionService $service): SessionResource
+    public function store(
+        CreateSessionRequest $request,
+        Project $project,
+        SessionService $sessionService,
+        SubscriptionService $subscriptionService
+    ): SessionResource
     {
-        $session = $service->createSession(
+        $session = $sessionService->createSession(
             collect($request->validated()),
             $request->user(),
             $project
@@ -39,10 +45,7 @@ class ProjectSessionController extends Controller
         $sessionLengthInSeconds = 600;
 
         if (!config('devqaly.isSelfHosting')) {
-            $sessionLengthInSeconds = $session
-                ->project
-                ->company
-                ->subscribedToProduct(config('stripe.products.enterprise.id')) ? 600 : 300;
+            $sessionLengthInSeconds = $subscriptionService->getMaximumSessionLength($session->project->company);
         }
 
         return (new SessionResource($session))

@@ -1,10 +1,17 @@
 <template>
   <div class="p-5">
+    <CompanyBlockedDialog :company="appStore.activeCompany!" />
+
     <div class="text-3xl font-medium">Create Project</div>
     <div class="font-medium text-slate-500 mb-4">
       A project allows you to group your sessions in a logical manner and collaborate with
       colleagues
     </div>
+
+    <CompanyTrialInformationDialog
+      v-model:visible="isShowingTrialWarning"
+      @update:visible="onUpdateVisibleCompanyTrialDialog"
+    />
 
     <Form
       :validation-schema="validationSchema"
@@ -56,20 +63,29 @@ import { object, string } from 'yup'
 import { getSubmitFn } from '@/services/validations'
 import { displayGeneralError } from '@/services/ui'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useProjectsStore } from '@/stores/projects'
 import { Field, Form } from 'vee-validate'
 import { useAppStore } from '@/stores/app'
 import type { WrappedResponse } from '@/services/api/axios'
-import { assertsIsCompanyCodec } from '@/services/resources/Company'
+import {
+  assertsIsCompanyCodec,
+  SHOW_FREE_TRIAL_COMPANY_PARAMETER_NAME
+} from '@/services/resources/Company'
+import CompanyTrialInformationDialog from '@/components/resources/company/CompanyTrialInformationDialog.vue'
+import CompanyBlockedDialog from '@/components/subscription/CompanyBlockedDialog/CompanyBlockedDialog.vue'
 
 const isCreatingProject = ref(false)
 
 const router = useRouter()
 
+const route = useRoute()
+
 const projectStore = useProjectsStore()
 
 const appStore = useAppStore()
+
+const isShowingTrialWarning = ref(route.query[SHOW_FREE_TRIAL_COMPANY_PARAMETER_NAME] !== undefined)
 
 const validationSchema = object({
   title: string()
@@ -96,4 +112,10 @@ const onSubmit = getSubmitFn(validationSchema, async (values) => {
     isCreatingProject.value = false
   }
 })
+
+function onUpdateVisibleCompanyTrialDialog(isOpen: boolean) {
+  if (isOpen) return
+
+  router.replace({ name: route.name! })
+}
 </script>

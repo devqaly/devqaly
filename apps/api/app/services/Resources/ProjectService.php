@@ -2,16 +2,26 @@
 
 namespace App\services\Resources;
 
+use App\Enum\Company\CompanyBlockedReasonEnum;
 use App\Models\Company\Company;
 use App\Models\Project\Project;
 use App\Models\User;
+use App\services\SubscriptionService;
 use App\Traits\UsesPaginate;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProjectService
 {
     use UsesPaginate;
+
+    private SubscriptionService $subscriptionService;
+
+    public function __construct(SubscriptionService $subscriptionService)
+    {
+        $this->subscriptionService = $subscriptionService;
+    }
 
     public function createProject(
         Collection $data,
@@ -19,6 +29,13 @@ class ProjectService
         Company $company,
     ): Project
     {
+        if (
+            !config('devqaly.isSelfHosting')
+            && !$this->subscriptionService->canCreateProject($company)
+        ) {
+            abort(Response::HTTP_FORBIDDEN, 'You have exceed the amount of projects for this plan');
+        }
+
         /** @var Project $project */
         $project = Project::create([
             'title' => $data->get('title'),
@@ -56,5 +73,30 @@ class ProjectService
         $project->save();
 
         return $project;
+    }
+
+    public function destroyProject(Project $project): void
+    {
+        $project->delete();
+
+        $this->removeBlockedReasons($project->company);
+    }
+
+    private function removeBlockedReasons(Company $company): void
+    {
+        if (config('devqaly.isSelfHosting')) return;
+
+        if (is_null($company->blocked_reasons)) return;
+
+        if (count($company->blocked_reasons) < 1) return;
+
+        if (!$this->subscriptionService->hasMoreProjectsThanAllowedOnFreePlan($company)) {
+            $company->blocked_reasons = collect($company->blocked_reasons)
+                ->filter(function (array $reason) {
+                    return $reason['reason'] !== CompanyBlockedReasonEnum::TRIAL_FINISHED_AND_HAS_MORE_PROJECTS_THAN_ALLOWED_ON_FREE_PLAN->value;
+                });
+
+            $company->save();
+        }
     }
 }

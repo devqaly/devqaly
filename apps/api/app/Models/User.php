@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Company\Company;
 use App\Models\Company\CompanyMember;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -45,5 +46,10 @@ class User extends Authenticatable
     public function companiesMember(): HasMany
     {
         return $this->hasMany(CompanyMember::class, 'member_id');
+    }
+
+    public function companiesCreator(): HasMany
+    {
+        return $this->hasMany(Company::class, 'created_by_id');
     }
 }

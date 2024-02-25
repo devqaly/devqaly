@@ -16,6 +16,7 @@ form label {
 
 html {
   font-size: 14px;
+  font-style: normal;
 }
 
 body {
@@ -27,6 +28,7 @@ body {
 
 :root {
   --surface-ground: #EFF3F8;
+  --font-family: "Inter var",sans-serif;
 }
 
 .p-datatable-table .p-column-title {

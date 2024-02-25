@@ -7,6 +7,7 @@ import type {
 } from '@/services/api/resources/project/codec'
 import {
   createProject,
+  deleteProject,
   getProject,
   getProjects,
   getProjectSessions
@@ -24,6 +25,7 @@ interface ProjectStoreState {
   activeProjectSessionsRequest: PaginatableRecord<SessionCodec>
   projectBeingCreated: CreatableProject
   projectsRequest: PaginatableRecord<ProjectCodec>
+  selectedProjectForDeletion: ProjectCodec | null
 }
 
 export const useProjectsStore = defineStore('projectsStore', {
@@ -32,7 +34,8 @@ export const useProjectsStore = defineStore('projectsStore', {
     activeProject: null,
     activeProjectSessionsRequest: emptyPagination(),
     projectBeingCreated: creatableProjectFactory(),
-    projectsRequest: emptyPagination()
+    projectsRequest: emptyPagination(),
+    selectedProjectForDeletion: null
   }),
   actions: {
     async createProject(companyId: string, createProjectBody: CreateProjectBody) {
@@ -71,6 +74,11 @@ export const useProjectsStore = defineStore('projectsStore', {
       const response = await getProject(projectId)
 
       this.onboardingProject = response.data.data
+    },
+    async deleteProject(projectId: string) {
+      await deleteProject(projectId)
+
+      this.projectsRequest.data = this.projectsRequest.data.filter((p) => p.id !== projectId)
     }
   }
 })

@@ -99,6 +99,19 @@
                   <span class="font-medium">Create Project</span>
                 </router-link>
               </li>
+              <li v-if="shouldShowSubscriptionConcerns()">
+                <router-link
+                  active-class="bg-white shadow-lg"
+                  :to="{
+                    name: 'companySubscription',
+                    params: { companyId: appStore.activeCompany!.id }
+                  }"
+                  class="flex items-center cursor-pointer p-4 rounded-md text-slate-500 transition-all"
+                >
+                  <i class="pi pi-wallet mr-2 bg-white p-2.5 rounded-md text-slate-800"></i>
+                  <span class="font-medium">Subscription</span>
+                </router-link>
+              </li>
             </ul>
           </div>
 
@@ -197,6 +210,7 @@ import Menu from 'primevue/menu'
 import { useAppStore } from '@/stores/app'
 import type { CompanyCodec } from '@/services/api/resources/company/codec'
 import { useRouter } from 'vue-router'
+import { shouldShowSubscriptionConcerns } from '@/services/resources/Subscription'
 
 const router = useRouter()
 

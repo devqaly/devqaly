@@ -2,20 +2,26 @@
 
 namespace App\services\Resources;
 
-use App\Models\Company\Company;
 use App\Models\Project\Project;
 use App\Models\Session\Session;
 use App\Models\User;
+use App\services\SubscriptionService;
 use App\Traits\UsesPaginate;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class SessionService
 {
     use UsesPaginate;
+
+    private SubscriptionService $subscriptionService;
+
+    public function __construct(SubscriptionService $subscriptionService)
+    {
+        $this->subscriptionService = $subscriptionService;
+    }
 
     public function createSession(Collection $data, ?User $user, Project $project): Session
     {
@@ -30,12 +36,8 @@ class SessionService
             'environment' => $data->get('environment'),
         ]);
 
-        if ($this->shouldDeletePastSessions($project)) {
-            $this->deletePastSessionsForFreemium($project);
-        }
-
-        if ($this->isEnterpriseCustomer($project->company)) {
-            $this->updateMeteredUsage($project->company);
+        if ($this->shouldArchivePastSessions($project)) {
+            $this->archivePastSessions($project);
         }
 
         return $session;
@@ -74,50 +76,43 @@ class SessionService
         return $sessions->paginate($this->getPerPage());
     }
 
-    private function isEnterpriseCustomer(Company $company): bool
+    private function shouldArchivePastSessions(Project $project): bool
     {
         if (config('devqaly.isSelfHosting')) {
             return false;
         }
 
-        return $company->subscribedToProduct(config('stripe.products.enterprise.id'));
-    }
-
-    private function updateMeteredUsage(Company $company): void
-    {
-        try {
-            $company
-                ->subscription()
-                ->reportUsageFor(config('stripe.products.enterprise.prices.default'), 1);
-        } catch (\Exception $e) {
-            Log::info(sprintf('There was an error updating metered usage for company [%s] with ID [%s]', $company->name, $company->id));
-        }
-    }
-
-    private function shouldDeletePastSessions(Project $project): bool
-    {
-        if (config('devqaly.isSelfHosting')) {
+        if ($this->subscriptionService->isSubscribedToEnterprisePlan($project->company)) {
             return false;
         }
 
-        $currentNumberSessions = Session::query()
-            ->where('project_id', $project->id)
-            ->count();
+        $currentNumberSessions = Session::query()->where('project_id', $project->id)->count();
 
-        /** @var Company $company */
-        $company = $project->company;
+        if ($this->subscriptionService->isSubscribedToGoldPlan($project->company)) {
+            return $currentNumberSessions >= SubscriptionService::MAXIMUM_NUMBER_SESSIONS_GOLD_PLAN_PER_COMPANY;
+        }
 
-        return $currentNumberSessions >= Session::MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES
-            && !$this->isEnterpriseCustomer($company);
+        return $currentNumberSessions >= SubscriptionService::MAXIMUM_NUMBER_SESSIONS_FREE_PLAN_PER_COMPANY;
+
     }
 
-    private function deletePastSessionsForFreemium(Project $project): void
+    private function archivePastSessions(Project $project): void
     {
+        if ($this->subscriptionService->isSubscribedToEnterprisePlan($project->company)) {
+            return;
+        }
+
+        if ($this->subscriptionService->isSubscribedToGoldPlan($project->company)) {
+            $numberAllowedSessionsForPlan = SubscriptionService::MAXIMUM_NUMBER_SESSIONS_GOLD_PLAN_PER_COMPANY;
+        } else {
+            $numberAllowedSessionsForPlan = SubscriptionService::MAXIMUM_NUMBER_SESSIONS_FREE_PLAN_PER_COMPANY;
+        }
+
         $sessionsToDelete = Session::query()
             ->select('id')
             ->where('project_id', $project->id)
             ->orderBy('created_at', 'DESC')
-            ->skip(Session::MAXIMUM_NUMBER_SESSIONS_FOR_FREE_COMPANIES)
+            ->skip($numberAllowedSessionsForPlan)
             ->get();
 
         Session::query()

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Resources;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Resources\Company\CompanyMember\DestroyCompanyMemberRequest;
 use App\Http\Requests\Resources\Company\CompanyMember\IndexCompanyMemberRequest;
 use App\Http\Requests\Resources\Company\CompanyMember\StoreCompanyMemberRequest;
 use App\Http\Resources\Resources\CompanyMemberResource;
 use App\Models\Company\Company;
+use App\Models\Company\CompanyMember;
 use App\services\Resources\Company\CompanyMemberService;
 use App\services\Resources\CompanyService;
 use Illuminate\Http\JsonResponse;
@@ -69,8 +71,17 @@ class CompanyMemberController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(
+        DestroyCompanyMemberRequest $request,
+        Company $company,
+        CompanyService $companyService,
+        CompanyMember $companyMember
+    ): JsonResponse
     {
-        //
+        $this->authorize('delete', [CompanyMember::class, $companyMember]);
+
+        $companyService->removeUsersFromCompany($companyMember);
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

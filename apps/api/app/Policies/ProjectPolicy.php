@@ -52,7 +52,11 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project): bool
     {
-        //
+        return $project
+            ->company
+            ->members()
+            ->where('member_id', $user->id)
+            ->exists();
     }
 
     /**

@@ -117,4 +117,56 @@ describe('ListProjectsView.vue', () => {
       })
     })
   })
+
+  context('deletion', () => {
+    it('should close modal for deletion when clicking cancel', () => {
+      const project = projects[0]
+
+      cy.intercept('GET', `**/companies/${companyId}/projects**`).as('projectsRequest')
+
+      cy.visit(`company/${companyId}/projects`)
+
+      cy.wait('@projectsRequest')
+
+      cy.dataCy('list-projects-view__delete-project', {
+        'data-project-id': project.id
+      }).click()
+
+      cy.dataCy('list-projects-view__delete-project-dialog-project-name').should(
+        'have.text',
+        project.title
+      )
+
+      cy.dataCy('list-projects-view__cancel-delete-project-dialog').click()
+
+      cy.dataCy('list-projects-view__delete-project-dialog').should('not.exist')
+    })
+
+    it('should delete project and remove from DOM', () => {
+      const project = projects[0]
+
+      cy.intercept('GET', `**/companies/${companyId}/projects**`).as('projectsRequest')
+      cy.intercept('DELETE', `**/projects/${project.id}`).as('deleteProject')
+
+      cy.visit(`company/${companyId}/projects`)
+
+      cy.wait('@projectsRequest')
+
+      cy.dataCy('list-projects-view__delete-project', {
+        'data-project-id': project.id
+      }).click()
+
+      cy.dataCy('list-projects-view__confirm-delete-project').click()
+
+      cy.wait('@deleteProject').then(({ response }) => {
+        expect(response?.statusCode).to.be.eq(204)
+      })
+
+      cy.dataCy('list-projects-view__delete-project-dialog').should('not.exist')
+
+      cy.dataCy('list-projects-view__delete-project', {
+        'data-project-id': project.id
+      }).should('not.exist')
+    })
+  })
 })

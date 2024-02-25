@@ -24,6 +24,9 @@ describe('CreateCompanyView.vue', () => {
       expect(response?.body.data.name).to.be.eq(companyName)
 
       cy.url().should('contain', `company/${response?.body.data.id}/projects`)
+      cy.url().should('contain', 'showFreeTrialInfo=1')
+
+      cy.dataCy('company-trial-information-dialog').should('be.visible')
     })
 
     cy.dataCy('navigation-layout__active-company').should('have.text', companyName)

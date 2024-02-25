@@ -10,6 +10,8 @@
       @close="onIntegrationDetailsModalCLose"
     />
 
+    <DeleteProjectWarningDialog />
+
     <div class="bg-white shadow-lg rounded-lg">
       <ProjectFilters
         class="p-5"
@@ -80,6 +82,17 @@
               rounded
               @click="() => onIntegrationDetailsClick(data)"
             />
+
+            <Button
+              data-cy="list-projects-view__delete-project"
+              :data-project-id="data.id"
+              v-tooltip.left="'Delete Project'"
+              severity="secondary"
+              icon="pi pi-trash"
+              text
+              rounded
+              @click="() => onDeleteProjectClick(data)"
+            />
           </template>
         </Column>
       </DataTable>
@@ -105,6 +118,7 @@ import type { PageState } from 'primevue/paginator'
 import { useAppStore } from '@/stores/app'
 import SetupSDKDialog from '@/components/resources/project/SetupSDKDialog.vue'
 import { assertsIsCompanyCodec } from '@/services/resources/Company'
+import DeleteProjectWarningDialog from '@/components/pages/projects/ListProjectsView/DeleteProjectWarningDialog.vue'
 
 const isFetchingProjects = ref(false)
 
@@ -178,5 +192,9 @@ async function onIntegrationDetailsClick(project: ProjectCodec) {
 
 async function onIntegrationDetailsModalCLose() {
   activeProjectForIntegration.value = null
+}
+
+function onDeleteProjectClick(project: ProjectCodec) {
+  projectStore.selectedProjectForDeletion = project
 }
 </script>

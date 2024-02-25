@@ -16,6 +16,16 @@ import type { GetLoggedUserCompaniesParameters } from '@/services/api/resources/
 import type { AxiosError } from 'axios'
 import { isAxiosError } from 'axios'
 import { StatusCodes } from 'http-status-codes'
+import { assertsIsCompanyCodec } from '@/services/resources/Company'
+import {
+  getCompanyStripePortalUrl,
+  updateCompanyBillingDetails,
+  updateCompanySubscription
+} from '@/services/api/resources/company/actions'
+import type {
+  UpdateCompanyBillingDetailsBody,
+  UpdateCompanySubscriptionBody
+} from '@/services/api/resources/company/requests'
 
 interface AppStoreState {
   isAuthenticated: boolean
@@ -23,6 +33,7 @@ interface AppStoreState {
   loggedUserProjectsRequest: PaginatableRecord<ProjectCodec>
   loggedUserCompanies: PaginatableRecord<CompanyCodec>
   activeCompany: CompanyCodec | null
+  activeCompanyStripePortalUrl: string | null
 }
 
 export const TOKEN_KEY = '_token'
@@ -33,7 +44,8 @@ export const useAppStore = defineStore('appStore', {
     loggedUser: loggedUserCodecFactory(),
     loggedUserProjectsRequest: emptyPagination(),
     loggedUserCompanies: emptyPagination(),
-    activeCompany: null
+    activeCompany: null,
+    activeCompanyStripePortalUrl: null
   }),
   actions: {
     async loginUser(loginBody: LoginBody) {
@@ -85,6 +97,28 @@ export const useAppStore = defineStore('appStore', {
           await this.$router.push({ name: 'authLogin' })
         }
       }
+    },
+    async getActiveCompanyPortalStripePortalUrl(returnUrl: string) {
+      assertsIsCompanyCodec(this.activeCompany)
+
+      const { data } = await getCompanyStripePortalUrl(this.activeCompany.id, { returnUrl })
+
+      this.activeCompanyStripePortalUrl = data.data.portalUrl
+    },
+    async updateActiveCompanyBillingDetails(body: UpdateCompanyBillingDetailsBody) {
+      assertsIsCompanyCodec(this.activeCompany)
+
+      const { data } = await updateCompanyBillingDetails(this.activeCompany.id, body)
+
+      this.activeCompany.billingContact = data.data.billingContact
+      this.activeCompany.invoiceDetails = data.data.invoiceDetails
+    },
+    async updateActiveCompanySubscription(body: UpdateCompanySubscriptionBody) {
+      assertsIsCompanyCodec(this.activeCompany)
+
+      const { data } = await updateCompanySubscription(this.activeCompany.id, body)
+
+      this.activeCompany = data.data
     }
   }
 })
