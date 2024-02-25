@@ -2,34 +2,49 @@
 
 namespace App\services\Resources;
 
+use App\Enum\Company\CompanyBlockedReasonEnum;
 use App\Models\Auth\RegisterToken;
 use App\Models\Company\Company;
 use App\Models\Company\CompanyMember;
 use App\Models\User;
 use App\services\Auth\RegisterTokenService;
+use App\services\SubscriptionService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Laravel\Cashier\Exceptions\IncompletePayment;
+use Symfony\Component\HttpFoundation\Response;
 
 class CompanyService
 {
+    private SubscriptionService $subscriptionService;
+
+    public function __construct(SubscriptionService $subscriptionService)
+    {
+        $this->subscriptionService = $subscriptionService;
+    }
+
     public function createCompany(Collection $data, User $createdBy, array $customerOptionsMetadata = []): Company
     {
         DB::beginTransaction();
 
         try {
-            /** @var Company $company */
-            $company = Company::create([
+            $fields = collect([
                 'name' => $data->get('name'),
-                'created_by_id' => $createdBy->id
-            ]);
+                'created_by_id' => $createdBy->id,
+            ])
+                ->when(!config('devqaly.isSelfHosting'), function (Collection $collection) {
+                    $collection->put(
+                        'trial_ends_at',
+                        now()->addDays(SubscriptionService::SUBSCRIPTION_INITIAL_TRIAL_DAYS)
+                    );
+                });
+
+            /** @var Company $company */
+            $company = Company::create($fields->toArray());
 
             if (!config('devqaly.isSelfHosting')) {
-                $company->createOrGetStripeCustomer([
-                    'email' => $company->createdBy->email,
-                    'name' => $company->name
-                ]);
+                $this->createCustomOnStripe($company);
             }
 
             DB::commit();
@@ -60,6 +75,10 @@ class CompanyService
 
         $registeredUsers = User::whereIn('email', $emails)->get();
 
+        $unregisteredUsersEmails = $emails->diff($registeredUsers->pluck('email'));
+
+        $this->canInviteUsers($data->get('emails'), $company);
+
         foreach ($registeredUsers as $registeredUser) {
             CompanyMember::create([
                 'company_id' => $company->id,
@@ -68,8 +87,6 @@ class CompanyService
                 'invited_by_id' => $invitedBy->id,
             ]);
         }
-
-        $unregisteredUsersEmails = $emails->diff($registeredUsers->pluck('email'));
 
         /** @var Collection $registerTokens */
         $registerTokens = RegisterToken::query()
@@ -132,6 +149,123 @@ class CompanyService
                 'register_token_id' => $oldRegisterToken->id,
                 'invited_by_id' => $invitedBy->id,
             ]);
+        }
+
+        $this->reportUsageForMembers($company);
+    }
+
+    public function removeUsersFromCompany(CompanyMember $companyMember): void
+    {
+        /** @var Company $totalNumberMembers */
+        $company = $companyMember->company;
+
+        $totalNumberMembers = $company->members()->count();
+
+        if ($totalNumberMembers === 1) {
+            abort(Response::HTTP_FORBIDDEN, 'You must have at least 1 members in the company');
+        }
+
+        $this->destroyUsersFromCompany($companyMember);
+        $this->removeBlockedReasons($company);
+        $this->reportUsageForMembers($company);
+    }
+
+    public function updateCompanyBillingDetails(Collection $data, Company $company): Company
+    {
+        $company->update([
+            'billing_contact' => $data->get('billingContact', $company->billing_contact),
+            'invoice_details' => $data->get('invoiceDetails', $company->invoice_details),
+        ]);
+
+        return $company;
+    }
+
+    public function createCustomOnStripe(Company $company, array $options = []): void
+    {
+        if (config('devqaly.isSelfHosting')) return;
+
+        $company->createOrGetStripeCustomer(array_merge($options, [
+            'email' => $company->createdBy->email,
+            'name' => $company->name
+        ]));
+    }
+
+    private function canInviteUsers(array $newUsers, Company $company): void
+    {
+        if (config('devqaly.isSelfHosting')) return;
+
+        if ($this->subscriptionService->isPayingCustomer($company)) return;
+
+        $numberCompanyMembers = $company->members()->count();
+        $numberMembersBeingInvited = count($newUsers);
+        $totalNumberMembers = ($numberCompanyMembers + $numberMembersBeingInvited);
+
+        if ($totalNumberMembers > SubscriptionService::MAXIMUM_NUMBER_MEMBERS_FREE_PLAN_PER_COMPANY) {
+            abort(Response::HTTP_FORBIDDEN, "Your plan does not support the amount of $totalNumberMembers members");
+        }
+    }
+
+    private function reportUsageForMembers(Company $company): void
+    {
+        if (config('devqaly.isSelfHosting')) return;
+
+        if ($this->subscriptionService->isSubscribedToGoldPlan($company)) {
+            $company->subscription()->reportUsageFor(
+                $this->subscriptionService->getGoldMonthlyPricingId(),
+                $company->members()->count()
+            );
+
+            $company->last_time_reported_usage_to_stripe = now();
+            $company->save();
+
+            return;
+        }
+
+        if ($this->subscriptionService->isSubscribedToEnterprisePlan($company)) {
+            $company->subscription()->reportUsageFor(
+                $this->subscriptionService->getEnterpriseMonthlyPricingId(),
+                $company->members()->count()
+            );
+
+            $company->last_time_reported_usage_to_stripe = now();
+            $company->save();
+        }
+    }
+
+    private function destroyUsersFromCompany(CompanyMember $companyMember): void
+    {
+        CompanyMember::query()
+            ->where('company_id', $companyMember->company->id)
+            ->when($companyMember->member_id, function ($query) use ($companyMember) {
+                $query->where('member_id', $companyMember->member_id);
+            })
+            ->when($companyMember->register_token_id, function ($query) use ($companyMember) {
+                $query->where('register_token_id', $companyMember->register_token_id);
+            })
+            ->delete();
+
+        if ($companyMember->register_token_id) {
+            RegisterToken::query()
+                ->where('id', $companyMember->register_token_id)
+                ->delete();
+        }
+    }
+
+    private function removeBlockedReasons(Company $company): void
+    {
+        if (config('devqaly.isSelfHosting')) return;
+
+        if (is_null($company->blocked_reasons)) return;
+
+        if (count($company->blocked_reasons) < 1) return;
+
+        if (!$this->subscriptionService->hasMoreMembersThanAllowedOnFreePlan($company)) {
+            $company->blocked_reasons = collect($company->blocked_reasons)
+                ->filter(function (array $reason) {
+                    return $reason['reason'] !== CompanyBlockedReasonEnum::TRIAL_FINISHED_AND_HAS_MORE_MEMBERS_THAN_ALLOWED_ON_FREE_PLAN->value;
+                });
+
+            $company->save();
         }
     }
 }

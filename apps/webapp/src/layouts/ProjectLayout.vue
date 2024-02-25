@@ -1,24 +1,9 @@
 <template>
   <div>
-    <div
-      v-if="shouldShowSubscriptionWarning()"
-      class="bg-white rounded-md shadow-md p-5 flex justify-between flex-col lg:flex-row items-center m-5 no-underline"
-    >
-      <div>
-        <div class="font-semibold mb-3 text-xl">Free Subscription</div>
-        <p class="mt-0 mb-4 lg:mb-0 p-0">
-          You currently have a free subscription for this company. You will be able to have active
-          50 sessions for each project. On the 51st session, the first one will be archived.
-        </p>
-      </div>
+    <CompanyBlockedDialog :company="appStore.activeCompany!" />
 
-      <a href="mailto:bruno.francisco@devqaly.com">
-        <Button
-          label="Request Higher Limit"
-          icon="pi pi-check"
-          class="ml-0 lg:ml-5"
-        />
-      </a>
+    <div class="m-5">
+      <TrialEndingWarning />
     </div>
     <div class="bg-white overflow-x-auto m-5 rounded-md shadow-md">
       <div class="mx-4 my-2">
@@ -91,6 +76,8 @@ import {
 } from '@/services/resources/Subscription'
 import { assertsIsCompanyCodec } from '@/services/resources/Company'
 import { useAppStore } from '@/stores/app'
+import TrialEndingWarning from '@/components/layouts/ProjectLayout/TrialEndingWarning.vue'
+import CompanyBlockedDialog from '@/components/subscription/CompanyBlockedDialog/CompanyBlockedDialog.vue'
 
 const isFetchingActiveProject = ref(false)
 
@@ -144,19 +131,4 @@ watch(
     immediate: true
   }
 )
-
-function shouldShowSubscriptionWarning(): boolean {
-  if (!shouldShowSubscriptionConcerns()) return false
-
-  assertsIsCompanyCodec(appStore.activeCompany)
-
-  // If no subscription is present, we are assuming the user is in free plan.
-  if (
-    appStore.activeCompany.subscription === null ||
-    appStore.activeCompany.subscription === undefined
-  )
-    return true
-
-  return !isActiveSubscription(appStore.activeCompany.subscription.status)
-}
 </script>

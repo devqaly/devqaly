@@ -2,6 +2,8 @@
 
 namespace App\Models\Company;
 
+use App\Enum\Company\CompanyBlockedReasonEnum;
+use App\Models\Project\Project;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,7 +20,17 @@ class Company extends Model
 
     protected $fillable = [
         'name',
-        'created_by_id'
+        'created_by_id',
+        'trial_ends_at',
+        'billing_contact',
+        'invoice_details',
+        'last_time_reported_usage_to_stripe',
+    ];
+
+    protected $casts = [
+        'trial_ends_at' => 'datetime',
+        'blocked_reasons' => 'json',
+        'last_time_reported_usage_to_stripe' => 'datetime'
     ];
 
     public function createdBy(): BelongsTo
@@ -29,5 +41,10 @@ class Company extends Model
     public function members(): HasMany
     {
         return $this->hasMany(CompanyMember::class, 'company_id');
+    }
+
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class, 'company_id');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Resources;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Resources\Project\DestroyProjectRequest;
 use App\Http\Requests\Resources\Project\IndexProjectRequest;
 use App\Http\Requests\Resources\Project\RevokeSecurityTokenRequest;
 use App\Http\Requests\Resources\Project\StoreProjectRequest;
@@ -12,6 +13,7 @@ use App\Models\Project\Project;
 use App\services\Resources\ProjectService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 class ProjectController extends Controller
 {
@@ -55,12 +57,15 @@ class ProjectController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(
+        DestroyProjectRequest $request,
+        Project $project,
+        ProjectService $projectService
+    ): Response
     {
-        //
+        $projectService->destroyProject($project);
+
+        return response()->noContent();
     }
 
     public function revokeSecurityToken(

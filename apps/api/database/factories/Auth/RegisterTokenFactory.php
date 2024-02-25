@@ -48,7 +48,8 @@ class RegisterTokenFactory extends Factory
         });
     }
 
-    public function used() {
+    public function used()
+    {
         return $this->state(function (array $attributes) {
             return [
                 'used_at' => now(),
@@ -56,7 +57,8 @@ class RegisterTokenFactory extends Factory
         });
     }
 
-    public function revoked() {
+    public function revoked()
+    {
         return $this->state(function (array $attributes) {
             return [
                 'revoked' => 1,
@@ -64,7 +66,8 @@ class RegisterTokenFactory extends Factory
         });
     }
 
-    public function unrevoked() {
+    public function unrevoked()
+    {
         return $this->state(function (array $attributes) {
             return [
                 'revoked' => 0,
@@ -72,7 +75,8 @@ class RegisterTokenFactory extends Factory
         });
     }
 
-    public function hasOnboarding() {
+    public function hasOnboarding()
+    {
         return $this->state(function (array $attributes) {
             return [
                 'has_onboarding' => true,
@@ -83,11 +87,14 @@ class RegisterTokenFactory extends Factory
     public function withCompanyMember(?Company $company = null): RegisterTokenFactory
     {
         return $this->afterCreating(function (RegisterToken $registerToken) use ($company) {
-                CompanyMember::factory()->create([
-                    'member_id' => null,
-                    'register_token_id' => $registerToken->id,
-                    'company_id' => $company?->id ?? Company::factory(),
-                ]);
-            });
+            $company = $company ?: Company::factory()->create();
+
+            CompanyMember::factory()->create([
+                'member_id' => null,
+                'register_token_id' => $registerToken->id,
+                'company_id' => $company->id,
+                'invited_by_id' => $company->created_by_id
+            ]);
+        });
     }
 }

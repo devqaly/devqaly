@@ -2,9 +2,11 @@
 
 namespace Database\Factories\Company;
 
+use App\Enum\Company\CompanyBlockedReasonEnum;
 use App\Models\Company\Company;
 use App\Models\Company\CompanyMember;
 use App\Models\User;
+use App\services\SubscriptionService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -52,6 +54,27 @@ class CompanyFactory extends Factory
                     'invited_by_id' => $company->created_by_id,
                 ]);
             });
+        });
+    }
+
+    public function withTrial(): CompanyFactory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'trial_ends_at' => now()->addDays(SubscriptionService::SUBSCRIPTION_INITIAL_TRIAL_DAYS)
+            ];
+        });
+    }
+
+    public function withBlockedReasons(array $reasons): CompanyFactory
+    {
+        return $this->state(function (array $attributes) use ($reasons) {
+            return [
+                'blocked_reasons' => collect($reasons)->map(fn (CompanyBlockedReasonEnum $reason) => [
+                    'reason' => $reason->value,
+                    'description' => $this->faker->words(10, true),
+                ])->toArray()
+            ];
         });
     }
 }

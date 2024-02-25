@@ -6,7 +6,7 @@ export interface CompanyMemberCodec {
   createdAt: DateTime
   invitedBy?: UserCodec
   member?: UserCodec | null
-  registerToken?: { email: string } | null
+  registerToken?: { email: string; id: ResourceID } | null
 }
 
 export type InviteMembersToCompanyBody = { emails: string[] }

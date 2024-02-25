@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Resources;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Resources\Company\CreateCompanyRequest;
+use App\Http\Requests\Resources\Company\UpdateCompanyBillingDetailsMemberRequest;
 use App\Http\Resources\Resources\CompanyResource;
+use App\Models\Company\Company;
 use App\services\Resources\CompanyService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class CompanyController extends Controller
 {
@@ -47,5 +51,38 @@ class CompanyController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function getStripeCustomerPortal(Request $request, Company $company): JsonResponse
+    {
+        $this->authorize('view', $company);
+
+        $this->validate($request, [
+            'returnUrl' => 'required|url'
+        ]);
+
+        $returnUrl = $request->get('returnUrl');
+        $host = parse_url($returnUrl)['host'];
+
+        if (!in_array($host, ['app.devqaly.com', 'localhost', 'staging-app.devqaly.com', '0.0.0.0'])) {
+            abort(Response::HTTP_FORBIDDEN, 'Return URL must be a URL pointing to devqaly servers');
+        }
+
+        return response()->json([
+            'data' => [
+                'portalUrl' => $company->billingPortalUrl($returnUrl)
+            ]
+        ]);
+    }
+
+    public function updateBillingDetails(
+        UpdateCompanyBillingDetailsMemberRequest $request,
+        Company $company,
+        CompanyService $companyService
+    ): CompanyResource
+    {
+        $company = $companyService->updateCompanyBillingDetails(collect($request->validated()), $company);
+
+        return new CompanyResource($company);
     }
 }

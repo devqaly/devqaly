@@ -2,9 +2,12 @@
 
 namespace App\Http\Resources\Resources;
 
+use App\services\SubscriptionService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Laravel\Cashier\Subscription;
 use Laravel\Cashier\SubscriptionItem;
 
 class CompanyResource extends JsonResource
@@ -29,8 +32,33 @@ class CompanyResource extends JsonResource
                     'createdAt' => $subscription->created_at,
                     'status' => $subscription->stripe_status,
                     'trialEndsAt' => $subscription->trial_ends_at,
+                    'planName' => $this->getPlanName($subscription)
+
                 ] : null);
+
+                $collection->put('trialEndsAt', $this->trial_ends_at);
+                $collection->put('paymentMethodType', $this->pm_type);
+                $collection->put('paymentLastFourDigits', $this->pm_last_four);
+                $collection->put('billingContact', $this->billing_contact);
+                $collection->put('invoiceDetails', $this->invoice_details);
+                $collection->put('blockedReasons', $this->blocked_reasons);
             })
             ->toArray();
+    }
+
+    private function getPlanName(Subscription $subscription): string
+    {
+        /** @var SubscriptionService $subscriptionService */
+        $subscriptionService = app()->make(SubscriptionService::class);
+
+        if ($subscription->hasProduct($subscriptionService->getEnterpriseProductId())) {
+            return 'enterprise';
+        }
+
+        if ($subscription->hasProduct($subscriptionService->getGoldProductId())) {
+            return 'gold';
+        }
+
+        return 'free';
     }
 }

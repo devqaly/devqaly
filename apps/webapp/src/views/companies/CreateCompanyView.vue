@@ -61,6 +61,7 @@ import { createCompany } from '@/services/api/resources/company/actions'
 import { displayGeneralError } from '@/services/ui'
 import type { WrappedResponse } from '@/services/api/axios'
 import { useRouter } from 'vue-router'
+import { buildQueryForShowingFreeTrialCompany } from '@/services/resources/Company'
 
 const validationSchema = object({
   name: string()
@@ -84,7 +85,11 @@ const onSubmit = getSubmitFn(validationSchema, async (values) => {
     appStore.activeCompany = data.data
     appStore.loggedUserCompanies.data.push(data.data)
 
-    await router.push({ name: 'listProjects', params: { companyId: appStore.activeCompany!.id } })
+    await router.push({
+      name: 'projectCreate',
+      params: { companyId: appStore.activeCompany!.id },
+      query: buildQueryForShowingFreeTrialCompany()
+    })
   } catch (e) {
     displayGeneralError(e as WrappedResponse)
   } finally {

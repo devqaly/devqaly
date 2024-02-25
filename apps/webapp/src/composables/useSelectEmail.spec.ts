@@ -59,15 +59,28 @@ describe('useSelectEmail', () => {
 
     const emailToBeRemoved = emails[randomInteger(1, emails.length) - 1]
 
-    console.log('----')
-    console.log(emailToBeRemoved)
-    console.log('----')
-
     await wrapper.vm.onRemoveEmail(emailToBeRemoved)
 
     await flushPromises()
 
     expect(wrapper.vm.emails.length).toBe(emails.length - 1)
     expect(wrapper.vm.emails.find((e) => e === emailToBeRemoved)).toBeUndefined()
+  })
+
+  it('should not allow to add the same email twice', async () => {
+    const email = 'bruno.francisco@devqaly.com'
+
+    wrapper.vm.emails = [email]
+
+    const input = wrapper.find('input')
+
+    await input.setValue(email)
+
+    await input.trigger('change')
+
+    await flushPromises()
+
+    expect(wrapper.vm.emails.length).toBe(1)
+    expect(wrapper.vm.emails[0]).toBe(email)
   })
 })

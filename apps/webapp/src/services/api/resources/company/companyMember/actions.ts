@@ -11,3 +11,6 @@ export const getCompanyMembers = (companyId: string, params: GetCompanyMembersPa
 
 export const addMembersToCompany = (companyId: string, body: InviteMembersToCompanyBody) =>
   axios.post<null>(`/companies/${companyId}/members`, body)
+
+export const removeMembersFromCompany = (companyId: string, companyMemberId: string) =>
+  axios.delete<null>(`/companies/${companyId}/members/${companyMemberId}`)

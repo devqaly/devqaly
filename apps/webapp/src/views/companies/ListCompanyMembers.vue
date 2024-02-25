@@ -61,6 +61,22 @@
             {{ formatToDateTime(data.createdAt) }}
           </template>
         </Column>
+        <Column headerStyle="width: 1%;white-space: nowrap;">
+          <template #body="{ data }: { data: CompanyMemberCodec }">
+            <div class="min-h-[42px]">
+              <Button
+                data-cy="list-company-members-view__remove-user"
+                :data-member-id="data.id"
+                v-if="appStore.loggedUser.id !== data.member?.id"
+                @click="onClickRemoveUserFromCompany(data)"
+                icon="pi pi-trash"
+                link
+                rounded
+                :loading="isRemovingMember"
+              />
+            </div>
+          </template>
+        </Column>
       </DataTable>
 
       <Paginator
@@ -68,6 +84,15 @@
         v-bind="getPaginationPropsForMeta(companyMemberStore.companyMembersRequest.meta, perPage)"
         @page="onPageUpdate"
       />
+
+      <ConfirmDialog group="confirmRemoveUserFromCompany">
+        <template #message>
+          <div class="flex flex-col items-center w-full gap-3">
+            <i class="text-6xl text-primary-500"></i>
+            <p>Are you sure you would like to remove user from company?</p>
+          </div>
+        </template>
+      </ConfirmDialog>
     </div>
   </div>
 </template>
@@ -81,10 +106,12 @@ import FiltersSection from '@/components/pages/companies/ListCompanyMembers/Filt
 import { formatToDateTime } from '@/services/date'
 import type { CompanyMemberCodec } from '@/services/api/resources/company/companyMember/codec'
 import InviteCompanyMember from '@/components/resources/companyMember/InviteCompanyMember.vue'
-import { getPaginationPropsForMeta } from '@/services/ui'
+import { displayGeneralError, getPaginationPropsForMeta } from '@/services/ui'
 import type { PageState } from 'primevue/paginator'
 import { OrderBy } from '@/services/api'
 import { assertsIsCompanyCodec } from '@/services/resources/Company'
+import { useConfirm } from 'primevue/useconfirm'
+import type { WrappedResponse } from '@/services/api/axios'
 
 const companyMemberStore = useCompanyMembersStore()
 
@@ -99,6 +126,10 @@ const currentPage = ref(1)
 const isFetchingMembers = ref(false)
 
 const perPage = ref(50)
+
+const isRemovingMember = ref(false)
+
+const confirm = useConfirm()
 
 onMounted(() => {
   assertsIsCompanyCodec(appStore.activeCompany)
@@ -147,5 +178,29 @@ async function onPageUpdate(page: PageState) {
     perPage: perPage.value
   })
   isFetchingMembers.value = false
+}
+
+function onClickRemoveUserFromCompany(member: CompanyMemberCodec) {
+  confirm.require({
+    group: 'confirmRemoveUserFromCompany',
+    header: 'Destructive action',
+    acceptLabel: 'Remove Member',
+    accept: () => onConfirmRemoveUserFromCompany(member),
+    blockScroll: true
+  })
+}
+
+async function onConfirmRemoveUserFromCompany(member: CompanyMemberCodec) {
+  assertsIsCompanyCodec(appStore.activeCompany)
+
+  isRemovingMember.value = true
+
+  try {
+    await companyMemberStore.removeUsersFromCompany(appStore.activeCompany.id, member.id)
+  } catch (e) {
+    displayGeneralError(e as WrappedResponse, { group: 'bottom-center' })
+  } finally {
+    isRemovingMember.value = false
+  }
 }
 </script>

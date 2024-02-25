@@ -37,6 +37,9 @@ describe('OnboardingInviteTeamMembersView.vue.spec.ts', () => {
     cy.dataCy('onboarding-invite-page__skip-step').click()
 
     cy.url().should('contain', `projects/${project.id}/dashboard`)
+    cy.url().should('contain', 'showFreeTrialInfo=1')
+
+    cy.dataCy('company-trial-information-dialog').should('be.visible')
   })
 
   context('pre invite members', () => {
@@ -143,6 +146,9 @@ describe('OnboardingInviteTeamMembersView.vue.spec.ts', () => {
       })
 
       cy.url().should('contain', `projects/${inviteMembersProject.id}/dashboard`)
+      cy.url().should('contain', 'showFreeTrialInfo=1')
+
+      cy.dataCy('company-trial-information-dialog').should('be.visible')
     })
 
     it('should allow user to add AND/OR remove emails and invite them', () => {
@@ -183,6 +189,9 @@ describe('OnboardingInviteTeamMembersView.vue.spec.ts', () => {
       })
 
       cy.url().should('contain', `projects/${inviteMembersProject.id}/dashboard`)
+      cy.url().should('contain', 'showFreeTrialInfo=1')
+
+      cy.dataCy('company-trial-information-dialog').should('be.visible')
     })
   })
 })
