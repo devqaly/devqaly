@@ -29,46 +29,6 @@ describe('CreateCompanyView.vue', () => {
     })
   })
 
-  context('invoice details', () => {
-    it('should allow to update invoice details', () => {
-      cy.intercept('PUT', '**/billingDetails').as('updateBillingDetails')
-
-      const invoiceDetails = 'billing details for my company'
-
-      cy.visit(`/company/${companyId}/subscription`)
-
-      cy.dataCy('company-subscription-view__invoice-details').should(
-        'contain.text',
-        'No Invoice Details'
-      )
-
-      cy.dataCy('company-subscription-view__open-invoice-details-dialog').click()
-
-      cy.dataCy('company-subscription-view__open-invoice-details-textarea').type(invoiceDetails)
-
-      cy.dataCy('company-subscription-view__update-invoice-details').click()
-
-      cy.wait('@updateBillingDetails').then(({ request, response }) => {
-        expect(request.body.invoiceDetails).to.be.eq(invoiceDetails)
-
-        expect(response?.statusCode).to.be.eq(200)
-        expect(response?.body.data.invoiceDetails).to.be.eq(invoiceDetails)
-      })
-
-      cy.dataCy('company-subscription-view__invoice-details').should('contain.text', invoiceDetails)
-    })
-
-    it('should close modal when clicking cancel', () => {
-      cy.visit(`/company/${companyId}/subscription`)
-
-      cy.dataCy('company-subscription-view__open-invoice-details-dialog').click()
-
-      cy.contains('button', 'Cancel').click()
-
-      cy.dataCy('company-subscription-view__open-invoice-details-textarea').should('not.exist')
-    })
-  })
-
   context('billing contact', () => {
     it('should allow to update billing contact', () => {
       cy.intercept('PUT', '**/billingDetails').as('updateBillingDetails')

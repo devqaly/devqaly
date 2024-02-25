@@ -29,12 +29,19 @@ class CompanyService
         DB::beginTransaction();
 
         try {
-            /** @var Company $company */
-            $company = Company::create([
+            $fields = collect([
                 'name' => $data->get('name'),
                 'created_by_id' => $createdBy->id,
-                'trial_ends_at' => now()->addDays(SubscriptionService::SUBSCRIPTION_INITIAL_TRIAL_DAYS),
-            ]);
+            ])
+                ->when(!config('devqaly.isSelfHosting'), function (Collection $collection) {
+                    $collection->put(
+                        'trial_ends_at',
+                        now()->addDays(SubscriptionService::SUBSCRIPTION_INITIAL_TRIAL_DAYS)
+                    );
+                });
+
+            /** @var Company $company */
+            $company = Company::create($fields->toArray());
 
             if (!config('devqaly.isSelfHosting')) {
                 $this->createCustomOnStripe($company);
