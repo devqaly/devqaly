@@ -3,7 +3,7 @@
     <h2 class="font-semibold text-xl">Credit Card</h2>
     <a
       data-cy="company-subscription-view__stripe-portal-url"
-      :href="appStore.activeCompanyStripePortalUrl"
+      :href="appStore.activeCompanyStripePortalUrl as string"
       class="text-green-500 hover:underline px-2 py-1"
     >
       Edit
@@ -17,7 +17,7 @@
     <div>Company does not have a payment method added</div>
 
     <a
-      :href="appStore.activeCompanyStripePortalUrl"
+      :href="appStore.activeCompanyStripePortalUrl as string"
       class="text-red-500 hover:underline"
     >
       Add one
@@ -39,8 +39,13 @@
 import { useAppStore } from '@/stores/app'
 import { computed } from 'vue'
 import { hasPaymentMethod } from '@/services/resources/Subscription'
+import { assertsIsCompanyCodec } from '@/services/resources/Company'
 
 const appStore = useAppStore()
 
-const companyHasPaymentMethod = computed(() => hasPaymentMethod(appStore.activeCompany))
+const companyHasPaymentMethod = computed(() => {
+  assertsIsCompanyCodec(appStore.activeCompany)
+
+  return hasPaymentMethod(appStore.activeCompany)
+})
 </script>

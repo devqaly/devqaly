@@ -56,7 +56,7 @@
 
 <script lang="ts" setup>
 import type { SUBSCRIPTION_PLANS } from '@/services/resources/Subscription'
-import { POSSIBLE_CHANGE_PLANS } from '@/services/resources/Subscription'
+import type { POSSIBLE_CHANGE_PLANS } from '@/services/resources/Subscription'
 
 const props = defineProps<{
   planSelected: boolean

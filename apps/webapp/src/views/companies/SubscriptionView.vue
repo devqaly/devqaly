@@ -21,6 +21,7 @@ import { onBeforeMount } from 'vue'
 import { assertsIsCompanyCodec } from '@/services/resources/Company'
 import { useAppStore } from '@/stores/app'
 import { displayGeneralError } from '@/services/ui'
+import type { WrappedResponse } from '@/services/api/axios'
 
 const appStore = useAppStore()
 
@@ -32,7 +33,7 @@ async function getCompanyPortalUrl() {
   try {
     await appStore.getActiveCompanyPortalStripePortalUrl(window.location.href)
   } catch (e) {
-    displayGeneralError(e)
+    displayGeneralError(e as WrappedResponse)
   }
 }
 </script>

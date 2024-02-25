@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { POSSIBLE_CHANGE_PLANS, SUBSCRIPTION_PLANS } from '@/services/resources/Subscription'
+import type { POSSIBLE_CHANGE_PLANS, SUBSCRIPTION_PLANS } from '@/services/resources/Subscription'
 import addMonths from 'date-fns/addMonths'
 
 defineProps<{

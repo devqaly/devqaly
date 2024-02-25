@@ -87,6 +87,7 @@ import { Field, Form } from 'vee-validate'
 import { object, string } from 'yup'
 import { getSubmitFn } from '@/services/validations'
 import { displayGeneralError } from '@/services/ui'
+import type { WrappedResponse } from '@/services/api/axios'
 
 const appStore = useAppStore()
 
@@ -104,7 +105,7 @@ const onSubmit = getSubmitFn(validationSchema, async (values) => {
     await appStore.updateActiveCompanyBillingDetails({ billingContact: values.email })
     isDialogOpen.value = false
   } catch (e) {
-    displayGeneralError(e)
+    displayGeneralError(e as WrappedResponse)
   } finally {
     isUpdatingBillingContact.value = false
   }

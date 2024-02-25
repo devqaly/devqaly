@@ -87,6 +87,7 @@ import { ref } from 'vue'
 import { object, string } from 'yup'
 import { getSubmitFn } from '@/services/validations'
 import { displayGeneralError } from '@/services/ui'
+import type { WrappedResponse } from '@/services/api/axios'
 
 const appStore = useAppStore()
 
@@ -106,7 +107,7 @@ const onSubmit = getSubmitFn(validationSchema, async (values) => {
     await appStore.updateActiveCompanyBillingDetails({ invoiceDetails: values.invoiceDetails })
     isDialogOpen.value = false
   } catch (e) {
-    displayGeneralError(e)
+    displayGeneralError(e as WrappedResponse)
   } finally {
     isUpdatingInvoiceDetails.value = false
   }

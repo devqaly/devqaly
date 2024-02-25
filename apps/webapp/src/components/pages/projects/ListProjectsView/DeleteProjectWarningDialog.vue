@@ -39,6 +39,7 @@
 import { computed, ref } from 'vue'
 import { useProjectsStore } from '@/stores/projects'
 import { displayGeneralError } from '@/services/ui'
+import type { WrappedResponse } from '@/services/api/axios'
 
 const projectStore = useProjectsStore()
 
@@ -65,7 +66,7 @@ async function onConfirmDeleteProject() {
     await projectStore.deleteProject(projectStore.selectedProjectForDeletion.id)
     projectStore.selectedProjectForDeletion = null
   } catch (e) {
-    displayGeneralError(e)
+    displayGeneralError(e as WrappedResponse)
   } finally {
     isDeletingProject.value = false
   }

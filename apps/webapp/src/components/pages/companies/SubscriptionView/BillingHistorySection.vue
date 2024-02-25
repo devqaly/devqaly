@@ -4,7 +4,7 @@
     <div class="bg-white shadow p-2 rounded-lg mt-1 grow justify-center items-center flex flex-col">
       <i class="pi pi-file !text-[90px]" />
 
-      <a :href="appStore.activeCompanyStripePortalUrl">
+      <a :href="appStore.activeCompanyStripePortalUrl as string">
         <Button
           class="!mt-4 !text-gray-500 !text-center"
           label="See on customer portal"

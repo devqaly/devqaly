@@ -102,10 +102,9 @@ import PlanSection from '@/components/subscription/ChooseSubscriptionDialog/Plan
 import {
   PLAN_ENTERPRISE_ADVANTAGES,
   PLAN_FREE_ADVANTAGES,
-  PLAN_GOLD_ADVANTAGES,
-  POSSIBLE_CHANGE_PLANS,
-  SUBSCRIPTION_PLANS
+  PLAN_GOLD_ADVANTAGES
 } from '@/services/resources/Subscription'
+import type { POSSIBLE_CHANGE_PLANS, SUBSCRIPTION_PLANS } from '@/services/resources/Subscription'
 import { ref } from 'vue'
 import ChoosePlanWarning from '@/components/subscription/ChooseSubscriptionDialog/ChoosePlanWarning.vue'
 

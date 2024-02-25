@@ -38,7 +38,7 @@
         <div class="font-semibold text-xl">Total Price Per Month:</div>
         <div class="font-semibold text-xl hover:cursor-pointer">
           <a
-            :href="appStore.activeCompanyStripePortalUrl"
+            :href="appStore.activeCompanyStripePortalUrl as string"
             class="flex gap-4 items-center"
           >
             Open Customer Portal <i class="pi pi-external-link"></i>
@@ -52,15 +52,13 @@
 <script lang="ts" setup>
 import { useAppStore } from '@/stores/app'
 import { computed, ref } from 'vue'
-import {
-  hasActiveSubscription,
-  hasPaymentMethod,
-  POSSIBLE_CHANGE_PLANS,
-  SUBSCRIPTION_PLANS
-} from '@/services/resources/Subscription'
+import { hasActiveSubscription, hasPaymentMethod } from '@/services/resources/Subscription'
+import type { POSSIBLE_CHANGE_PLANS, SUBSCRIPTION_PLANS } from '@/services/resources/Subscription'
 import ChooseSubscriptionDialog from '@/components/subscription/ChooseSubscriptionDialog/ChooseSubscriptionDialog.vue'
 import { useToast } from 'primevue/usetoast'
 import { displayGeneralError } from '@/services/ui'
+import { assertsIsCompanyCodec } from '@/services/resources/Company'
+import type { WrappedResponse } from '@/services/api/axios'
 
 const isChoosingPlan = ref(false)
 
@@ -95,6 +93,8 @@ const subtext = computed(() => {
 })
 
 function onChoosePlanClick() {
+  assertsIsCompanyCodec(appStore.activeCompany)
+
   if (!hasPaymentMethod(appStore.activeCompany)) {
     toast.add({
       severity: 'error',
@@ -116,7 +116,7 @@ async function onPlanChange(plan: POSSIBLE_CHANGE_PLANS) {
     await appStore.updateActiveCompanySubscription({ newPlan: plan })
     isChoosingPlan.value = false
   } catch (e) {
-    displayGeneralError(e)
+    displayGeneralError(e as WrappedResponse)
   } finally {
     isChangingPlan.value = false
   }

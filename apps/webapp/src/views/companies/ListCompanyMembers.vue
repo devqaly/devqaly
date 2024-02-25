@@ -111,7 +111,7 @@ import type { PageState } from 'primevue/paginator'
 import { OrderBy } from '@/services/api'
 import { assertsIsCompanyCodec } from '@/services/resources/Company'
 import { useConfirm } from 'primevue/useconfirm'
-import { WrappedResponse } from '@/services/api/axios'
+import type { WrappedResponse } from '@/services/api/axios'
 
 const companyMemberStore = useCompanyMembersStore()
 
